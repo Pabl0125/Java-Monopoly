@@ -26,10 +26,13 @@ public class Tablero {
     
     //Método para insertar las casillas del lado norte.
     private void insertarLadoNorte() {
+
     }
 
     //Método para insertar las casillas del lado sur.
+    
     private void insertarLadoSur() {
+        
     }
 
     //Método que inserta casillas del lado oeste.

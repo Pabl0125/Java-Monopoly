@@ -4,6 +4,7 @@ import monopoly.*;
 
 import java.util.ArrayList;
 
+import java.util.Random;
 
 public class Avatar {
 
@@ -22,8 +23,11 @@ public class Avatar {
     * avatares creados (usado para crear un ID distinto del de los demás avatares).
      */
     public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
+        this.generarId(avCreados);
+        this.tipo = tipo;
+        this.jugador = jugador;
+        this.lugar = lugar;
     }
-
     //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
     /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
     * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
@@ -31,12 +35,28 @@ public class Avatar {
     * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
+        
     }
 
-    /*Método que permite generar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
-    * El ID generado será una letra mayúscula. Parámetros:
-    * - Un arraylist de los avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
+    /*Método que permite  mayúscula. Parámetros:
+    * - Un arraylist de logenerar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
+    * El ID generado será una letras avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
      */
     private void generarId(ArrayList<Avatar> avCreados) {
+        Random rand = new Random();
+        char letra;
+        boolean idRepetido;
+        do {
+            letra = (char) (rand.nextInt(26) + 'A'); //Genera una letra mayúscula aleatoria.
+            idRepetido = false;
+            for (Avatar av : avCreados) {
+                if (av.id.equals(String.valueOf(letra))) {
+                    idRepetido = true;
+                    break;
+                }
+            }
+        } while (idRepetido);
+        avCreados.add(this);
+        this.id = String.valueOf(letra);
     }
 }
