@@ -35,9 +35,8 @@ public class Jugador {
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
         this.propiedades = new ArrayList<Casilla>(); //Al crear el jugador, no tiene propiedades.
-        
     }
-
+    
     //Otros métodos:
     //Método para añadir una propiedad al jugador. Como parámetro, la casilla a añadir.
     public void anhadirPropiedad(Casilla casilla) {
@@ -56,16 +55,27 @@ public class Jugador {
     //Método para añadir fortuna a un jugador
     //Como parámetro se pide el valor a añadir. Si hay que restar fortuna, se pasaría un valor negativo.
     public void sumarFortuna(float valor) {
+        this.fortuna = this.fortuna + valor;
     }
 
     //Método para sumar gastos a un jugador.
     //Parámetro: valor a añadir a los gastos del jugador (será el precio de un solar, impuestos pagados...).
     public void sumarGastos(float valor) {
+        this.gastos = this.gastos + valor;
     }
 
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
+        this.enCarcel=true;
+        this.
+
+        
     }
 
+    
+    //@override
+    public String toString(){
+        return "Nombre: " + this.nombre + "\nAvatar: " + this.avatar + "\nPropiedades" + this.propiedades;
+    }
 }

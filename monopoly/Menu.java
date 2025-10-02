@@ -67,22 +67,12 @@ public class Menu {
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
     private void listarJugadores() {
         for (Jugador jugador : jugadores) {
-            listarJugadores(jugador);
+            jugador.toString();
         }
 
 
     }
-    private void listarJugadores(Jugador jugador) {
-        System.out.println("Nombre: " + jugador.getNombre());
-        System.out.println("Fortuna: " + jugador.getFortuna() + "€");
-        System.out.println("Gastos: " + jugador.getGastos() + "€");
-        System.out.println("Propiedades: ");
-        for (Casilla propiedad : jugador.getPropiedades()) {
-            System.out.println(" - " + propiedad.getNombre());
-        }
-        for (Casilla e)
-        System.out.println("---------------------------");
-    }
+    
 
     // Método que realiza las acciones asociadas al comando 'listar avatares'.
     private void listarAvatares() {
