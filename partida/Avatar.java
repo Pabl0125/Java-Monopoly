@@ -35,7 +35,19 @@ public class Avatar {
     * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
      */
     public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-        
+        //Nos movemos tantas casillas como indique valorTirada.
+        int posicionActual = this.lugar.getPosicion(); //Obtenemos la posición actual del avatar.
+        int nuevaPosicion = posicionActual + valorTirada; //Calculamos la nueva posición
+        for (ArrayList<Casilla> cs:casillas){
+            for (Casilla c:cs){
+                if (c.getPosicion()==nuevaPosicion){
+                    c.anhadirAvatar(this);    
+                }
+                if (c.getPosicion()==posicionActual){
+                    c.eliminarAvatar(this);
+                }
+            }
+        }
     }
 
     /*Método que permite  mayúscula. Parámetros:
@@ -58,5 +70,23 @@ public class Avatar {
         } while (idRepetido);
         avCreados.add(this);
         this.id = String.valueOf(letra);
+    }
+
+
+    //Getters y setters:
+    public String getTipo() {
+        return tipo;
+    }
+    public Casilla getLugar() {
+        return lugar;
+    }
+    public Jugador getJugador() {
+        return jugador;
+    }
+    public String getId() {
+        return id;
+    }
+    public void setlugar(Casilla lugar){
+        this.lugar=lugar;
     }
 }

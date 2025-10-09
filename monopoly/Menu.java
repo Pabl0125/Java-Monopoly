@@ -31,7 +31,12 @@ public class Menu {
     /*Método que realiza las acciones asociadas al comando 'describir jugador'.
     * Parámetro: comando introducido
      */
-    private void descJugador(String[] partes) {
+    private void descJugador(String nombre) {
+        for (Jugador j:jugadores){
+            if (j.getNombre().equals(nombre)){
+                j.toString();
+            }
+        }
     }
 
     /*Método que realiza las acciones asociadas al comando 'describir avatar'.
@@ -80,6 +85,7 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
     private void acabarTurno() {
+        this.turno+=1;
     }
 
 }

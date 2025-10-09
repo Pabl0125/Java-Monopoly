@@ -49,5 +49,9 @@ class Grupo {
     public boolean esDuenhoGrupo(Jugador jugador) {
         if()
     }
-
+    //SEtters y getters:
+    public void setcolorGrupo(String color){
+        this.colorGrupo = color;
+    }
+    
 }

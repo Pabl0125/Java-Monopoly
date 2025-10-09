@@ -18,7 +18,14 @@ public class Jugador {
 
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
-
+        this.nombre="Banca"; //Se asigna el nombre del jugador.
+        this.avatar = null; //La banca no tiene avatar.
+        this.fortuna=0; //La banca empieza con 1.
+        this.gastos = 0; //Al crear el jugador, no ha realizado ningún gasto.
+        this.enCarcel = false; //Al crear el jugador, no está en la carcel.
+        this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
+        this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
+        this.propiedades=new ArrayList<Casilla>();//Al crear el jugador, la banca posee todas las propiedadades.
     }
 
     /*Constructor principal. Requiere parámetros:
@@ -47,7 +54,8 @@ public class Jugador {
     public void eliminarPropiedad(Casilla casilla) {
         for(Casilla propiedad: propiedades){
             if (casilla.equals(propiedad)) {
-                
+                propiedades.remove(propiedad);
+                break;
             }
         }
     }
@@ -67,15 +75,32 @@ public class Jugador {
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
-        this.enCarcel=true;
-        this.
+        //Buscamoos primero la casilla de la carcel (posición 11 del tablero).Y luego los movemos y cambiamos el estaddo
+       for(ArrayList<Casilla> lado: pos){
+              for(Casilla casilla: lado){
+                if(casilla.getPosicion()==11){
+                        this.avatar.setlugar(casilla);
+                    this.enCarcel = true;
+                    this.tiradasCarcel = 0;
+                    return;
+                }
+              }
+       }
 
-        
     }
 
+    //Getters y setters:   
+    public String getNombre() {
+        return nombre;
+    }
     
-    //@override
-    public String toString(){
-        return "Nombre: " + this.nombre + "\nAvatar: " + this.avatar + "\nPropiedades" + this.propiedades;
+    public Avatar getAvatar(Jugador jugador){
+        return jugador.avatar;
     }
+    
+    @Override
+    public String toString(){
+        return "Nombre: "+this.nombre+"\nAvatar: "+this.avatar+"\nFortuna: "+this.fortuna+"\nPropiedades:"+this.propiedades;
+    }
+
 }

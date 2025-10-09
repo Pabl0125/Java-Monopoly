@@ -55,10 +55,12 @@ public class Casilla {
 
     //Método utilizado para añadir un avatar al array de avatares en casilla.
     public void anhadirAvatar(Avatar av) {
+        this.avatares.add(av);
     }
 
     //Método utilizado para eliminar un avatar del array de avatares en casilla.
     public void eliminarAvatar(Avatar av) {
+        this.avatares.remove(av);
     }
 
     /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
@@ -87,7 +89,15 @@ public class Casilla {
     /*Método para mostrar información sobre una casilla.
     * Devuelve una cadena con información específica de cada tipo de casilla.*/
     public String infoCasilla() {
-        
+        return "Nombre: " + this.nombre+
+        "\nTipo: " + this.tipo +
+        "\nValor: " + this.valor + 
+        "\nPosición: " + this.posicion +
+        "\nDueño: " + this.duenho +
+        "\nGrupo: " + this.grupo +
+        "\nImpuesto: " + this.impuesto +
+        "\nHipoteca: " + this.hipoteca +
+        "\nAvatares: " + this.avatares;
     }
 
     /* Método para mostrar información de una casilla en venta.
@@ -96,4 +106,14 @@ public class Casilla {
     public String casEnVenta() {
     }
 
+    //Getters y setters:
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }        
+    public int getPosicion() {
+        return this.posicion;
+    }
+    public String getNombre() {
+        return this.nombre;
+    }
 }
