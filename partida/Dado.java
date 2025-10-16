@@ -7,6 +7,16 @@ public class Dado {
 
     //Metodo para simular lanzamiento de un dado: devolverá un valor aleatorio entre 1 y 6.
     public int hacerTirada(){
-        return (int) (Math.random() * 6) + 1;
+        this.valor = (int) (Math.random() * 6) + 1;
+        return valor;
+    }
+
+    //Getter y setter
+
+    public void setValor(int valor){
+        this.valor = valor;
+    }
+    public int getValor(){
+        return valor;
     }
 }

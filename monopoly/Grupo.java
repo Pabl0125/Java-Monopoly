@@ -57,5 +57,8 @@ class Grupo {
     public void setcolorGrupo(String color){
         this.colorGrupo = color;
     }
+    public String getcolorGrupo(){
+        return this.colorGrupo;
+    }
     
 }

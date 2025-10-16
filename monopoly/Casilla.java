@@ -73,13 +73,27 @@ public class Casilla {
         
         switch (Casilla.this.tipo) {
             case "Solar":
-                if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){  //Caso de que la casilla sea de un tercero.
+                pagoAlquiler(actual, banca, tirada);
+            case "Transporte":
+                pagoAlquiler(actual, banca, tirada);
+            case "Servicios":
+                pagoAlquiler(actual, banca, tirada);
+        }
+    }
+    /*Metodo usado cuando un jugador cae en una casilla y debe pagar el alquiler correspondiente a un tercero 
+     * cuando la casilla en la que cae no le pertenece
+    */
+    //NOTA: Se sabe de antemano que la casilla no es de un tipo incompatible
+    private boolean pagoAlquiler(Jugador actual, Jugador banca, int tirada){
+        if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){  //Caso de que la casilla sea de un tercero.
                     float impuestoAPagar = this.impuesto; //Valor del impuesto a pagar
                     if (actual.getFortuna() >= impuestoAPagar) { //Comprobar que el jugador tiene saldo suficiente.
                         actual.sumarGastos(impuestoAPagar); //Añadir el valor del impuesto a los gastos del jugador.
                         this.duenho.sumarFortuna(impuestoAPagar);//Sumar el valor del impuesto al saldo del dueño de la casilla.
+                        actual.sumarFortuna(impuestoAPagar);
                         System.out.println(actual.getNombre() + " ha pagado " + impuestoAPagar + "€ a " + this.duenho.getNombre() + " por caer en " + this.nombre + ".");
                         return true; //El jugador es solvente.
+
                     } else {
                         System.out.println(actual.getNombre() + " no tiene saldo suficiente para pagar el alquiler de " + this.nombre + ".");
                         return false; //El jugador no es solvente.
@@ -87,60 +101,20 @@ public class Casilla {
                 } 
                 else if (this.duenho.equals(banca)) { //Caso de que el dueño sea la banca.
                     System.out.println("La casilla " + this.nombre + " está en venta por " + this.valor + "€.");
+                    this.casEnVenta();  //Imprimimos la info de la casilla en venta
                     if (actual.getFortuna() >= this.valor) {
                         System.out.println("Usa el comando 'comprar' para adquirirla.");
                         return true; //El jugador es solvente.
                     } else {
-                        System.out.println("No tienes saldo suficiente para comprar esta casilla.");\
+                        System.out.println("No tienes saldo suficiente para comprar esta casilla.");
                         return false; //El jugador no es solvente.
                     }
                 } else { //Caso de que el dueño sea el mismo jugador
                     System.out.println("Has caído en una de tus propiedades: " + this.nombre + ".");
+                    return true; //El jugador necesariamente es solvente al no tener que pagar por estar en su propiedad
                 }
-                break;
-            case "Transporte":
-                if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){
-
-                    float impuestoAPagar = this.impuesto; //Valor del impuesto a pagar.
-                    if (actual.getFortuna() >= impuestoAPagar) { //Comprobar que el jugador tiene saldo suficiente.
-                        actual.sumarGastos(impuestoAPagar); //Añadir el valor del impuesto a los gastos del jugador.
-                        this.duenho.sumarFortuna(impuestoAPagar);//Sumar el valor del impuesto al saldo del dueño de la casilla.
-                        System.out.println(actual.getNombre() + " ha pagado " + impuestoAPagar + "€ a " + this.duenho.getNombre() + " por caer en " + this.nombre + ".");
-                        return true; //El jugador es solvente.
-                    } else {
-                        System.out.println(actual.getNombre() + " no tiene saldo suficiente para pagar el alquiler de " + this.nombre + ".");
-                        return false; //El jugador no es solvente.
-                    }
-                } else if (this.duenho.equals(banca)) {
-                    System.out.println("La casilla " + this.nombre + " está en venta por " + this.valor + "€. Usa el comando 'comprar' para adquirirla.");
-                } else {
-                    System.out.println("Has caído en una de tus propiedades: " + this.nombre + ".");
-                }
-            case "Servicios":
-                if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){
-                    //El jugador debe pagar el impuesto (alquiler) al dueño de la casilla.
-                    float impuestoAPagar = this.impuesto * tirada; //Valor del impuesto a pagar.
-                    if (actual.getFortuna() >= impuestoAPagar) { //Comprobar que el jugador tiene saldo suficiente.
-                        actual.sumarGastos(impuestoAPagar); //Añadir el valor del impuesto a los gastos del jugador.
-                        this.duenho.sumarFortuna(impuestoAPagar);//Sumar el valor del impuesto al saldo del dueño de la casilla.
-                        System.out.println(actual.getNombre() + " ha pagado " + impuestoAPagar + "€ a " + this.duenho.getNombre() + " por caer en " + this.nombre + ".");
-                        return true; //El jugador es solvente.
-                    } else {
-                        System.out.println(actual.getNombre() + " no tiene saldo suficiente para pagar el alquiler de " + this.nombre + ".");
-                        return false; //El jugador no es solvente.
-                    }
-                } else if (this.duenho.equals(banca)) {
-                    System.out.println("La casilla " + this.nombre + " está en venta por " + this.valor + "€. Usa el comando 'comprar' para adquirirla.");
-                } else {
-                    System.out.println("Has caído en una de tus propiedades: " + this.nombre + ".");
-                }
-                break;
-            default:
-                
-                break;
-        }
-
     }
+
 
     /*Método usado para comprar una casilla determinada. Parámetros:
     * - Jugador que solicita la compra de la casilla.
@@ -194,10 +168,24 @@ public class Casilla {
     /* Método para mostrar información de una casilla en venta.
      * Valor devuelto: texto con esa información.
      */
-    public String casEnVenta() {
+    public void casEnVenta() {
+    if (this.duenho != null && this.duenho.getNombre().equals("Banca") &&
+        (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicios"))) {
+        
+        System.out.print("{\n");
+        System.out.print("tipo: " + this.tipo + ",\n");
+        if (this.tipo.equals("Solar") && this.grupo != null) {
+            System.out.print("grupo: " + this.grupo.getcolorGrupo() + ",\n");
+        }
+        System.out.println("valor: " + this.valor + "\n},");
     }
+}
+
 
     //Getters y setters:
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }        
@@ -207,13 +195,23 @@ public class Casilla {
     public String getNombre() {
         return this.nombre;
     }
+    public String getTipo() {
+        return this.tipo;
+    }
+    public Jugador getDuenho(){
+        return this.duenho;
+    }
+    public float getImpuesto(){
+        return this.impuesto;
+    }
 
 @Override
-public boolean equals(Object obj) {
-    if (this == obj) return true; // Si son el mismo objeto
-    if (obj == null || getClass() != obj.getClass()) return false; // Comprobar null y clase
-    Casilla otraCasilla = (Casilla) obj; // Hacemos casting seguro
-    return this.nombre != null && this.nombre.equals(otraCasilla.nombre); // Comparamos nombres
-}
+
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Si son el mismo objeto
+        if (obj == null || getClass() != obj.getClass()) return false; // Comprobar null y clase
+        Casilla otraCasilla = (Casilla) obj; // Hacemos casting seguro
+        return this.nombre != null && this.nombre.equals(otraCasilla.nombre); // Comparamos nombres
+    }
 
 }

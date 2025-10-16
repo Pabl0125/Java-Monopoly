@@ -55,28 +55,28 @@ public class Avatar {
     * El ID generado será una letras avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
      */
     private void generarId(ArrayList<Avatar> avCreados) {
-    Random rand = new Random();
-    char letra;
-    boolean idRepetido;
+        Random rand = new Random();
+        char letra;
+        boolean idRepetido;
 
-    do {
-        // Genera una letra mayúscula aleatoria (A-Z)
-        letra = (char) ('A' + rand.nextInt(26));
-        idRepetido = false;
+        do {
+            // Genera una letra mayúscula aleatoria (A-Z)
+            letra = (char) ('A' + rand.nextInt(26));
+            idRepetido = false;
 
-        // Comprueba si ya existe un avatar con ese ID
-        for (Avatar av : avCreados) {
-            if (av.id.equals(String.valueOf(letra))) {
-                idRepetido = true;
-                break;
+            // Comprueba si ya existe un avatar con ese ID
+            for (Avatar av : avCreados) {
+                if (av.id.equals(String.valueOf(letra))) {
+                    idRepetido = true;
+                    break;
+                }
             }
-        }
-    } while (idRepetido);
+        } while (idRepetido);
 
-    // Asigna el ID antes de añadir el avatar a la lista
-    this.id = String.valueOf(letra);
-    avCreados.add(this);
-}
+        // Asigna el ID antes de añadir el avatar a la lista
+        this.id = String.valueOf(letra);
+        avCreados.add(this);
+    }
 
 
 
