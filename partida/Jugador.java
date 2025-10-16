@@ -75,28 +75,63 @@ public class Jugador {
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
-        //Buscamoos primero la casilla de la carcel (posición 11 del tablero).Y luego los movemos y cambiamos el estaddo
-       for(ArrayList<Casilla> lado: pos){
-              for(Casilla casilla: lado){
-                if(casilla.getPosicion()==11){
-                        this.avatar.setlugar(casilla);
-                    this.enCarcel = true;
-                    this.tiradasCarcel = 0;
-                    return;
-                }
-              }
-       }
+        //Cambiamos la posición del avatar a la casilla de la carcel (índice 10 en el arraylist de posiciones).
+        this.avatar.setLugar(pos.get(0).get(10));
+       
 
     }
+    
 
-    //Getters y setters:   
+    //Getters y setters: 
     public String getNombre() {
         return nombre;
     }
-    
-    public Avatar getAvatar(Jugador jugador){
-        return jugador.avatar;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
+    public Avatar getAvatar() {
+        return avatar;
+    }
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
+    }
+    public float getFortuna() {
+        return fortuna;
+    }
+    public void setFortuna(float fortuna) {
+        this.fortuna = fortuna;
+    }
+    public float getGastos() {
+        return gastos;
+    }
+    public void setGastos(float gastos) {
+        this.gastos = gastos;
+    }
+    public boolean isEnCarcel() {
+        return enCarcel;
+    }
+    public void setEnCarcel(boolean enCarcel) {
+        this.enCarcel = enCarcel;
+    }
+    public int getTiradasCarcel() {
+        return tiradasCarcel;
+    }
+    public void setTiradasCarcel(int tiradasCarcel) {
+        this.tiradasCarcel = tiradasCarcel;
+    }
+    public int getVueltas() {
+        return vueltas;
+    }
+    public void setVueltas(int vueltas) {
+        this.vueltas = vueltas;
+    }
+    public ArrayList<Casilla> getPropiedades() {
+        return propiedades;
+    }
+    public void setPropiedades(ArrayList<Casilla> propiedades) {
+        this.propiedades = propiedades;
+    }
+    
     
     @Override
     public String toString(){

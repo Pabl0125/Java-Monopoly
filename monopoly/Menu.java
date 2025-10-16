@@ -20,7 +20,14 @@ public class Menu {
 
     // Método para inciar una partida: crea los jugadores y avatares.
     private void iniciarPartida() {
+        //Crear jugadores y avatares.
+        jugadores = new ArrayList<Jugador>();
+        avatares = new ArrayList<Avatar>();
+        banca = new Jugador();
+        jugadores.add(banca);
+
     }
+
     
     /*Método que interpreta el comando introducido y toma la accion correspondiente.
     * Parámetro: cadena de caracteres (el comando).
@@ -32,10 +39,16 @@ public class Menu {
     * Parámetro: comando introducido
      */
     private void descJugador(String nombre) {
+        int encontrado = 0;
         for (Jugador j:jugadores){
             if (j.getNombre().equals(nombre)){
-                j.toString();
+                System.out.println(j.toString());
+                encontrado = 1;
+                break;
             }
+        }
+        if (encontrado == 0){
+            System.out.println("No se encontro ningun jugador con el nombre '" + nombre + "'.");
         }
     }
 
@@ -67,25 +80,51 @@ public class Menu {
 
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     private void listarVenta() {
+        for (ArrayList<Casilla> casilla : tablero.getPosiciones()) {
+            for (Casilla c : casilla) {
+                ///
+            }
+        }
+
+        
+
     }
 
     // Método que realiza las acciones asociadas al comando 'listar jugadores'.
     private void listarJugadores() {
-        for (Jugador jugador : jugadores) {
-            jugador.toString();
+        if(jugadores == null || jugadores.isEmpty()){
+            System.out.println("No hay jugadores en la partida.");
+            return;
         }
-
-
+        for (Jugador jugador : jugadores) {
+            System.out.println(jugador); //Se omite el toString() ya que se llama implícitamente.  
+        }
     }
     
 
     // Método que realiza las acciones asociadas al comando 'listar avatares'.
     private void listarAvatares() {
+        for (Avatar avatar : avatares) {
+            avatar.toString();
+        }
     }
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
     private void acabarTurno() {
-        this.turno+=1;
+        if(jugadores == null || jugadores.isEmpty()){
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+        if(turno == jugadores.size() - 1) {
+            turno = 0;
+        } else {
+            turno++;
+        }
+
+        System.out.println("El jugador actual es " + jugadores.get(turno).getNombre() + ".");
     }
 
+    private void imprimirJugadorTurno() {
+        System.out.println("Nombre:" + this.jugadores.get(turno).getNombre() + "\nAvatar: " + this.jugadores.get(turno).getAvatar().getId());
+    }
 }

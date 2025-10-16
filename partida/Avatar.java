@@ -55,38 +55,59 @@ public class Avatar {
     * El ID generado será una letras avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
      */
     private void generarId(ArrayList<Avatar> avCreados) {
-        Random rand = new Random();
-        char letra;
-        boolean idRepetido;
-        do {
-            letra = (char) (rand.nextInt(26) + 'A'); //Genera una letra mayúscula aleatoria.
-            idRepetido = false;
-            for (Avatar av : avCreados) {
-                if (av.id.equals(String.valueOf(letra))) {
-                    idRepetido = true;
-                    break;
-                }
+    Random rand = new Random();
+    char letra;
+    boolean idRepetido;
+
+    do {
+        // Genera una letra mayúscula aleatoria (A-Z)
+        letra = (char) ('A' + rand.nextInt(26));
+        idRepetido = false;
+
+        // Comprueba si ya existe un avatar con ese ID
+        for (Avatar av : avCreados) {
+            if (av.id.equals(String.valueOf(letra))) {
+                idRepetido = true;
+                break;
             }
-        } while (idRepetido);
-        avCreados.add(this);
-        this.id = String.valueOf(letra);
-    }
+        }
+    } while (idRepetido);
+
+    // Asigna el ID antes de añadir el avatar a la lista
+    this.id = String.valueOf(letra);
+    avCreados.add(this);
+}
+
+
 
 
     //Getters y setters:
+    public String getId() {
+        return id;
+    }
     public String getTipo() {
         return tipo;
-    }
-    public Casilla getLugar() {
-        return lugar;
     }
     public Jugador getJugador() {
         return jugador;
     }
-    public String getId() {
-        return id;
+    public Casilla getLugar() {
+        return lugar;
     }
-    public void setlugar(Casilla lugar){
-        this.lugar=lugar;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+    }
+    public void setLugar(Casilla lugar) {
+        this.lugar = lugar;
+    }
+    @Override
+    public String toString() {
+        System.out.println("Avatar " + this.id + " (" + this.tipo + ") del jugador " + this.jugador.getNombre() +
+                " está en la casilla " + this.lugar.getNombre() + " (posición " + this.lugar.getPosicion() + ").");
+        return "";
+    }
+
 }
