@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 public class MonopolyETSE {
 
     public static void main(String[] args) {
-
+        Menu menu = new Menu();
+        menu.iniciarPartida();
+        menu.lecturaFichero("~/Documentos/segundoCarrera/POO/MONOPOLY/fichero.txt");
     }
 
 

@@ -77,6 +77,7 @@ public class Jugador {
     public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
         //Cambiamos la posición del avatar a la casilla de la carcel (índice 10 en el arraylist de posiciones).
         this.avatar.setLugar(pos.get(0).get(10));
+        this.enCarcel=true;
        
 
     }
@@ -92,6 +93,7 @@ public class Jugador {
     public Avatar getAvatar() {
         return avatar;
     }
+
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
     }

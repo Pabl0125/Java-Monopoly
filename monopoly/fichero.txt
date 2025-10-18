@@ -1,0 +1,4 @@
+crear jugador Lucas coche
+crear jugador Pablo dedal
+crear jugador Joel barco
+imprimir tablero

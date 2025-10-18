@@ -16,6 +16,10 @@ public class Tablero {
         this.banca = banca;
         this.posiciones = new ArrayList<ArrayList<Casilla>>(); //Inicializamos el array de posiciones.
         this.grupos = new HashMap<String, Grupo>(); //Inicializamos el hashmap de grupos.
+        this.posiciones.add(new ArrayList<Casilla>()); // Índice 0: Lado Sur
+        this.posiciones.add(new ArrayList<Casilla>()); // Índice 1: Lado Oeste
+        this.posiciones.add(new ArrayList<Casilla>()); // Índice 2: Lado Norte
+        this.posiciones.add(new ArrayList<Casilla>()); // Índice 3: Lado Este
         this.generarCasillas(); //Generamos las casillas del tablero.
     }
 
@@ -172,22 +176,22 @@ public class Tablero {
             // Lado Sur 
             ArrayList<Casilla> sur = this.posiciones.get(0);
             for (int i = 0; i < 10; i++) {
-                tablero[10][i] = "[" + sur.get(i).getNombre() + "]";
+                tablero[10][i] = formatearCasilla(sur.get(i));
             }
             // Lado Oeste 
             ArrayList<Casilla> oeste = this.posiciones.get(1);
             for (int i = 0; i < 10; i++) {
-                tablero[9 - i][0] = "|" + oeste.get(i).getNombre() + "|";
+                tablero[9 - i][0] = formatearCasilla(oeste.get(i));
             }
             // Lado Norte
             ArrayList<Casilla> norte = this.posiciones.get(2);
             for (int i = 0; i < 10; i++) {
-                tablero[0][i] = "[" + norte.get(i).getNombre() + "]";
+                tablero[0][i] = formatearCasilla(norte.get(i));
             }
             // Lado Este
             ArrayList<Casilla> este = this.posiciones.get(3);
             for (int i = 0; i < 10; i++) {
-                tablero[i][10] = "|" + este.get(i).getNombre() + "|";
+                tablero[i][10] = formatearCasilla(este.get(i));
             }
             // Rellenar espacios vacíos
             for (int i = 1; i < 10; i++) {
@@ -198,10 +202,37 @@ public class Tablero {
             // Imprimir el tablero
             for (int i = 0; i < tablero.length; i++) {
                 for (int j = 0; j < tablero.length; j++){
-                    System.out.println(tablero[i][j] + " ");
-                }
-                System.out.println();
+                    if(i == 0 || i == 10 || j == 0 || j == 10){
+                        System.out.print("[" + tablero[i][j] + " " + "]");
+                    }else{
+                        System.out.print(tablero[i][j]);
+                    }
             }
+            System.out.println();
+        }
+    }
+
+        private String formatearCasilla(Casilla c){
+            String nombre = c.getNombre();
+            String avatares = "";
+
+            //Si hay un avatar en una casilla, se le añade al texto
+            if(c.getAvatares() != null && !c.getAvatares().isEmpty()){
+                for(Avatar a : c.getAvatares()){
+                    avatares += " &" + a.getId();
+                }
+            }
+
+            String texto_casilla = nombre + avatares;
+
+            //Ancho que tendran nuestras casillas: 10 caracteres
+            if(texto_casilla.length() < 10){
+                texto_casilla = String.format("%-10s", texto_casilla);  //Rellena con espacios a la derecha
+            } else if(texto_casilla.length() > 10){
+                texto_casilla = texto_casilla.substring(0, 10); //Recorta si es demasiado largo
+            }
+
+            return texto_casilla;
         }
     
         
