@@ -10,7 +10,7 @@ public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca; //Un jugador que será la banca.
-
+    
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca) {
         this.banca = banca;
@@ -48,9 +48,8 @@ public class Tablero {
         Casilla c30 = new Casilla("Solar17", "Solar", 30, 2800000, this.banca);
 
         // GRUPOS
-        Grupo gRojo = new Grupo(c22, c24, c25, "Rojo"); // 3 solares
-        Grupo gAmarillo = new Grupo(c27, c28, c30, "Amarillo"); // 3 solares
-
+        Grupo gRojo = new Grupo(c22, c24, c25, Valor.RED); // 3 solares
+        Grupo gAmarillo = new Grupo(c27, c28, c30, Valor.YELLOW); // 3 solares
         
         // Añadir al lado Norte
         norte.add(c21); norte.add(c22); norte.add(c23); norte.add(c24); norte.add(c25); 
@@ -80,12 +79,12 @@ public class Tablero {
             Casilla c7 = new Casilla("Solar3", "Solar", 7, 1000000, this.banca);
             Casilla c8 = new Casilla("Suerte", "Suerte", 8, this.banca);
             Casilla c9 = new Casilla("Solar4", "Solar", 9, 1000000, this.banca);
-            Casilla c10 = new Casilla("Solar5", "Solar", 10, 1200000, this.banca);
+            Casilla c10 = new Casilla("Solar5", "Solar", 10, 1200000, this.banca);            
 
             // GRUPOS
-            Grupo gMarron = new Grupo(c2, c4, "Marron"); // 2 solares
-            Grupo gCian = new Grupo(c7, c9, c10, "Cian"); // 3 solares
-            
+            Grupo gMarron = new Grupo(c2, c4, Valor.MARRON); // 2 solares
+            Grupo gCian = new Grupo(c7, c9, c10, Valor.CYAN); // 3 solares
+
             // Añadir al lado Sur
             sur.add(c1); sur.add(c2); sur.add(c3); sur.add(c4); sur.add(c5); 
             sur.add(c6); sur.add(c7); sur.add(c8); sur.add(c9); sur.add(c10);
@@ -96,12 +95,12 @@ public class Tablero {
             
             // Inicializar el grupo de Transporte (solo 1, se completará en otros lados)
             Grupo gTransporte = new Grupo(); // Constructor vacío
-            gTransporte.setcolorGrupo("Transporte");
+            gTransporte.setcolorGrupo(Valor.GRIS);
             gTransporte.anhadirCasilla(c6);
             this.grupos.put("Transporte", gTransporte);
         }
 
-        //Método que inserta casillas del lado oeste.
+    //Método que inserta casillas del lado este.
     private void insertarLadoEste() {
         ArrayList<Casilla> este = this.posiciones.get(3);
         
@@ -118,8 +117,8 @@ public class Tablero {
         Casilla c40 = new Casilla("Solar22", "Solar", 40, 4000000, this.banca);
 
         // GRUPOS
-        Grupo gVerde = new Grupo(c32, c33, c35, "Verde"); // 3 solares
-        Grupo gAzulOscuro = new Grupo(c38, c40, "Azul Oscuro"); // 2 solares
+        Grupo gVerde = new Grupo(c32, c33, c35, Valor.GREEN); // 3 solares
+        Grupo gAzulOscuro = new Grupo(c38, c40, Valor.BLUE); // 2 solares
         
         // Añadir al lado Este
         este.add(c31); este.add(c32); este.add(c33); este.add(c34); este.add(c35); 
@@ -133,7 +132,7 @@ public class Tablero {
         this.grupos.get("Transporte").anhadirCasilla(c36);
     }
 
-        //Método que inserta las casillas del lado este.
+    //Método que inserta las casillas del lado oeste.
     private void insertarLadoOeste() {
         ArrayList<Casilla> oeste = this.posiciones.get(1);
         
@@ -150,8 +149,8 @@ public class Tablero {
         Casilla c20 = new Casilla("Solar11", "Solar", 20, 2200000, this.banca);
 
         // GRUPOS
-        Grupo gMagenta = new Grupo(c12, c14, c15, "Magenta"); // 3 solares
-        Grupo gNaranja = new Grupo(c17, c19, c20, "Naranja"); // 3 solares
+        Grupo gMagenta = new Grupo(c12, c14, c15, Valor.PURPLE); // 3 solares
+        Grupo gNaranja = new Grupo(c17, c19, c20, Valor.NARANJA); // 3 solares
         
         // Añadir al lado Oeste
         oeste.add(c11); oeste.add(c12); oeste.add(c13); oeste.add(c14); oeste.add(c15); 
@@ -166,7 +165,7 @@ public class Tablero {
         gTransporte.anhadirCasilla(c16);
 
         Grupo gServicios = new Grupo(); // Constructor vacío
-        gServicios.setcolorGrupo("Servicios");
+        gServicios.setcolorGrupo(Valor.GRIS);
         gServicios.anhadirCasilla(c13);
         this.grupos.put("Servicios", gServicios);
     }
@@ -175,13 +174,13 @@ public class Tablero {
             String[][] tablero = new String[11][11];
             // Lado Sur 
             ArrayList<Casilla> sur = this.posiciones.get(0);
-            for (int i = 0; i < 10; i++) {
-                tablero[10][i] = formatearCasilla(sur.get(i));
+            for (int i = 0; i < 10; i++) {  //Se insertaron las casillas del lado sur en orden inverso (salida empieza a la izquierda)
+                tablero[10][10 - i] = formatearCasilla(sur.get(i));    //Por lo que se deben imprimir en orden inverso.
             }
             // Lado Oeste 
             ArrayList<Casilla> oeste = this.posiciones.get(1);
             for (int i = 0; i < 10; i++) {
-                tablero[9 - i][0] = formatearCasilla(oeste.get(i));
+                tablero[10 - i][0] = formatearCasilla(oeste.get(i));
             }
             // Lado Norte
             ArrayList<Casilla> norte = this.posiciones.get(2);
@@ -196,7 +195,7 @@ public class Tablero {
             // Rellenar espacios vacíos
             for (int i = 1; i < 10; i++) {
                 for (int j = 1; j < 10; j++) {
-                    tablero[i][j] = "         ";
+                    tablero[i][j] = "             ";
                 }
             }
             // Imprimir el tablero
@@ -212,28 +211,34 @@ public class Tablero {
         }
     }
 
-        private String formatearCasilla(Casilla c){
-            String nombre = c.getNombre();
-            String avatares = "";
-
-            //Si hay un avatar en una casilla, se le añade al texto
-            if(c.getAvatares() != null && !c.getAvatares().isEmpty()){
-                for(Avatar a : c.getAvatares()){
-                    avatares += " &" + a.getId();
-                }
+    private String formatearCasilla(Casilla c){
+        String nombre = c.getNombre();
+        String avatares = "";
+        // 1. Obtener la cadena de texto base (sin colores)
+        if(c.getAvatares() != null && !c.getAvatares().isEmpty()){
+            for(Avatar a : c.getAvatares()){
+                avatares += " &" + a.getId();
             }
-
-            String texto_casilla = nombre + avatares;
-
-            //Ancho que tendran nuestras casillas: 10 caracteres
-            if(texto_casilla.length() < 10){
-                texto_casilla = String.format("%-10s", texto_casilla);  //Rellena con espacios a la derecha
-            } else if(texto_casilla.length() > 10){
-                texto_casilla = texto_casilla.substring(0, 10); //Recorta si es demasiado largo
-            }
-
-            return texto_casilla;
         }
+    
+        String texto_base = nombre + avatares;
+    
+        // 2. Aplicar el ancho fijo de 10 caracteres al texto BASE
+        if(texto_base.length() < 10){
+            texto_base = String.format("%-10s", texto_base);
+        } else if(texto_base.length() > 10){
+            texto_base = texto_base.substring(0, 10);
+        }
+    
+        // 3. AHORA, añadir el color (si existe) al texto BASE formateado
+        Grupo g = c.getGrupo();
+        if(g != null && g.getcolorGrupo() != null){
+            // Concatenamos las secuencias ANSI al String que ya tiene 10 caracteres
+            return g.getcolorGrupo() + texto_base + Valor.RESET;
+        }
+    
+        return texto_base;
+    }
     
         
         //Método usado para buscar la casilla con el nombre pasado como argumento:

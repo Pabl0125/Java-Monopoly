@@ -19,6 +19,9 @@ public class Casilla {
 
     //Constructores:
     public Casilla() {
+        this.tipo = "Desconocido"; // <--- Add this line to set a default type
+        this.avatares = new ArrayList<>(); // <- It's also safer to initialize ArrayLists here.
+
     }//Parámetros vacíos
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
@@ -36,6 +39,7 @@ public class Casilla {
     * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
     public Casilla(String nombre, int posicion, float impuesto, Jugador duenho) {
+        this.tipo = "Impuesto";
         this.nombre = nombre;
         this.posicion = posicion;
         this.impuesto = impuesto;
@@ -173,9 +177,10 @@ public class Casilla {
         (this.tipo.equals("Solar") || this.tipo.equals("Transporte") || this.tipo.equals("Servicios"))) {
         
         System.out.print("{\n");
+        System.out.println("nombre: " + this.nombre);
         System.out.print("tipo: " + this.tipo + ",\n");
         if (this.tipo.equals("Solar") && this.grupo != null) {
-            System.out.print("grupo: " + this.grupo.getcolorGrupo() + ",\n");
+            System.out.print("grupo: " + this.grupo.colorToNombreGrupo() + ",\n");
         }
         System.out.println("valor: " + this.valor + "\n},");
     }
@@ -189,6 +194,7 @@ public class Casilla {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }        
+    
     public int getPosicion() {
         return this.posicion;
     }
@@ -209,6 +215,15 @@ public class Casilla {
 
     public ArrayList<Avatar> getAvatares(){
         return this.avatares;
+    }
+
+    //Agregacion de getter y setter para el atributo grupo
+    public Grupo getGrupo(){
+        return this.grupo;
+    }
+
+    public void setGrupo(Grupo grupo) {
+        this.grupo = grupo;
     }
 
     @Override

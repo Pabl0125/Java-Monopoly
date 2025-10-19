@@ -20,7 +20,7 @@ public class Jugador {
     public Jugador() {
         this.nombre="Banca"; //Se asigna el nombre del jugador.
         this.avatar = null; //La banca no tiene avatar.
-        this.fortuna=0; //La banca empieza con 1.
+        this.fortuna=Valor.FORTUNA_BANCA; //La banca empieza con 1.
         this.gastos = 0; //Al crear el jugador, no ha realizado ningún gasto.
         this.enCarcel = false; //Al crear el jugador, no está en la carcel.
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
@@ -36,7 +36,7 @@ public class Jugador {
     public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
         this.nombre = nombre;//Se asigna el nombre del jugador.
         this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);//Se crea el avatar del jugador.
-        this.fortuna=15000000; //Cada jugador empieza con 15.000.000
+        this.fortuna=Valor.FORTUNA_INICIAL; //Cada jugador empieza con Valor.Fortunainicial
         this.gastos = 0; //Al crear el jugador, no ha realizado ningún gasto.
         this.enCarcel = false; //Al crear el jugador, no está en la car
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
@@ -78,8 +78,6 @@ public class Jugador {
         //Cambiamos la posición del avatar a la casilla de la carcel (índice 10 en el arraylist de posiciones).
         this.avatar.setLugar(pos.get(0).get(10));
         this.enCarcel=true;
-       
-
     }
     
 
@@ -137,7 +135,7 @@ public class Jugador {
     
     @Override
     public String toString(){
-        return "Nombre: "+this.nombre+"\nAvatar: "+this.avatar+"\nFortuna: "+this.fortuna+"\nPropiedades:"+this.propiedades;
+        return "Nombre: "+this.nombre+"\nAvatar: "+this.avatar.getId()+"\nFortuna: "+this.fortuna+"\nPropiedades:"+this.propiedades;
     }
 
 }

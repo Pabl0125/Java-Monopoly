@@ -9,7 +9,7 @@ public class MonopolyETSE {
     public static void main(String[] args) {
         Menu menu = new Menu();
         menu.iniciarPartida();
-        menu.lecturaFichero("~/Documentos/segundoCarrera/POO/MONOPOLY/fichero.txt");
+        menu.lecturaFichero("/home/pablo/Documentos/segundoCarrera/POO/MONOPOLY/monopoly/fichero.txt");
     }
 
 

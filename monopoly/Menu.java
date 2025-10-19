@@ -30,6 +30,7 @@ public class Menu {
         banca = new Jugador();
         jugadores.add(banca);
         tablero = new Tablero(banca);
+        turno = 1;
     }
 
     
@@ -41,7 +42,7 @@ public class Menu {
                 String linea = sc.nextLine();
                 analizarComando(linea);
                 try{
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 }
                 catch(Exception e){
                     System.out.println("Error en el sleep");
@@ -83,13 +84,13 @@ public class Menu {
                     if(partesComando.length==2 && partesComando[1].equals("jugadores")){
                         this.listarJugadores();
                     }
-                    if(partesComando.length ==2 && partesComando[1].equals("enventa")){
+                    else if(partesComando.length ==2 && partesComando[1].equals("enventa")){
                         this.listarVenta();
                     }
                     else System.err.println("Invalid command");    
                     break;
                     
-                case "lanzar":  // NOTA -> Por ahora el comando no acepta operaciones aritmeticas del tipo "2+4"
+                case "lanzar":
                     if (partesComando.length == 1) { 
                             lanzarDados();
                         }
@@ -124,6 +125,7 @@ public class Menu {
                     if(partesComando.length == 2 && partesComando[1].equals("tablero")){
                         tablero.imprimirTablero();
                     }
+                    break;
                 default:
                     // Se ejecuta si el comando no coincide con ningún case
                     System.out.println("Error: Comando desconocido '" + comandoPrincipal + "'.");
@@ -410,7 +412,12 @@ public class Menu {
             return;
         }
         for (Jugador jugador : jugadores) {
+            if(jugador.getAvatar()==null){  //La banca no tiene avatar, y por lo tanto no debe imprimirse
+                continue;
+            }
+            System.out.println("{");
             System.out.println(jugador); //Se omite el toString() ya que se llama implícitamente.  
+            System.out.println("},");
         }
     }
 

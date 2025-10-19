@@ -1,4 +1,7 @@
 crear jugador Lucas coche
 crear jugador Pablo dedal
 crear jugador Joel barco
-imprimir tablero
+ver tablero
+jugador
+listar jugadores
+listar enventa
