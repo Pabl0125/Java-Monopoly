@@ -74,9 +74,18 @@ public class Jugador {
 
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
-    public void encarcelar(ArrayList<ArrayList<Casilla>> pos) {
-        //Cambiamos la posición del avatar a la casilla de la carcel (índice 10 en el arraylist de posiciones).
-        this.avatar.setLugar(pos.get(0).get(10));
+    public void encarcelar(Tablero tablero) {
+        Casilla casillaCarcel = tablero.encontrar_casilla("Carcel");
+        if (casillaCarcel == null) {
+            System.err.println("Error crítico: No se ha encontrado la casilla 'Carcel'.");
+            return;
+        }
+
+        // 1. Eliminar el avatar de su casilla actual
+        this.avatar.getLugar().eliminarAvatar(this.avatar);
+        // 2. Mover el avatar a la cárcel
+        this.avatar.setLugar(casillaCarcel);
+        casillaCarcel.anhadirAvatar(this.avatar);
         this.enCarcel=true;
     }
     
@@ -135,7 +144,11 @@ public class Jugador {
     
     @Override
     public String toString(){
-        return "Nombre: "+this.nombre+"\nAvatar: "+this.avatar.getId()+"\nFortuna: "+this.fortuna+"\nPropiedades:"+this.propiedades;
+        String avatarInfo = (this.avatar != null) ? this.avatar.getId() : "N/A (Banca)";
+        return "Nombre: " + this.nombre +
+               "\nAvatar: " + avatarInfo +
+               "\nFortuna: " + this.fortuna +
+               "\nPropiedades:" + this.propiedades;
     }
 
 }

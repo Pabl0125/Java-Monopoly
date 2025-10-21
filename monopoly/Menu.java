@@ -31,6 +31,8 @@ public class Menu {
         jugadores.add(banca);
         tablero = new Tablero(banca);
         turno = 1;
+        dado1 = new Dado();
+        dado2 = new Dado();
     }
 
     
@@ -42,10 +44,11 @@ public class Menu {
                 String linea = sc.nextLine();
                 analizarComando(linea);
                 try{
-                    Thread.sleep(500);
+                    Thread.sleep(1);
                 }
                 catch(Exception e){
                     System.out.println("Error en el sleep");
+                    return;
                 }
             }
             sc.close();
@@ -89,13 +92,12 @@ public class Menu {
                     }
                     else System.err.println("Invalid command");    
                     break;
-                    
                 case "lanzar":
-                    if (partesComando.length == 1) { 
+                    if (partesComando.length == 2 && partesComando[1].equals("dados")){
                             lanzarDados();
                         }
-                    if(partesComando.length ==2){
-                        lanzarDados(partesComando[1]);
+                    else if(partesComando.length ==3 && partesComando[1].equals("dados") && partesComando[2].contains("+") && partesComando[2].length()==3){
+                        lanzarDados(partesComando[2]);
                     }
                     else System.err.println("Invalid command");  
                     break;
@@ -103,32 +105,43 @@ public class Menu {
                     if(partesComando.length ==2 && partesComando[1].equals("turno")){
                         this.acabarTurno();
                     }
+                    else System.err.println("Invalid command");
                     break;
                 case "salir":
                     if(partesComando.length ==2 && partesComando[1].equals("carcel")){
                         this.salirCarcel();
                     }
+                    else System.err.println("Invalid command");
                     break;
                 case "describir":
-                    if(partesComando.length == 2 && partesComando[1].equals("jugador") && this.encontrar_jugador(partesComando[2])){
+                    if(partesComando.length == 3 && partesComando[1].equals("jugador") && this.encontrar_jugador(partesComando[2])){
+                        System.out.println("{");
                         this.descJugador(partesComando[2]);
-                    }if (partesComando.length == 2 && partesComando[1].equals("casilla") && ((tablero.encontrar_casilla(partesComando[2]) instanceof Casilla))) {
-                        this.descCasilla(partesComando[2]);
+                        System.out.println("}");
                     }
+                    else if (partesComando.length == 2 && ((tablero.encontrar_casilla(partesComando[1]) instanceof Casilla))) {
+                        System.out.println("{");
+                        this.descCasilla(partesComando[1]);
+                        System.out.println("},");
+                    }
+                    else System.err.println("Invalid command");  
                     break;
                 case "comprar":
                     if(partesComando.length ==2 && ((tablero.encontrar_casilla(partesComando[1]) instanceof Casilla))){
                         comprar(partesComando[1]);
                     }
+                    else System.err.println("Invalid command");
                     break;
                 case "ver":
                     if(partesComando.length == 2 && partesComando[1].equals("tablero")){
                         tablero.imprimirTablero();
                     }
+                    else System.err.println("Invalid command");
                     break;
                 default:
                     // Se ejecuta si el comando no coincide con ningún case
-                    System.out.println("Error: Comando desconocido '" + comandoPrincipal + "'.");
+                    System.out.println("Error: Comando desconocido '" + comandoPrincipal + "'");
+                    break;
             }
         }
     }
@@ -173,8 +186,6 @@ public class Menu {
         System.out.println("Jugador '" + nombre + "' creado correctamente.");
         System.out.println("Avatar: " + nuevoJugador.getAvatar());
 
-        //REPINTAR EL TABLERO
-        
     }
     /**
      * Devuelgetpove el Jugador con el turno actual
@@ -237,128 +248,130 @@ public class Menu {
     }
     
     private void lanzarDados(String tirada) {
-    Jugador jugadorActual = jugadores.get(turno);
-    Avatar avatarActual = jugadorActual.getAvatar();
-    int doblesSeguidos = 0;
+        Jugador jugadorActual = jugadores.get(turno);
+        Avatar avatarActual = jugadorActual.getAvatar();
+        int doblesSeguidos = 0;
 
-    boolean volverATirar;
-    do {
-        // Extraer los valores de la jugada forzada
-        String[] partes = tirada.split("\\+");
-        if (partes.length != 2) {
-            System.out.println("Formato de tirada inválido. Usa el formato 'x+y'.");
-            return;
-        }
-
-        int valor1, valor2;
-        try {
-            valor1 = Integer.parseInt(partes[0].trim());
-            valor2 = Integer.parseInt(partes[1].trim());
-        } catch (NumberFormatException e) {
-            System.out.println("Error: los valores deben ser números enteros.");
-            return;
-        }
-
-        // Asignar los valores a los dados (igual que si se hubiesen lanzado)
-        this.dado1.setValor(valor1);
-        this.dado2.setValor(valor2);
-        int total = valor1 + valor2;
-
-        System.out.println("Dados forzados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
-
-        // Comprobar dobles
-        if (valor1 == valor2) {
-            doblesSeguidos++;
-            if (doblesSeguidos == 3) {
-                avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
-                avatarActual.getJugador().encarcelar(tablero.getPosiciones());
-                System.out.println("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
-                break;
+        boolean volverATirar;
+        do { // Bucle para permitir volver a tirar si saca dobles
+            // Extraer los valores de la jugada forzada
+            String[] partes = tirada.split("\\+"); // Dividir por el carácter '+'
+            if (partes.length != 2) {
+                System.out.println("Formato de tirada inválido. Usa el formato 'x+y'.");
+                return;
             }
-            volverATirar = true;
-            System.out.println("¡Doble forzado! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
-        } else {
-            volverATirar = false;
-            doblesSeguidos = 0;
-        }
 
-        // Mover avatar y mostrar movimiento
-        Casilla casillaInicial = avatarActual.getLugar();
-        avatarActual.moverAvatar(tablero.getPosiciones(),valor1+valor2);
-        Casilla casillaFinal = avatarActual.getLugar();
-        
+            int valor1, valor2;
+            try {
+                valor1 = Integer.parseInt(partes[0].trim());
+                valor2 = Integer.parseInt(partes[1].trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Error: los valores deben ser números enteros.");
+                return;
+            }
 
-        System.out.println("El avatar " + avatarActual.getId() +
-                " avanza desde " + casillaInicial.getNombre() +
-                " hasta " + casillaFinal.getNombre() + ".");
+            // Asignar los valores a los dados (igual que si se hubiesen lanzado)
+            this.dado1.setValor(valor1);
+            this.dado2.setValor(valor2);
+            int total = valor1 + valor2;
 
-        // Evaluar la casilla
-        boolean solvente = casillaFinal.evaluarCasilla(jugadorActual, banca, total);
-        if (!solvente) {
-            System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
-        }
+            System.out.println("Dados forzados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
 
-        // Si sale doble, se permite una nueva tirada forzada
-        if (volverATirar) {
-            System.out.print("Introduce una nueva tirada forzada (formato x+y): ");
-            Scanner sc = new Scanner(System.in);
-            tirada = sc.nextLine();
-            sc.close();
-        }
+            // Comprobar dobles
+            if (valor1 == valor2) {
+                doblesSeguidos++;
+                if (doblesSeguidos == 3) {
+                    avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
+                    avatarActual.getJugador().encarcelar(this.tablero);
+                    System.out.println("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
+                    break;
+                }
+                volverATirar = true;
+                System.out.println("¡Doble forzado! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
+            } else {
+                volverATirar = false;
+                doblesSeguidos = 0;
+            }
 
-    } while (volverATirar);
+            // Mover avatar y mostrar movimiento
+            Casilla casillaInicial = avatarActual.getLugar();
+            avatarActual.moverAvatar(this.tablero, valor1+valor2);
+            Casilla casillaFinal = avatarActual.getLugar();
+            
+
+            System.out.println("El avatar " + avatarActual.getId() +
+                    " avanza desde " + casillaInicial.getNombre() +
+                    " hasta " + casillaFinal.getNombre() + ".");
+
+            // Evaluar la casilla
+            boolean solvente = casillaFinal.evaluarCasilla(jugadorActual, banca, total, this.tablero);
+            if (!solvente) {
+                System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
+            }
+
+            // Si sale doble, se permite una nueva tirada forzada
+            if (volverATirar) {
+                System.out.print("Introduce una nueva tirada forzada (formato x+y): ");
+                Scanner sc = new Scanner(System.in);
+                tirada = sc.nextLine();
+                sc.close();
+            }
+
+        } while (volverATirar);
+
 }
 
     
     private void lanzarDados() {
-    Jugador jugadorActual = jugadores.get(turno);
-    Avatar avatarActual = jugadorActual.getAvatar();
-    int doblesSeguidos = 0;
+        Jugador jugadorActual = jugadores.get(turno);
+        Avatar avatarActual = jugadorActual.getAvatar();
+        int doblesSeguidos = 0;
 
-    boolean volverATirar;
-    do {
-        // Lanzar los dados
-        this.dado1.hacerTirada();
-        this.dado2.hacerTirada();
-        int valor1 = this.dado1.getValor();
-        int valor2 = this.dado2.getValor();
-        int total = valor1 + valor2;
+        boolean volverATirar;
+        do {
+            // Lanzar los dados
+            this.dado1.hacerTirada();
+            this.dado2.hacerTirada();
+            int valor1 = this.dado1.getValor();
+            int valor2 = this.dado2.getValor();
+            int total = valor1 + valor2;
 
-        System.out.println("Dados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
+            System.out.println("Dados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
 
-        // Comprobar dobles
-        if (valor1 == valor2) {
-            doblesSeguidos++;
-            if (doblesSeguidos == 3) {
-                avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
-                System.out.println("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
-                break;
+            // Comprobar dobles
+            if (valor1 == valor2) {
+                doblesSeguidos++;
+                if (doblesSeguidos == 3) {
+                    avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
+                    jugadorActual.encarcelar(this.tablero);
+                    System.out.println("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
+                    break;
+                }
+                volverATirar = true;
+                System.out.println("¡Doble! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
+            } else {
+                volverATirar = false;
+                doblesSeguidos = 0;
             }
-            volverATirar = true;
-            System.out.println("¡Doble! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
-        } else {
-            volverATirar = false;
-            doblesSeguidos = 0;
-        }
 
-        // Mover avatar y mostrar movimiento
-        // Mover avatar y mostrar movimiento
-        Casilla casillaInicial = avatarActual.getLugar();
-        avatarActual.moverAvatar(tablero.getPosiciones(),valor1+valor2);
-        Casilla casillaFinal = avatarActual.getLugar();
+            // Mover avatar y mostrar movimiento
+            Casilla casillaInicial = avatarActual.getLugar();
+            avatarActual.moverAvatar(this.tablero, valor1+valor2);
+            Casilla casillaFinal = avatarActual.getLugar();
 
-        System.out.println("El avatar " + avatarActual.getId() +
-                " avanza desde " + casillaInicial.getNombre() +
-                " hasta " + casillaFinal.getNombre() + ".");
+            System.out.println("El avatar " + avatarActual.getId() +
+                    " avanza desde " + casillaInicial.getNombre() +
+                    " hasta " + casillaFinal.getNombre() + ".");
 
-        // Evaluar la casilla usando su propio método
-        boolean solvente = casillaFinal.evaluarCasilla(jugadorActual, banca, total);
-        if (!solvente) {
-            System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
-        }
+            // Evaluar la casilla usando su propio método
+            boolean solvente = casillaFinal.evaluarCasilla(jugadorActual, banca, total, this.tablero);
+            if (!solvente) {
+                System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
+            }
 
-    } while (volverATirar);
-}
+        } while (volverATirar);
+
+    }
 
 
 
@@ -391,6 +404,31 @@ public class Menu {
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. 
     private void salirCarcel() {
+        if (jugadores == null || jugadores.isEmpty()) {
+            System.out.println("No hay jugadores en la partida.");
+            return;
+        }
+        Jugador jugadorActual = jugadores.get(turno);
+        if (!jugadorActual.isEnCarcel()) {
+            System.out.println("El jugador " + jugadorActual.getNombre() + " no está en la cárcel.");
+            return;
+        }
+        float fianza = 500000f;
+
+        if(jugadorActual.getFortuna() >= fianza){
+            jugadorActual.sumarFortuna(-fianza);
+            jugadorActual.sumarGastos(fianza);
+            jugadorActual.setEnCarcel(false);
+            jugadorActual.setTiradasCarcel(0);
+
+            System.out.println(jugadorActual.getNombre() + "paga" + String.format("%,.f", fianza).replace(",", ".") + "€ y sale de la cárcel. Puede lanzar los dados.");
+        }else{
+            System.out.println(jugadorActual.getNombre() + " no tiene suficiente dinero para pagar la fianza de " + String.format("%,.0f", fianza).replace(",",".") + "€.");
+            System.out.println("Debe intentar sacar dobles o declararse en bancarrota si no puede conseguir el dinero.");
+            //POSTERIORMENTE SE IMPLEMENTARÁ LA CASUÍSTICA DE SACAR DOBLES/BANCARROTA/CARTA DE LA SUERTE
+        }
+        
+
         
         
     }
@@ -427,7 +465,6 @@ public class Menu {
             return false;
         }
         for (Jugador jugador : jugadores) {
-            System.out.println(jugador); //Se omite el toString() ya que se llama implícitamente.  
             if(jugadorBuscado.equals(jugador.getNombre())) return true;
         }
         return false;
@@ -447,8 +484,11 @@ public class Menu {
             System.out.println("No hay jugadores en la partida.");
             return;
         }
-        if(turno == jugadores.size() - 1) {
-            turno = 0;
+        // Si es el turno del último jugador, el turno pasa al primer jugador real (índice 1),
+        // saltándose a la banca (índice 0).
+        if(turno >= jugadores.size() - 1) { 
+            turno = 1;  //Reiniciar vuelta al primer jugador (no a la banca)
+
         } else {
             turno++;
         }

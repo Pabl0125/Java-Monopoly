@@ -96,8 +96,7 @@ class Grupo {
             return "Gris";
         default:
             return "Color desconocido";
-    }
-        
+        }
     }
 
         

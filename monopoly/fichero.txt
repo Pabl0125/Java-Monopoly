@@ -2,6 +2,17 @@ crear jugador Lucas coche
 crear jugador Pablo dedal
 crear jugador Joel barco
 ver tablero
-jugador
-listar jugadores
-listar enventa
+describir jugador Lucas
+describir jugador Pablo
+describir jugador Joel
+lanzar dados 1+5
+comprar Solar3
+acabar turno
+ver tablero
+describir jugador Lucas
+lanzar dados 1+5
+acabar turno
+ver tablero
+lanzar dados 1+5
+acabar turno
+ver tablero

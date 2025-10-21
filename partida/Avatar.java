@@ -27,27 +27,36 @@ public class Avatar {
         this.tipo = tipo;
         this.jugador = jugador;
         this.lugar = lugar;
+        //Añadimos el avatar a la lista de avatares de su casilla inicial
+        if (lugar != null) {
+            lugar.anhadirAvatar(this);
+        }
     }
     //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
     /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
-    * - Un array con las casillas del tablero. Se trata de un arrayList de arrayList de casillas (uno por lado).
+    * - El tablero, para poder encontrar la nueva casilla.
     * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
     * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
      */
-    public void moverAvatar(ArrayList<ArrayList<Casilla>> casillas, int valorTirada) {
-        //Nos movemos tantas casillas como indique valorTirada.
-        int posicionActual = this.lugar.getPosicion(); //Obtenemos la posición actual del avatar.
-        int nuevaPosicion = posicionActual + valorTirada; //Calculamos la nueva posición
-        for (ArrayList<Casilla> cs:casillas){
-            for (Casilla c:cs){
-                if (c.getPosicion()==nuevaPosicion){
-                    c.anhadirAvatar(this);    
-                }
-                if (c.getPosicion()==posicionActual){
-                    c.eliminarAvatar(this);
-                }
-            }
+    public void moverAvatar(Tablero tablero, int valorTirada) {
+        if (this.lugar == null) {
+            System.err.println("Error: el avatar no está en ninguna casilla.");
+            return;
         }
+
+        // 1. Eliminar el avatar de la casilla actual
+        this.lugar.eliminarAvatar(this);
+
+        // 2. Calcular la nueva posición, dando la vuelta al tablero si es necesario
+        int posicionActual = this.lugar.getPosicion();
+        int nuevaPosicion = (posicionActual + valorTirada - 1) % 40 + 1;
+
+        // 3. Encontrar la nueva casilla y actualizar el estado
+        Casilla nuevaCasilla = tablero.encontrar_casilla_por_posicion(nuevaPosicion);
+        this.setLugar(nuevaCasilla); // Actualizamos la casilla en el avatar
+
+        // 4. Añadir el avatar a la lista de la nueva casilla
+        this.lugar.anhadirAvatar(this);
     }
 
     /*Método que permite  mayúscula. Parámetros:
