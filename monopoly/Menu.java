@@ -44,7 +44,7 @@ public class Menu {
                 String linea = sc.nextLine();
                 analizarComando(linea);
                 try{
-                    Thread.sleep(1);
+                    Thread.sleep(250);
                 }
                 catch(Exception e){
                     System.out.println("Error en el sleep");
@@ -181,7 +181,7 @@ public class Menu {
         
         //Añadir el avatar (ya creado)
         //El identificador del avatar se genera automaticamente en el constructor
-        avatares.add(nuevoJugador.getAvatar());
+        
 
         System.out.println("Jugador '" + nombre + "' creado correctamente.");
         System.out.println("Avatar: " + nuevoJugador.getAvatar());
@@ -278,7 +278,7 @@ public class Menu {
             System.out.println("Dados forzados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
 
             // Comprobar dobles
-            if (valor1 == valor2) {
+            /*if (valor1 == valor2) {
                 doblesSeguidos++;
                 if (doblesSeguidos == 3) {
                     avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
@@ -291,7 +291,8 @@ public class Menu {
             } else {
                 volverATirar = false;
                 doblesSeguidos = 0;
-            }
+            }*/
+            volverATirar = false;
 
             // Mover avatar y mostrar movimiento
             Casilla casillaInicial = avatarActual.getLugar();
@@ -309,13 +310,15 @@ public class Menu {
                 System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
             }
 
-            // Si sale doble, se permite una nueva tirada forzada
-            if (volverATirar) {
-                System.out.print("Introduce una nueva tirada forzada (formato x+y): ");
-                Scanner sc = new Scanner(System.in);
-                tirada = sc.nextLine();
-                sc.close();
-            }
+            // Si se está leyendo de un fichero, no se puede pedir una nueva tirada interactiva.
+            // Por lo tanto, si salen dobles, el jugador podrá volver a tirar en el siguiente
+            // comando del fichero, pero no se detiene la ejecución para pedir input.
+            // if (volverATirar) {
+            //     System.out.print("Introduce una nueva tirada forzada (formato x+y): ");
+            //     Scanner sc = new Scanner(System.in);
+            //     tirada = sc.nextLine();
+            //     sc.close();
+            // }
 
         } while (volverATirar);
 
@@ -421,7 +424,7 @@ public class Menu {
             jugadorActual.setEnCarcel(false);
             jugadorActual.setTiradasCarcel(0);
 
-            System.out.println(jugadorActual.getNombre() + "paga" + String.format("%,.f", fianza).replace(",", ".") + "€ y sale de la cárcel. Puede lanzar los dados.");
+            System.out.println(jugadorActual.getNombre() + "paga" + fianza + "€ y sale de la cárcel. Puede lanzar los dados."); //aqui se ha sustituido fianza por String.format("%,.f", fianza).replace(",", ".")
         }else{
             System.out.println(jugadorActual.getNombre() + " no tiene suficiente dinero para pagar la fianza de " + String.format("%,.0f", fianza).replace(",",".") + "€.");
             System.out.println("Debe intentar sacar dobles o declararse en bancarrota si no puede conseguir el dinero.");

@@ -144,7 +144,7 @@ public class Jugador {
     
     @Override
     public String toString(){
-        String avatarInfo = (this.avatar != null) ? this.avatar.getId() : "N/A (Banca)";
+        String avatarInfo = (this.avatar != null) ? this.avatar.getId() : "(Banca)";
         return "Nombre: " + this.nombre +
                "\nAvatar: " + avatarInfo +
                "\nFortuna: " + this.fortuna +

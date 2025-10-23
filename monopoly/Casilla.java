@@ -18,8 +18,8 @@ public class Casilla {
 
     //Constructores:
     public Casilla() {
-        this.tipo = "Desconocido"; // <--- Add this line to set a default type
-        this.avatares = new ArrayList<>(); // <- It's also safer to initialize ArrayLists here.
+        this.tipo = "Desconocido";
+        this.avatares = new ArrayList<>(); 
 
     }//Parámetros vacíos
 
@@ -33,6 +33,7 @@ public class Casilla {
         this.valor = valor;
         this.impuesto = impuesto;
         this.duenho = duenho;
+        this.duenho.getPropiedades().add(this);
         this.avatares = new ArrayList<>(); // Inicializar avatares
     }
 
@@ -45,6 +46,7 @@ public class Casilla {
         this.posicion = posicion;
         this.impuesto = impuesto;
         this.duenho = duenho;
+        this.duenho.getPropiedades().add(this);
         this.avatares = new ArrayList<>(); // Inicializar avatares
     }
 
@@ -56,6 +58,7 @@ public class Casilla {
         this.tipo = tipo;
         this.posicion = posicion;
         this.duenho = duenho;
+        this.duenho.getPropiedades().add(this);
         this.avatares = new ArrayList<>(); // Inicializar avatares
 
     }
@@ -150,6 +153,7 @@ public class Casilla {
         if (this.duenho.equals(banca)) { //Solo se puede comprar si el dueño es la banca.
             if (solicitante.getFortuna() >= this.valor) { //Comprobar que el jugador tiene saldo suficiente.
                 solicitante.sumarGastos(this.valor); //Añadir el valor de la casilla a los gastos del jugador.
+                solicitante.sumarFortuna(-this.valor); //Restar el importe correspondiente a la casilla que se ha pagado
                 banca.sumarFortuna(this.valor);//Sumar el valor de la casilla al saldo de la banca.
                 this.duenho = solicitante; //Cambiar el dueño de la casilla al jugador que la compra.
                 System.out.println(solicitante.getNombre() + " ha comprado la casilla " + this.nombre + " por " + this.valor + "€.");
@@ -262,11 +266,11 @@ public class Casilla {
             System.out.print("grupo: " + this.grupo.colorToNombreGrupo() + ",\n");
         }
         System.out.println("valor: " + this.valor + "\n},");
+        }
     }
-}
-
 
     //Getters y setters:
+
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
