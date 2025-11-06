@@ -10,12 +10,20 @@ public class Jugador {
     private String nombre; //Nombre del jugador
     private Avatar avatar; //Avatar que tiene en la partida.
     private float fortuna; //Dinero que posee.
-    private float gastos; //Gastos realizados a lo largo del juego.
+    private float gastos; //Gastos realizados a lo largo del juego.     
     private boolean enCarcel; //Será true si el jugador está en la carcel
     private int tiradasCarcel; //Cuando está en la carcel, contará las tiradas sin éxito que ha hecho allí para intentar salir (se usa para limitar el numero de intentos).
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
-
+    //Atributos especiales nuevos para las estadisticas del jugador
+    private int vecesEnCarcel;
+    private float dineroPremios;
+    private float dineroSalida;
+    private float dineroCobroAlquileres;
+    private float dineroPagoAlquileres;
+    private float dineroTasasImpuestos;
+    private float dineroInvertido;
+    
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
         this.nombre="Banca"; //Se asigna el nombre del jugador.
@@ -42,6 +50,13 @@ public class Jugador {
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
         this.propiedades = new ArrayList<Casilla>(); //Al crear el jugador, no tiene propiedades.
+        this.vecesEnCarcel = 0;
+        this.dineroPremios = 0;
+        this.dineroSalida = 0;
+        this.dineroCobroAlquileres = 0;
+        this.dineroPagoAlquileres = 0;
+        this.dineroTasasImpuestos = 0;
+
     }
     
     //Otros métodos:
@@ -72,6 +87,38 @@ public class Jugador {
         this.gastos = this.gastos + valor;
     }
 
+    public void sumarvecesEnCarcel(int valor){
+        this.vecesEnCarcel = this.vecesEnCarcel + valor;
+    }
+
+    public void sumarDineroPremios(float valor){
+        this.dineroPremios = this.dineroPremios + valor;
+    }
+
+    public void sumarDineroSalida(float valor){
+        this.dineroSalida = this.dineroSalida + valor;
+    }
+
+    public void sumardineroCobroAlquileres(float valor){
+        this.dineroCobroAlquileres = this.dineroCobroAlquileres + valor;
+    }
+
+    public void sumarDineroPagoAlquileres(float valor){
+        this.dineroPagoAlquileres = this.dineroPagoAlquileres + valor;
+    }
+
+    public void sumarDineroTasasImpuestos(float valor){
+        this.dineroTasasImpuestos = this.dineroTasasImpuestos + valor;
+    }
+
+    public void sumarDineroInvertido(float valor){
+        this.dineroInvertido = this.dineroInvertido + valor;
+    }
+
+    public void sumarVueltas(int valor){
+        this.vueltas = this.vueltas + valor;
+    }
+
     /*Método para establecer al jugador en la cárcel. 
     * Se requiere disponer de las casillas del tablero para ello (por eso se pasan como parámetro).*/
     public void encarcelar(Tablero tablero) {
@@ -80,13 +127,31 @@ public class Jugador {
             System.err.println("Error crítico: No se ha encontrado la casilla 'Carcel'.");
             return;
         }
-
         // 1. Eliminar el avatar de su casilla actual
         this.avatar.getLugar().eliminarAvatar(this.avatar);
         // 2. Mover el avatar a la cárcel
         this.avatar.setLugar(casillaCarcel);
         casillaCarcel.anhadirAvatar(this.avatar);
         this.enCarcel=true;
+        this.vecesEnCarcel ++;  //Aumenta el numero de veces que el jugador ha ido a la carcel en 1
+    }
+
+    public String edificiosJugador(){
+        String edificiosFormato = "";
+        ArrayList<Edificacion> edificaciones = new ArrayList<Edificacion>();
+        for(Casilla c: this.getPropiedades()){
+            for(Edificacion e: c.getEdificios()){
+                 edificaciones.add(e);
+            }
+        }
+        if(edificaciones.isEmpty()){
+            edificiosFormato = " Ninguno";
+        }else{
+            for(Edificacion e: edificaciones){
+                edificiosFormato += e.toString() + ", ";
+            }
+        }
+        return edificiosFormato;
     }
     
 
@@ -140,6 +205,63 @@ public class Jugador {
     public void setPropiedades(ArrayList<Casilla> propiedades) {
         this.propiedades = propiedades;
     }
+
+
+    //Getters y setteres para las estadisticas
+    public int getVecesEnCarcel(){
+        return this.vecesEnCarcel;
+    }
+
+    public void setVecesEnCarcel(int vecesEnCarcel){
+        this.vecesEnCarcel = vecesEnCarcel;
+    }
+
+    public float getDineroPremios(){
+        return this.dineroPremios;
+    }
+    
+    public void setDineroPremios(float dineroPremios){
+        this.dineroPremios = dineroPremios;
+    }
+
+    public float getDineroSalida(){
+        return this.dineroSalida;
+    }
+
+    public void setDineroSalida(float dineroSalida){
+        this.dineroSalida = dineroSalida;
+    }
+
+    public float getDineroCobroAlquileres(){
+        return this.dineroCobroAlquileres;
+    }
+
+    public void setDineroCobroAlquileres(float dineroCobroAlquileres){
+        this.dineroCobroAlquileres = dineroCobroAlquileres;
+    }
+
+    public float getDineroPagoAlquileres(){
+        return this.dineroPagoAlquileres;
+    }
+
+    public void setDineroPagoAlquileres(float dineroPagoAlquileres){
+        this.dineroPagoAlquileres = dineroPagoAlquileres;
+    }
+
+    public float getDineroTasasImpuestos(){
+        return this.dineroTasasImpuestos;
+    }
+    
+    public void setDineroTasasImpuestos(float dineroTasasImpuestos){
+        this.dineroTasasImpuestos = dineroTasasImpuestos;
+    }
+
+    public void setDineroInvertido(float valor){
+        this.dineroInvertido = valor;
+    }
+    public float getDineroInvertido(){
+        return this.dineroInvertido;
+    }
     
     
     @Override
@@ -148,7 +270,9 @@ public class Jugador {
         return "Nombre: " + this.nombre +
                "\nAvatar: " + avatarInfo +
                "\nFortuna: " + this.fortuna +
-               "\nPropiedades:" + this.propiedades;
+               "\nPropiedades:" + this.propiedades +
+               "\nEdificios:" + this.edificiosJugador();
+               
     }
 
 }

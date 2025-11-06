@@ -3,7 +3,7 @@ package monopoly;
 import partida.*;
 import java.util.ArrayList;
 
-public class Casilla {
+public class Casilla{
 
     //Atributos:
     private String nombre; //Nombre de la casilla
@@ -15,18 +15,28 @@ public class Casilla {
     private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
     private float hipoteca; //Valor otorgado por hipotecar una casilla
     private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
-
+    private ArrayList<Edificacion> edificios; //ArrayList de edificaciones que posee la casilla
+    private boolean estarHipotecada; //Booleano que indica si la casilla ha sido hipotecada o no
+    
     //Constructores:
     public Casilla() {
         this.tipo = "Desconocido";
         this.avatares = new ArrayList<>(); 
+        this.edificios = new ArrayList<>();
+        this.grupo = null;
+        this.impuesto = 0;
+        this.hipoteca = 0;
+        this.valor = 0;
+        this.posicion = -1;
+        this.duenho = null;
+        this.nombre = "Casilla desconocida";
 
     }//Parámetros vacíos
 
     /*Constructor para casillas tipo Solar, Servicios o Transporte:
     * Parámetros: nombre casilla, tipo (debe ser solar, serv. o transporte), posición en el tablero, valor y dueño.
      */
-    public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho, float impuesto) {
+    public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho, float impuesto, float hipoteca, boolean estarHipotecada) {
         this.nombre = nombre;
         this.tipo = tipo;
         this.posicion= posicion;
@@ -35,8 +45,22 @@ public class Casilla {
         this.duenho = duenho;
         this.duenho.getPropiedades().add(this);
         this.avatares = new ArrayList<>(); // Inicializar avatares
+        this.edificios = new ArrayList<>(); // Inicializar edificios
+        this.hipoteca = hipoteca;
+        this.estarHipotecada = estarHipotecada;
     }
 
+    public Casilla(String nombre, String tipo, int posicion, float valor, Jugador duenho, float impuesto){
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.posicion= posicion;
+        this.valor = valor;
+        this.impuesto = impuesto;
+        this.duenho = duenho;
+        this.duenho.getPropiedades().add(this);
+        this.avatares = new ArrayList<>(); // Inicializar avatares
+        this.edificios = new ArrayList<>(); // Inicializar edificios
+    }
     /*Constructor utilizado para inicializar las casillas de tipo IMPUESTOS.
     * Parámetros: nombre, posición en el tablero, impuesto establecido y dueño.
      */
@@ -79,43 +103,68 @@ public class Casilla {
     * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
     * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
     * en caso de no cumplirlas.*/
-    public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada) {
-        switch (this.tipo) {
-            case "Solar":
-                return pagoAlquiler(actual, banca, tirada);
-            case "Transporte":
-                return pagoAlquiler(actual, banca, tirada);
-            case "Servicios":
-                return pagoAlquiler(actual, banca, tirada);
-            default:
-                return true;
-        }
-    }
-    /*Metodo usado cuando un jugador cae en una casilla y debe pagar el alquiler correspondiente a un tercero 
-     * cuando la casilla en la que cae no le pertenece
-    */
+    /**
+ * Evalúa la acción a tomar cuando un jugador cae en esta casilla.
+ * Determina si se debe pagar alquiler, realizar una acción especial (como ir a la cárcel),
+ * o si no ocurre nada.
+ *
+ * @param actual El jugador que ha caído en la casilla.
+ * @param banca El jugador que representa a la banca (para pagos si no hay dueño).
+ * @param tirada El resultado de la tirada de dados (relevante para Servicios).
+ * @param tablero El tablero del juego (necesario para acciones como "Ir a la Cárcel").
+ * @return true si el jugador puede solventar la acción (p.ej. pagar alquiler o una multa), 
+ * false si entra en bancarrota a consecuencia de la acción.
+ */
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada, Tablero tablero) {
         switch (this.tipo) {
             case "Solar":
-                
             case "Transporte":
             case "Servicios":
                 return pagoAlquiler(actual, banca, tirada);
+
             case "Especial":
-                if (this.nombre.equals("IrACarcel")) {
-                    System.out.println("¡" + actual.getNombre() + " va a la cárcel!");
-                    actual.encarcelar(tablero);
+                switch (this.nombre){
+                    case "IrACarcel":
+                        System.out.println("¡" + actual.getNombre() + " va a la cárcel!");
+                        actual.encarcelar(tablero);
+                        // Ir a la cárcel no cuesta dinero en el acto, por lo que no 
+                        // puedes quebrar solo por caer aquí.
+                        return true;
+                    case "Suerte":
+                        System.out.println(actual.getNombre() + " ha caído en " + 
+                            actual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Suerte.");
+                            Menu.cartaSuerte(Menu.getNumCartaSuerte());
+                        //Mas casillas por implementar
+                        //////////////
+                        return true;
+                    case "CajaComunidad":
+                        System.out.println(actual.getNombre() + " ha caído en " + 
+                            actual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Caja de Comunidad.");
+                            Menu.cartaComunidad(Menu.getNumCartaComunidad());
+                    default:
+                        // Otras casillas especiales que no requieren acción de pago.
+                        return true;
                 }
-                return true; // No hay pagos, siempre es solvente
+
             default:
+                // Casillas "neutrales" como la "Salida" (donde solo cobras si pasas, 
+                // no si caes) o cualquier otra que no esté definida.
+                // No requieren acción de pago.
                 return true;
         }
     }
+
+
     /*Metodo usado cuando un jugador cae en una casilla y debe pagar el alquiler correspondiente a un tercero
      * cuando la casilla en la que cae no le pertenece
     */
     //NOTA: Se sabe de antemano que la casilla no es de un tipo incompatible
     private boolean pagoAlquiler(Jugador actual, Jugador banca, int tirada){
+        
+        if(this.estarHipotecada){ //Comprobar si la casilla está hipotecada
+            System.out.println("La casilla " + this.nombre + " está hipotecada. No se paga alquiler.");
+            return true; //El jugador es solvente al no tener que pagar alquiler
+        }
         if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){  //Caso de que la casilla sea de un tercero.
             float impuestoAPagar = this.impuesto; //Valor del impuesto a pagar
             if (actual.getFortuna() >= impuestoAPagar) { //Comprobar que el jugador tiene saldo suficiente.
@@ -269,6 +318,18 @@ public class Casilla {
         }
     }
 
+    //Contruir un edificio en una casilla solar
+    public void construirEdificio(String tipoEdificio, float coste){
+        if (this.tipo.equals("Solar")){
+            this.valor += coste;
+            System.out.println("Se ha construido un " + tipoEdificio + " en " + this.nombre + " por " + coste + "€.");
+        } else {
+            System.out.println("No se pueden construir edificios en esta casilla.");
+        }
+
+    }
+
+
     //Getters y setters:
 
     public void setTipo(String tipo) {
@@ -277,7 +338,6 @@ public class Casilla {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }        
-    
     public int getPosicion() {
         return this.posicion;
     }
@@ -290,23 +350,37 @@ public class Casilla {
     public Jugador getDuenho(){
         return this.duenho;
     }
+
+    public float getHipoteca(){
+        return this.hipoteca;
+    }
+
     public float getImpuesto(){
         return this.impuesto;
     }
-
-    //Agregacion de getter para el atributo avatares
-
     public ArrayList<Avatar> getAvatares(){
         return this.avatares;
     }
-
-    //Agregacion de getter y setter para el atributo grupo
     public Grupo getGrupo(){
         return this.grupo;
     }
-
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
+    }
+    public ArrayList<Edificacion> getEdificios(){
+        return this.edificios;
+    }
+
+    public void setEdificios(Edificacion edificio){
+        this.edificios.add(edificio);
+    }
+
+    public boolean getEstarHipotecada(){
+        return this.estarHipotecada;
+    }
+
+    public void setEstarHipotecada(boolean estarHipotecada){
+        this.estarHipotecada = estarHipotecada;
     }
 
     @Override
@@ -316,9 +390,15 @@ public class Casilla {
         Casilla otraCasilla = (Casilla) obj; // Hacemos casting seguro
         return this.nombre != null && this.nombre.equals(otraCasilla.nombre); // Comparamos nombres
     }
-    
     @Override
     public String toString(){
         return nombre;
     }
+    public void eliminarEdificacion(Edificacion edificacion){
+        this.edificios.remove(edificacion);
+    }
+    public int getNumEdificaciones(){
+        return this.edificios.size();
+    }
+
 }

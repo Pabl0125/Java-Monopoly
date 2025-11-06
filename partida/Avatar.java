@@ -47,9 +47,34 @@ public class Avatar {
         // 1. Eliminar el avatar de la casilla actual
         this.lugar.eliminarAvatar(this);
 
-        // 2. Calcular la nueva posición, dando la vuelta al tablero si es necesario
+        // 2. Calcular la nueva posición, dando la vuelta al tablero si es necesario y 
+        //sumando 2000000 al jugador si pasa por la casilla de salida
         int posicionActual = this.lugar.getPosicion();
-        int nuevaPosicion = (posicionActual + valorTirada - 1) % 40 + 1;
+        int nuevaPosicion = posicionActual + valorTirada;
+        boolean pasoPorSalida = false;
+
+        if (valorTirada > 0) {
+            // Movimiento hacia adelante: si se supera 39, se considera haber pasado por Salida
+            if (nuevaPosicion >= 40) {
+                nuevaPosicion = nuevaPosicion % 40;
+                pasoPorSalida = true;
+            }
+        } else if (valorTirada < 0) {
+            // Movimiento hacia atrás: si queda negativo, envolvemos al tablero sin
+            // considerar que se ha pasado por la casilla de Salida (no hay bonificación).
+            // Normalizamos la posición para que quede en el rango [0,39].
+            while (nuevaPosicion < 0) {
+                nuevaPosicion += 40;
+            }
+            // No se marca pasoPorSalida cuando se retrocede
+        }
+
+        if (pasoPorSalida) {
+            // El avatar ha pasado por la casilla de salida en movimiento hacia adelante
+            this.jugador.sumarFortuna(2000000f); // Añadimos 2000000 al saldo del jugador
+            this.jugador.sumarDineroSalida(2000000f);
+            System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000 al saldo del jugador " + this.jugador.getNombre() + ".");
+        }
 
         // 3. Encontrar la nueva casilla y actualizar el estado
         Casilla nuevaCasilla = tablero.encontrar_casilla_por_posicion(nuevaPosicion);

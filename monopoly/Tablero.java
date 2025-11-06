@@ -37,16 +37,16 @@ public class Tablero {
         
         // CASILLAS (Pos 21-30)
         Casilla c21 = new Casilla("Parking", "Especial", 21, 0, this.banca, 0); // Valor 0 para bote
-        Casilla c22 = new Casilla("Solar12", "Solar", 22, 2200000, this.banca, 180000);
+        Casilla c22 = new Casilla("Solar12", "Solar", 22, 2200000, this.banca, 180000, 1100000, false);
         Casilla c23 = new Casilla("Suerte", "Suerte", 23, this.banca);
-        Casilla c24 = new Casilla("Solar13", "Solar", 24, 2200000, this.banca, 180000);
-        Casilla c25 = new Casilla("Solar14", "Solar", 25, 2400000, this.banca, 200000);
+        Casilla c24 = new Casilla("Solar13", "Solar", 24, 2200000, this.banca, 180000, 1100000, false);
+        Casilla c25 = new Casilla("Solar14", "Solar", 25, 2400000, this.banca, 200000, 1200000, false);
         Casilla c26 = new Casilla("Trans3", "Transporte", 26, 500000, this.banca, 0); // 500.000€
-        Casilla c27 = new Casilla("Solar15", "Solar", 27, 2600000, this.banca, 220000);
-        Casilla c28 = new Casilla("Solar16", "Solar", 28, 2600000, this.banca, 220000);
+        Casilla c27 = new Casilla("Solar15", "Solar", 27, 2600000, this.banca, 220000, 1300000, false);
+        Casilla c28 = new Casilla("Solar16", "Solar", 28, 2600000, this.banca, 220000, 1300000, false);
         Casilla c29 = new Casilla("Serv2", "Servicios", 29, 500000, this.banca, 0); // 500.000€
-        Casilla c30 = new Casilla("Solar17", "Solar", 30, 2800000, this.banca, 240000);
-
+        Casilla c30 = new Casilla("Solar17", "Solar", 30, 2800000, this.banca, 240000, 1400000, false);
+ 
         // GRUPOS
         Grupo gRojo = new Grupo(c22, c24, c25, Valor.RED); // 3 solares
         Grupo gAmarillo = new Grupo(c27, c28, c30, Valor.YELLOW); // 3 solares
@@ -71,15 +71,15 @@ public class Tablero {
             
             // CASILLAS (Pos 1-10)
             Casilla c1 = new Casilla("Salida", "Especial", 1, this.banca);
-            Casilla c2 = new Casilla("Solar1", "Solar", 2, 600000, this.banca, 20000);
+            Casilla c2 = new Casilla("Solar1", "Solar", 2, 600000, this.banca, 20000, 300000, false);
             Casilla c3 = new Casilla("Caja", "Comunidad", 3, this.banca);
-            Casilla c4 = new Casilla("Solar2", "Solar", 4, 600000, this.banca, 40000);
+            Casilla c4 = new Casilla("Solar2", "Solar", 4, 600000, this.banca, 40000, 300000, false);
             Casilla c5 = new Casilla("Imp1", 5, 2000000, this.banca); // Impuesto: 2.000.000€
             Casilla c6 = new Casilla("Trans1", "Transporte", 6, 500000, this.banca, 0); // 500.000€
-            Casilla c7 = new Casilla("Solar3", "Solar", 7, 1000000, this.banca, 60000);
+            Casilla c7 = new Casilla("Solar3", "Solar", 7, 1000000, this.banca, 60000, 500000, false);
             Casilla c8 = new Casilla("Suerte", "Suerte", 8, this.banca);
-            Casilla c9 = new Casilla("Solar4", "Solar", 9, 1000000, this.banca, 60000);
-            Casilla c10 = new Casilla("Solar5", "Solar", 10, 1200000, this.banca, 80000);            
+            Casilla c9 = new Casilla("Solar4", "Solar", 9, 1000000, this.banca, 60000, 500000, false);
+            Casilla c10 = new Casilla("Solar5", "Solar", 10, 1200000, this.banca, 80000, 600000, false);            
 
             // GRUPOS
             Grupo gMarron = new Grupo(c2, c4, Valor.MARRON); // 2 solares
@@ -106,15 +106,15 @@ public class Tablero {
         
         // CASILLAS (Pos 31-40)
         Casilla c31 = new Casilla("IrACarcel", "Especial", 31, this.banca);
-        Casilla c32 = new Casilla("Solar18", "Solar", 32, 3000000, this.banca, 260000);
-        Casilla c33 = new Casilla("Solar19", "Solar", 33, 3000000, this.banca, 260000);
+        Casilla c32 = new Casilla("Solar18", "Solar", 32, 3000000, this.banca, 260000, 1500000, false);
+        Casilla c33 = new Casilla("Solar19", "Solar", 33, 3000000, this.banca, 260000, 1500000, false);
         Casilla c34 = new Casilla("Caja", "Comunidad", 34, this.banca);
-        Casilla c35 = new Casilla("Solar20", "Solar", 35, 3200000, this.banca, 280000);
+        Casilla c35 = new Casilla("Solar20", "Solar", 35, 3200000, this.banca, 280000, 1600000, false);
         Casilla c36 = new Casilla("Trans4", "Transporte", 36, 500000, this.banca, 0); // 500.000€
         Casilla c37 = new Casilla("Suerte", "Suerte", 37, this.banca);
-        Casilla c38 = new Casilla("Solar21", "Solar", 38, 3500000, this.banca, 350000);
+        Casilla c38 = new Casilla("Solar21", "Solar", 38, 3500000, this.banca, 350000, 1750000, false);
         Casilla c39 = new Casilla("Imp2", 39, 2000000, this.banca); // Impuesto: 2.000.000€
-        Casilla c40 = new Casilla("Solar22", "Solar", 40, 4000000, this.banca, 500000);
+        Casilla c40 = new Casilla("Solar22", "Solar", 40, 4000000, this.banca, 500000, 2000000, false);
 
         // GRUPOS
         Grupo gVerde = new Grupo(c32, c33, c35, Valor.GREEN); // 3 solares
@@ -138,15 +138,15 @@ public class Tablero {
         
         // CASILLAS (Pos 11-20)
         Casilla c11 = new Casilla("Carcel", "Especial", 11, this.banca);
-        Casilla c12 = new Casilla("Solar6", "Solar", 12, 1400000, this.banca, 100000);
+        Casilla c12 = new Casilla("Solar6", "Solar", 12, 1400000, this.banca, 100000, 700000, false);
         Casilla c13 = new Casilla("Serv1", "Servicios", 13, 500000, this.banca, 0); // 500.000€
-        Casilla c14 = new Casilla("Solar7", "Solar", 14, 1400000, this.banca, 100000);
-        Casilla c15 = new Casilla("Solar8", "Solar", 15, 1600000, this.banca, 120000);
+        Casilla c14 = new Casilla("Solar7", "Solar", 14, 1400000, this.banca, 100000, 700000, false);
+        Casilla c15 = new Casilla("Solar8", "Solar", 15, 1600000, this.banca, 120000, 800000, false);
         Casilla c16 = new Casilla("Trans2", "Transporte", 16, 500000, this.banca, 0); // 500.000€
-        Casilla c17 = new Casilla("Solar9", "Solar", 17, 1800000, this.banca, 140000);
+        Casilla c17 = new Casilla("Solar9", "Solar", 17, 1800000, this.banca, 140000, 900000, false);
         Casilla c18 = new Casilla("Caja", "Comunidad", 18, this.banca);
-        Casilla c19 = new Casilla("Solar10", "Solar", 19, 1800000, this.banca, 140000);
-        Casilla c20 = new Casilla("Solar11", "Solar", 20, 2200000, this.banca, 160000);
+        Casilla c19 = new Casilla("Solar10", "Solar", 19, 1800000, this.banca, 140000, 900000, false);
+        Casilla c20 = new Casilla("Solar11", "Solar", 20, 2000000, this.banca, 160000, 1000000, false);
 
         // GRUPOS
         Grupo gMagenta = new Grupo(c12, c14, c15, Valor.PURPLE); // 3 solares
