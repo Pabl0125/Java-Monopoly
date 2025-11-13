@@ -166,7 +166,7 @@ public class Casilla{
             return true; //El jugador es solvente al no tener que pagar alquiler
         }
         if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){  //Caso de que la casilla sea de un tercero.
-            float impuestoAPagar = this.impuesto; //Valor del impuesto a 
+            float impuestoAPagar = this.impuestoTotalCasilla(); //Valor del impuesto a 
             if(this.tipo.equals("Impuesto")){
                 actual.sumarGastos(impuestoAPagar);
                 actual.sumarFortuna(-impuestoAPagar);
@@ -347,13 +347,14 @@ public class Casilla{
     public float impuestoTotalCasilla(){
         float total = this.impuesto;
         for (Edificacion edificio : this.edificios) {
-            total += edificio.get();
+            total += edificio.getAlquiler();
         }
         return total;
     }
 
     public void sumarRentabilidad(float cantidad){
         this.rentabilidad += cantidad;
+        this.grupo.sumarRentabilidad(cantidad);
     }   
 
     public void visitarCasilla(){

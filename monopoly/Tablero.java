@@ -273,8 +273,8 @@ public class Tablero {
     }
 
     //Metodo para buscar la casilla más rentable del juego
-    public ArrayList<Casilla> buscarCasillaMasRentable(){
-        ArrayList <Casilla> masRentables = new ArrayList<Casilla>();
+    public ArrayList<String> buscarCasillaMasRentable(){
+        ArrayList <String> masRentables = new ArrayList<String>();
         float maxRentabilidad = 0.0f;
 
         for (ArrayList<Casilla> lado : this.posiciones) {
@@ -282,9 +282,9 @@ public class Tablero {
                 if (c.getRentabilidad() > maxRentabilidad) {
                     maxRentabilidad = c.getRentabilidad();
                     masRentables.clear();
-                    masRentables.add(c);
+                    masRentables.add(c.getNombre());
                 }else if(c.getRentabilidad() == maxRentabilidad){
-                    masRentables.add(c);
+                    masRentables.add(c.getNombre());
                 }
             }
         }
@@ -293,8 +293,8 @@ public class Tablero {
     }
     
     //Método para buscar la casilla más visitada del juego
-    public ArrayList<Casilla> buscarCasillaMasVisitada(){
-        ArrayList<Casilla> masVisitadas = new ArrayList<Casilla>();
+    public ArrayList<String> buscarCasillaMasVisitada(){
+        ArrayList<String> masVisitadas = new ArrayList<String>();
         int maxVisitas = 0;
 
         for (ArrayList<Casilla> lado : this.posiciones) {
@@ -302,9 +302,9 @@ public class Tablero {
                 if (c.getVecesVisitada() > maxVisitas) {
                     maxVisitas = c.getVecesVisitada();
                     masVisitadas.clear();
-                    masVisitadas.add(c);
+                    masVisitadas.add(c.getNombre());
                 }else if(c.getVecesVisitada() == maxVisitas){
-                    masVisitadas.add(c);
+                    masVisitadas.add(c.getNombre());
                 }
             }
         }

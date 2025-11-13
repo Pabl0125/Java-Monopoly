@@ -14,6 +14,7 @@ class Grupo {
     private float precioHotel;
     private float precioPiscina;
     private float precioPistaDeporte;
+    private float rentabilidad;
     //Constructor vacío.
     public Grupo() {
         this.miembros = new ArrayList<Casilla>();
@@ -304,6 +305,11 @@ class Grupo {
                 // Tipo de edificación no válido
                 return 0.0f;
         }
+    }
+
+    public void sumarRentabilidad(float cantidad) {
+        this.rentabilidad += cantidad;
+        
     }
 
 

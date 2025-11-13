@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.stream.Collector;
 import java.util.Iterator;
 import java.util.stream.*;
 import java.lang.Thread;
@@ -1061,42 +1060,36 @@ public class Menu {
         System.out.println("}");
 
     }
-    public ArrayList<Jugador> buscarJugadorConMasVueltas(){
-        ArrayList<Jugador> jugadoresMasVueltas = new ArrayList<Jugador>();
-
+    public ArrayList<String> buscarJugadorConMasVueltas(){
+        ArrayList<String> jugadoresMasVueltas = new ArrayList<String>();
         int numeroMaximoVueltas = 0;
+        
         //Recoro el arraylist de jugadores buscando el numero maximo de vueltas
         for(Jugador jugador: jugadores){
             if(numeroMaximoVueltas < jugador.getNumeroDeVueltas()){
                 numeroMaximoVueltas = jugador.getNumeroDeVueltas();
-            }
-        }
-        //Recorro y meto en un arraylist de jugadores todos aquellos jugadores que tengan
-        for(Jugador jugador: jugadores){
-            if(numeroMaximoVueltas == jugador.getNumeroDeVueltas() && jugador.getNombre() != "Banca"){
-                jugadoresMasVueltas.add(jugador);
+                jugadoresMasVueltas.clear(); //Limpio el arraylist
+                jugadoresMasVueltas.add(jugador.getNombre()); //Añado el nuevo jugador con mas vueltas
+                
+            }else if(numeroMaximoVueltas == jugador.getNumeroDeVueltas() && jugador.getNombre() != "Banca"){
+                jugadoresMasVueltas.add(jugador.getNombre());
             }
         }
         return jugadoresMasVueltas;
     }
+    
+    public String corchetesToComas(ArrayList<String> array){
+        return array.stream().collect(Collectors.joining(","));
+    }
 
     public void mostrarEstadisticasJuego(){
-        //Antes de todo modifico el formato de jguad
-        String StringJugadoresConMasVueltas = new String();
-        ArrayList<Jugador> jugadoresConMasVueltas = buscarJugadorConMasVueltas();   //ArrayList de jugadores con mas vueltas
-        if (jugadoresConMasVueltas.size() == 1){
-            StringJugadoresConMasVueltas = jugadoresConMasVueltas.get(0).getNombre();   //Solo cojemos al primero
-        }else{
-            //Cogemos a cada uno de los objetos jugador y los pasamos a string a base de coger su nombre, para luego recojerlos todos y unirlos por comas
-            StringJugadoresConMasVueltas = jugadoresConMasVueltas.stream().map(jugador -> jugador.getNombre()).collect(Collectors.joining(","));
-        }
+
         System.out.println("{");
-        System.out.println("casillaMasRentable: " +  + ",");
-        System.out.println("grupoMasRentable: " + + ",");
+        System.out.println("casillaMasRentable: " + ",");
+        System.out.println("grupoMasRentable: " +  ",");
         System.out.println("casillaMasFrecuentada: " + tablero.buscarCasillaMasVisitada() + ",");
-        System.out.println("jugador(es)MasVueltas: " + StringJugadoresConMasVueltas + ",");
+        System.out.println("jugador(es)MasVueltas: " + corchetesToComas(buscarJugadorConMasVueltas()) + ",");
         System.out.println("jugadorEnCabeza: " );
         System.out.println("}");
     }
-
 }
