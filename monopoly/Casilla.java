@@ -6,17 +6,19 @@ import java.util.ArrayList;
 public class Casilla{
 
     //Atributos:
-    private String nombre; //Nombre de la casilla
-    private String tipo; //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
-    private float valor; //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
-    private int posicion; //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
-    private Jugador duenho; //Dueño de la casilla (por defecto sería la banca).
-    private Grupo grupo; //Grupo al que pertenece la casilla (si es solar).
-    private float impuesto; //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
-    private float hipoteca; //Valor otorgado por hipotecar una casilla
-    private ArrayList<Avatar> avatares; //Avatares que están situados en la casilla.
-    private ArrayList<Edificacion> edificios; //ArrayList de edificaciones que posee la casilla
-    private boolean estarHipotecada; //Booleano que indica si la casilla ha sido hipotecada o no
+    private String nombre;                      //Nombre de la casilla
+    private String tipo;                        //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto).
+    private float valor;                        //Valor de esa casilla (en la mayoría será valor de compra, en la casilla parking se usará como el bote).
+    private int posicion;                       //Posición que ocupa la casilla en el tablero (entero entre 1 y 40).
+    private Jugador duenho;                     //Dueño de la casilla (por defecto sería la banca).
+    private Grupo grupo;                        //Grupo al que pertenece la casilla (si es solar).
+    private float impuesto;                     //Cantidad a pagar por caer en la casilla: el alquiler en solares/servicios/transportes o impuestos.
+    private float hipoteca;                     //Valor otorgado por hipotecar una casilla
+    private ArrayList<Avatar> avatares; //Av    atares que están situados en la casilla.
+    private ArrayList<Edificacion> edificios;   //ArrayList de edificaciones que posee la casilla
+    private boolean estarHipotecada;            //Booleano que indica si la casilla ha sido hipotecada o no
+    private int vecesVisitada;                  //Número de veces que ha sido visitada la casilla
+    private float rentabilidad;                 //Rentabilidad de la casilla contando alquileres cobrados y beneficios aportados por edificaciones                o
     
     //Constructores:
     public Casilla() {
@@ -97,33 +99,28 @@ public class Casilla{
         this.avatares.remove(av);
     }
 
-    /*Método para evaluar qué hacer en una casilla concreta. Parámetros:
-    * - Jugador cuyo avatar está en esa casilla.
-    * - La banca (para ciertas comprobaciones).
-    * - El valor de la tirada: para determinar impuesto a pagar en casillas de servicios.
-    * Valor devuelto: true en caso de ser solvente (es decir, de cumplir las deudas), y false
-    * en caso de no cumplirlas.*/
-    /**
- * Evalúa la acción a tomar cuando un jugador cae en esta casilla.
- * Determina si se debe pagar alquiler, realizar una acción especial (como ir a la cárcel),
- * o si no ocurre nada.
- *
- * @param actual El jugador que ha caído en la casilla.
- * @param banca El jugador que representa a la banca (para pagos si no hay dueño).
- * @param tirada El resultado de la tirada de dados (relevante para Servicios).
- * @param tablero El tablero del juego (necesario para acciones como "Ir a la Cárcel").
- * @return true si el jugador puede solventar la acción (p.ej. pagar alquiler o una multa), 
- * false si entra en bancarrota a consecuencia de la acción.
- */
+    //Método para evaluar qué hacer en una casilla concreta
     public boolean evaluarCasilla(Jugador actual, Jugador banca, int tirada, Tablero tablero) {
         switch (this.tipo) {
             case "Solar":
             case "Transporte":
             case "Servicios":
-                return pagoAlquiler(actual, banca, tirada);
+                return pagoAlquiler(actual, banca, tirada, tablero);
 
             case "Especial":
                 switch (this.nombre){
+                    case "Parking":
+                        System.out.println("¡" + actual.getNombre() + "ha llegado al parking!");
+                        //Si cae en el parking tenemos que ver si hay bote y si lo hay, actualizar el saldo
+                        //tanto del jugador como el valor de la casilla
+                        if(this.valor > 0){
+                            System.out.println("El parking tiene dinero en el bote!");
+                            System.err.println(actual.getNombre() + "ha recibido el premio del bote. (" + this.valor + "€)");
+                            actual.sumarFortuna(this.valor);
+                            actual.sumarDineroPremios(this.valor);
+                            this.valor = 0;
+                        }
+                        break;
                     case "IrACarcel":
                         System.out.println("¡" + actual.getNombre() + " va a la cárcel!");
                         actual.encarcelar(tablero);
@@ -131,16 +128,20 @@ public class Casilla{
                         // puedes quebrar solo por caer aquí.
                         return true;
                     case "Suerte":
+                        // Se notifica que el jugador debe tomar una carta de Suerte.
+                        // La ejecución efectiva de la carta (movimientos, pagos, cárcel, ...)
+                        // la debe manejar el `Menu` porque necesita el estado de la partida
+                        // (contadores de cartas, referencia a jugadores, tablero, etc.).
                         System.out.println(actual.getNombre() + " ha caído en " + 
                             actual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Suerte.");
-                            Menu.cartaSuerte(Menu.getNumCartaSuerte());
-                        //Mas casillas por implementar
-                        //////////////
+                            
                         return true;
                     case "CajaComunidad":
+                        // Igual que con Suerte: solo se notifica aquí. La ejecución
+                        // real de la carta la realiza `Menu`.
                         System.out.println(actual.getNombre() + " ha caído en " + 
                             actual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Caja de Comunidad.");
-                            Menu.cartaComunidad(Menu.getNumCartaComunidad());
+                        return true;
                     default:
                         // Otras casillas especiales que no requieren acción de pago.
                         return true;
@@ -154,22 +155,33 @@ public class Casilla{
         }
     }
 
-
     /*Metodo usado cuando un jugador cae en una casilla y debe pagar el alquiler correspondiente a un tercero
      * cuando la casilla en la que cae no le pertenece
     */
     //NOTA: Se sabe de antemano que la casilla no es de un tipo incompatible
-    private boolean pagoAlquiler(Jugador actual, Jugador banca, int tirada){
+    private boolean pagoAlquiler(Jugador actual, Jugador banca, int tirada, Tablero tablero){
         
         if(this.estarHipotecada){ //Comprobar si la casilla está hipotecada
             System.out.println("La casilla " + this.nombre + " está hipotecada. No se paga alquiler.");
             return true; //El jugador es solvente al no tener que pagar alquiler
         }
         if(!this.duenho.equals(banca) && !this.duenho.equals(actual)){  //Caso de que la casilla sea de un tercero.
-            float impuestoAPagar = this.impuesto; //Valor del impuesto a pagar
+            float impuestoAPagar = this.impuesto; //Valor del impuesto a 
+            if(this.tipo.equals("Impuesto")){
+                actual.sumarGastos(impuestoAPagar);
+                actual.sumarFortuna(-impuestoAPagar);
+                actual.sumarDineroTasasImpuestos(impuestoAPagar);
+                tablero.aumentarBoteParking(impuestoAPagar);
+                return true;
+            }
             if (actual.getFortuna() >= impuestoAPagar) { //Comprobar que el jugador tiene saldo suficiente.
                 actual.sumarGastos(impuestoAPagar); //Añadir el valor del impuesto a los gastos del jugador.
                 this.duenho.sumarFortuna(impuestoAPagar);//Sumar el valor del impuesto al saldo del dueño de la casilla.
+                //Actualizamos las estadisticas del duenho y del jugador actual que paga
+                this.duenho.sumardineroCobroAlquileres(impuestoAPagar); 
+                actual.sumarDineroPagoAlquileres(impuestoAPagar);
+                this.rentabilidad += impuestoAPagar;
+
                 actual.sumarFortuna(-impuestoAPagar);
                 System.out.println(actual.getNombre() + " ha pagado " + impuestoAPagar + "€ a " + this.duenho.getNombre() + " por caer en " + this.nombre + ".");
                 return true; //El jugador es solvente
@@ -177,7 +189,7 @@ public class Casilla{
                 System.out.println(actual.getNombre() + " no tiene saldo suficiente para pagar el alquiler de " + this.nombre + ".");
                 return false; //El jugador no es solvente.
             }
-        } 
+        }
         else if (this.duenho.equals(banca)) { //Caso de que el dueño sea la banca.
             System.out.println("La casilla " + this.nombre + " está en venta por " + this.valor + "€.");
             this.casEnVenta();  //Imprimimos la info de la casilla en venta
@@ -203,6 +215,9 @@ public class Casilla{
             if (solicitante.getFortuna() >= this.valor) { //Comprobar que el jugador tiene saldo suficiente.
                 solicitante.sumarGastos(this.valor); //Añadir el valor de la casilla a los gastos del jugador.
                 solicitante.sumarFortuna(-this.valor); //Restar el importe correspondiente a la casilla que se ha pagado
+                //Actulizamos las estadisticas
+                solicitante.sumarDineroInvertido(valor);
+                
                 banca.sumarFortuna(this.valor);//Sumar el valor de la casilla al saldo de la banca.
                 this.duenho = solicitante; //Cambiar el dueño de la casilla al jugador que la compra.
                 System.out.println(solicitante.getNombre() + " ha comprado la casilla " + this.nombre + " por " + this.valor + "€.");
@@ -329,6 +344,12 @@ public class Casilla{
 
     }
 
+    
+
+    public void visitarCasilla(){
+        this.vecesVisitada += 1;
+    }
+
 
     //Getters y setters:
 
@@ -343,6 +364,13 @@ public class Casilla{
     }
     public String getNombre() {
         return this.nombre;
+    }
+
+    public float getValor() {
+        return valor;
+    }
+    public void setValor(float valor) {
+        this.valor = valor;
     }
     public String getTipo() {
         return this.tipo;
@@ -381,6 +409,14 @@ public class Casilla{
 
     public void setEstarHipotecada(boolean estarHipotecada){
         this.estarHipotecada = estarHipotecada;
+    }
+
+    public float getRentabilidad(){
+        return this.rentabilidad;
+    }
+
+    public void setRentabilidad(float rentabilidad){
+        this.rentabilidad = rentabilidad;
     }
 
     @Override

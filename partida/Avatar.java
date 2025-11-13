@@ -36,7 +36,7 @@ public class Avatar {
     /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
     * - El tablero, para poder encontrar la nueva casilla.
     * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
-    * EN ESTA VERSIÓN SUPONEMOS QUE valorTirada siemrpe es positivo.
+    * ESTA VERSIÓN ACEPTA MOVIMIENTOS HACIA ATRÁS (VALORES NEGATIVOS).
      */
     public void moverAvatar(Tablero tablero, int valorTirada) {
         if (this.lugar == null) {
@@ -55,7 +55,7 @@ public class Avatar {
 
         if (valorTirada > 0) {
             // Movimiento hacia adelante: si se supera 39, se considera haber pasado por Salida
-            if (nuevaPosicion >= 40) {
+            if (nuevaPosicion > 40) {
                 nuevaPosicion = nuevaPosicion % 40;
                 pasoPorSalida = true;
             }
@@ -72,13 +72,16 @@ public class Avatar {
         if (pasoPorSalida) {
             // El avatar ha pasado por la casilla de salida en movimiento hacia adelante
             this.jugador.sumarFortuna(2000000f); // Añadimos 2000000 al saldo del jugador
-            this.jugador.sumarDineroSalida(2000000f);
+            this.jugador.sumarDineroSalida(2000000f);  //Sumamos el dinero a la estadistica
+            this.jugador.sumarNumeroDeVueltas(1);       //Sumamos otra vuelta
             System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000 al saldo del jugador " + this.jugador.getNombre() + ".");
         }
 
         // 3. Encontrar la nueva casilla y actualizar el estado
         Casilla nuevaCasilla = tablero.encontrar_casilla_por_posicion(nuevaPosicion);
         this.setLugar(nuevaCasilla); // Actualizamos la casilla en el avatar
+        
+        this.getLugar().visitarCasilla(); // Incrementamos el contador de visitas de la casilla
 
         // 4. Añadir el avatar a la lista de la nueva casilla
         this.lugar.anhadirAvatar(this);

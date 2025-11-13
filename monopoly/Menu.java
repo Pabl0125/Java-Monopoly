@@ -345,6 +345,15 @@ public class Menu {
                 System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
             }
 
+            // Si la casilla es de tipo Suerte o Comunidad, ejecutar la carta desde Menu
+            if (casillaFinal.getTipo() != null) {
+                if (casillaFinal.getTipo().equals("Suerte")) {
+                    this.cartaSuerte(this.numCartaSuerte);
+                } else if (casillaFinal.getTipo().equals("Comunidad")) {
+                    this.cartaCajaComunidad(this.numCartaCajaCom);
+                }
+            }
+
             // Si se está leyendo de un fichero, no se puede pedir una nueva tirada interactiva.
             // Por lo tanto, si salen dobles, el jugador podrá volver a tirar en el siguiente
             // comando del fichero, pero no se detiene la ejecución para pedir input.
@@ -405,6 +414,15 @@ public class Menu {
             boolean solvente = casillaFinal.evaluarCasilla(jugadorActual, banca, total, this.tablero);
             if (!solvente) {
                 System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
+            }
+
+            // Si la casilla es de tipo Suerte o Comunidad, ejecutar la carta desde Menu
+            if (casillaFinal.getTipo() != null) {
+                if (casillaFinal.getTipo().equals("Suerte")) {
+                    this.cartaSuerte(this.numCartaSuerte);
+                } else if (casillaFinal.getTipo().equals("Comunidad")) {
+                    this.cartaCajaComunidad(this.numCartaCajaCom);
+                }
             }
 
         } while (volverATirar);
@@ -774,7 +792,7 @@ public class Menu {
                 jugadorActual.sumarGastos(150000f); //Sumar dinero a los gastos del jugador
                 break;
             case 7:
-                System.out.println("Avanza hasta la casilla de transporte más cercana.\nSi no tiene dueño, puedes comprarla. Si tiene dueño, paga al dueño el doble de la operación indicada.");
+                System.out.println("Avanza hasta la casilla de transporte más cercana.\nSi no tiene dueño, puedes comprarla.\nSi tiene dueño, paga al dueño el doble de la operación indicada.");
                 int posicion = jugadorActual.getAvatar().getLugar().getPosicion();
                 int posicionTrans1 = tablero.encontrar_casilla("Transporte1").getPosicion();
                 int posicionTrans2 = tablero.encontrar_casilla("Transporte2").getPosicion();
@@ -790,7 +808,18 @@ public class Menu {
                 } else {
                     jugadorActual.getAvatar().moverAvatar(tablero, posicionTrans4);
                 }
-                break;
+                if (jugadorActual.getAvatar().getLugar().evaluarCasilla(jugadorActual, banca, 0, tablero)) {
+
+                    System.out.println("El jugador " + jugadorActual.getNombre() + " ha llegado a la casilla " + 
+                    jugadorActual.getAvatar().getLugar().getNombre() + " y ha cumplido con sus obligaciones.");
+                    float pagoRealizado = jugadorActual.getAvatar().getLugar().getImpuesto();
+                    System.out.println("Por sacar la carta 7 de Suerte, el jugador paga otra vez " + pagoRealizado + "€ al dueño de la casilla.");
+                    jugadorActual.sumarFortuna(-pagoRealizado);
+                    jugadorActual.sumarGastos(pagoRealizado);
+
+                }
+                
+                    
 
             default:
                 // Es una buena práctica tener un 'default' por si numCarta tiene un valor inesperado
@@ -822,22 +851,19 @@ public class Menu {
             case 4:
                 System.out.println("Devolución de Hacienda. Cobra 500.000€.");
                 jugadorActual.sumarFortuna(500000f);
+                jugadorActual.sumarDineroPremios(500000f);
                 break;
             case 5:
                 System.out.println("Retrocede hasta Solar1 para comprar antigüedades exóticas.");
                 int posicionSolar1 = tablero.encontrar_casilla("Solar1").getPosicion();
                 int posicionActual = jugadorActual.getAvatar().getLugar().getPosicion();
                 int desplazamiento = posicionSolar1 - posicionActual;
-                if (desplazamiento < 0) {
-                    desplazamiento += 40; // Ajustar si es negativo
-                }
                 jugadorActual.getAvatar().moverAvatar(tablero, desplazamiento);
                 break;
             case 6:
-                System.out.println("Ve a Solar20 para disfrutar del San Fermín. Si pasas por la casilla de Salida, cobra 2.000.000€.");
+                System.out.println("Ve a Solar20 para disfrutar del San Fermín.\nSi pasas por la casilla de Salida, cobra 2.000.000€.");
                 break;
             default:
-                // Es una buena práctica tener un 'default' por si numCartaCajaComunidad tiene un valor inesperado
                 System.out.println("Error: Número de carta no válido.");
                 break;
         }
@@ -846,6 +872,33 @@ public class Menu {
             numCartaCajaComunidad = 1;
         }
     }
+
+    // Helper: tras un movimiento efectuado por una carta, evaluar la casilla destino
+    // y ejecutar (si procede) otra carta. Devuelve true si el jugador sigue siendo solvente.
+    private boolean evaluarTrasMovimientoPorCarta(Jugador jugadorActual, int tirada) {
+        Casilla destino = jugadorActual.getAvatar().getLugar();
+        boolean solvente = destino.evaluarCasilla(jugadorActual, banca, tirada, this.tablero);
+        if (!solvente) {
+            System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + destino.getNombre());
+            return false;
+        }
+        if (destino.getTipo() != null) {
+            if (destino.getTipo().equals("Suerte")) {
+                this.cartaSuerte(this.numCartaSuerte);
+            } else if (destino.getTipo().equals("Comunidad")) {
+                this.cartaCajaComunidad(this.numCartaCajaCom);
+            }
+        }
+        return true;
+    }
+
+    // Método que realiza las acciones asociadas al comando 'vender tipo_edificio nombre_casilla cantidad'.
+    /*Paramámetros:
+    - tipo_edificio: tipo de edificio a vender (casa, hotel, piscina,
+    pista deportiva).
+    - nombre_casilla: nombre de la casilla donde se encuentran los edificios.
+    - cantidad: número de edificios a vender.
+    */
     public void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr){
         Jugador jugadorActual = jugadores.get(turno);
         int cantidad;
@@ -928,15 +981,18 @@ public class Menu {
         //Comprobar que la casilla no este ya hipotecada
         if(c.getEstarHipotecada()){
             System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar" + c.getNombre() + ". Ya esta hipotecada");  
+            return;
         } 
         
         //Si la casilla es solar y tiene edificaciones
         if(c.getTipo().equals("Solar") && !c.getEdificios().isEmpty()){
             System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar" + c.getNombre() + ". Primero debe vender todos sus edificios.");
         }else if(c.getTipo().equals("Solar") && c.getEdificios().isEmpty()){
+            banca.sumarFortuna(-c.getHipoteca());
             JugadorActual.sumarFortuna(c.getHipoteca());
+            c.setEstarHipotecada(true);
             System.out.println("El jugador " + JugadorActual.getNombre() + "recibe " + c.getHipoteca() + "€ por hipotecar " + c.getNombre());
-            if(c.getGrupo().esDuenhoGrupo(JugadorActual)){
+            if(c.getGrupo() != null && c.getGrupo().esDuenhoGrupo(JugadorActual)){
                 System.out.println("No puede recibir alquileres ni edificar en el grupo " + c.getGrupo().colorToNombreGrupo());
             }else{
                 System.out.println("No se puede recibir alquiletes.");
@@ -944,6 +1000,7 @@ public class Menu {
         }else{
             System.out.println("La casilla " + c.getNombre() + "no es de tipo Solar. No se puede hipotecar.");
         }
+        return;
 
     }
 
@@ -958,6 +1015,7 @@ public class Menu {
 
         if(!c.getTipo().equals("Solar")){
             System.out.println("La casilla " + c.getNombre() + "no es de tipo Solar. No se puede deshipotecar.");
+            return;
         }   
         //Comprobar que el jugador sea duenho de la casilla
         if(!c.getDuenho().equals(JugadorActual)){
@@ -968,16 +1026,24 @@ public class Menu {
         if(!c.getEstarHipotecada()){
             System.out.println("El jugador " + JugadorActual.getNombre() + " no puede deshipotecar" + c.getNombre() + ". No esta hipotecada");  
         } 
+
+        if(JugadorActual.getFortuna() < c.getHipoteca()){
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no tiene suficiente dinero para deshipotecar " + c.getNombre() +". Se necesitan " + c.getHipoteca() + "€.");
+            return;
+        }
         
-    
         JugadorActual.sumarFortuna(-c.getHipoteca());
         JugadorActual.sumarGastos(c.getHipoteca());
-        System.out.println("El jugador " + JugadorActual.getNombre() + "paga " + c.getHipoteca() + "€ por deshipotecar " + c.getNombre());
-        if(c.getGrupo().esDuenhoGrupo(JugadorActual)){
-            System.out.println("Ahora puede recibir alquileres y edificar en el grupo " + c.getGrupo().colorToNombreGrupo());
+        banca.sumarFortuna(c.getHipoteca());
+        c.setEstarHipotecada(false);
+
+        System.out.println("El jugador " + JugadorActual.getNombre() + "paga " + c.getHipoteca() + "€ por deshipotecar " + c.getNombre() + ".");
+        if(c.getGrupo() != null && c.getGrupo().esDuenhoGrupo(JugadorActual)){
+            System.out.println("Ahora puede recibir alquileres y edificar en el grupo " + c.getGrupo().colorToNombreGrupo() + ".");
         }else{
-            System.out.println("AHora se puede recibir alquiletes.");
+            System.out.println("Ahora se puede recibir alquiletes.");
         }
+        return;
     }
     
 
@@ -993,6 +1059,8 @@ public class Menu {
         System.out.println("}");
 
     }
-
-
+    public void mostrarEstadisticasJuego(){
+        System.out.println("{");
+        System.out.println("dinero");
+    }
 }

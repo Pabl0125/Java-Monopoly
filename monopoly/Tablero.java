@@ -242,7 +242,12 @@ public class Tablero {
         }
     }
     
-        
+        //Metodo para aumentar el bote del parking
+        public void aumentarBoteParking(float valor){
+            Casilla parking = this.encontrar_casilla("Parking");
+            parking.setValor(parking.getValor() + valor);
+        }
+
         //Método usado para buscar la casilla con el nombre pasado como argumento:
         public Casilla encontrar_casilla(String nombre){
             for (ArrayList<Casilla> cs:posiciones){
@@ -265,6 +270,27 @@ public class Tablero {
 
             // Devolvemos la casilla directamente
             return this.posiciones.get(lado).get(indiceEnLado);
+        }
+
+        //Metodo para buscar la casilla más rentable del juego
+        public void buscarCasillaMasRentable(){
+            Casilla masRentable = null;
+            float maxRentabilidad = 0.0;
+
+            for (ArrayList<Casilla> cs : this.getposiciones()) {
+                for (Casilla c : cs) {
+                    if (c.getRentabilidad() > maxRentabilidad) {
+                        maxRentabilidad = c.getRentabilidad();
+                        masRentable = c;
+                    }
+                }
+            }
+
+            if (masRentable != null) {
+                System.out.println("La casilla más rentable es: " + masRentable.getNombre() + " con una rentabilidad de " + maxRentabilidad);
+            } else {
+                System.out.println("No se encontraron casillas.");
+            }
         }
     
 

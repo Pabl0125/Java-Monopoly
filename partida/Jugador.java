@@ -16,13 +16,15 @@ public class Jugador {
     private int vueltas; //Cuenta las vueltas dadas al tablero.
     private ArrayList<Casilla> propiedades; //Propiedades que posee el jugador.
     //Atributos especiales nuevos para las estadisticas del jugador
-    private int vecesEnCarcel;
-    private float dineroPremios;
-    private float dineroSalida;
-    private float dineroCobroAlquileres;
-    private float dineroPagoAlquileres;
-    private float dineroTasasImpuestos;
-    private float dineroInvertido;
+    private int vecesEnCarcel;              //Implementado
+    private float dineroPremios;            //Implementado         
+    private float dineroSalida;             //Implementado
+    private float dineroCobroAlquileres;    //Implementado
+    private float dineroPagoAlquileres;     //Implementado
+    private float dineroTasasImpuestos;     //Implementado
+    private float dineroInvertido;          //Implementado 
+
+    private int numeroDeVueltas;
     
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
@@ -117,6 +119,13 @@ public class Jugador {
 
     public void sumarVueltas(int valor){
         this.vueltas = this.vueltas + valor;
+    }
+
+    public void sumarNumeroDeVueltas(int valor){
+        this.numeroDeVueltas = this.numeroDeVueltas + valor;
+    }
+    public int getNumeroDeVueltas(){
+        return this.numeroDeVueltas;
     }
 
     /*Método para establecer al jugador en la cárcel. 
