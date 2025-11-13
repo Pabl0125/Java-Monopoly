@@ -36,6 +36,7 @@ public class Jugador {
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
         this.propiedades=new ArrayList<Casilla>();//Al crear el jugador, la banca posee todas las propiedadades.
+        this.vueltas = 0;
     }
 
     /*Constructor principal. Requiere parámetros:

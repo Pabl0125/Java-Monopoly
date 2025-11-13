@@ -180,7 +180,7 @@ public class Casilla{
                 //Actualizamos las estadisticas del duenho y del jugador actual que paga
                 this.duenho.sumardineroCobroAlquileres(impuestoAPagar); 
                 actual.sumarDineroPagoAlquileres(impuestoAPagar);
-                this.rentabilidad += impuestoAPagar;
+                this.sumarRentabilidad(impuestoAPagar);
 
                 actual.sumarFortuna(-impuestoAPagar);
                 System.out.println(actual.getNombre() + " ha pagado " + impuestoAPagar + "€ a " + this.duenho.getNombre() + " por caer en " + this.nombre + ".");
@@ -344,7 +344,17 @@ public class Casilla{
 
     }
 
-    
+    public float impuestoTotalCasilla(){
+        float total = this.impuesto;
+        for (Edificacion edificio : this.edificios) {
+            total += edificio.get();
+        }
+        return total;
+    }
+
+    public void sumarRentabilidad(float cantidad){
+        this.rentabilidad += cantidad;
+    }   
 
     public void visitarCasilla(){
         this.vecesVisitada += 1;
@@ -417,6 +427,10 @@ public class Casilla{
 
     public void setRentabilidad(float rentabilidad){
         this.rentabilidad = rentabilidad;
+    }
+
+    public int getVecesVisitada(){
+        return this.vecesVisitada;
     }
 
     @Override

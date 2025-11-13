@@ -242,11 +242,11 @@ public class Tablero {
         }
     }
     
-        //Metodo para aumentar el bote del parking
-        public void aumentarBoteParking(float valor){
-            Casilla parking = this.encontrar_casilla("Parking");
-            parking.setValor(parking.getValor() + valor);
-        }
+    //Metodo para aumentar el bote del parking
+    public void aumentarBoteParking(float valor){
+        Casilla parking = this.encontrar_casilla("Parking");
+        parking.setValor(parking.getValor() + valor);
+    }
 
         //Método usado para buscar la casilla con el nombre pasado como argumento:
         public Casilla encontrar_casilla(String nombre){
@@ -260,63 +260,83 @@ public class Tablero {
             return null;
         }
 
-        //Método para encontrar una casilla por su número de posición (1-40)
-        public Casilla encontrar_casilla_por_posicion(int posicion) {
-            if (posicion < 1 || posicion > 40) return null;
+    //Método para encontrar una casilla por su número de posición (1-40)
+    public Casilla encontrar_casilla_por_posicion(int posicion) {
+        if (posicion < 1 || posicion > 40) return null;
 
-            // Calculamos el lado y el índice dentro de ese lado
-            int lado = (posicion - 1) / 10;
-            int indiceEnLado = (posicion - 1) % 10;
+        // Calculamos el lado y el índice dentro de ese lado
+        int lado = (posicion - 1) / 10;
+        int indiceEnLado = (posicion - 1) % 10;
 
-            // Devolvemos la casilla directamente
-            return this.posiciones.get(lado).get(indiceEnLado);
-        }
+        // Devolvemos la casilla directamente
+        return this.posiciones.get(lado).get(indiceEnLado);
+    }
 
-        //Metodo para buscar la casilla más rentable del juego
-        public void buscarCasillaMasRentable(){
-            Casilla masRentable = null;
-            float maxRentabilidad = 0.0;
+    //Metodo para buscar la casilla más rentable del juego
+    public ArrayList<Casilla> buscarCasillaMasRentable(){
+        ArrayList <Casilla> masRentables = new ArrayList<Casilla>();
+        float maxRentabilidad = 0.0f;
 
-            for (ArrayList<Casilla> cs : this.getposiciones()) {
-                for (Casilla c : cs) {
-                    if (c.getRentabilidad() > maxRentabilidad) {
-                        maxRentabilidad = c.getRentabilidad();
-                        masRentable = c;
-                    }
+        for (ArrayList<Casilla> lado : this.posiciones) {
+            for (Casilla c : lado) {
+                if (c.getRentabilidad() > maxRentabilidad) {
+                    maxRentabilidad = c.getRentabilidad();
+                    masRentables.clear();
+                    masRentables.add(c);
+                }else if(c.getRentabilidad() == maxRentabilidad){
+                    masRentables.add(c);
                 }
             }
+        }
+        
+        return masRentables;
+    }
+    
+    //Método para buscar la casilla más visitada del juego
+    public ArrayList<Casilla> buscarCasillaMasVisitada(){
+        ArrayList<Casilla> masVisitadas = new ArrayList<Casilla>();
+        int maxVisitas = 0;
 
-            if (masRentable != null) {
-                System.out.println("La casilla más rentable es: " + masRentable.getNombre() + " con una rentabilidad de " + maxRentabilidad);
-            } else {
-                System.out.println("No se encontraron casillas.");
+        for (ArrayList<Casilla> lado : this.posiciones) {
+            for (Casilla c : lado) {
+                if (c.getVecesVisitada() > maxVisitas) {
+                    maxVisitas = c.getVecesVisitada();
+                    masVisitadas.clear();
+                    masVisitadas.add(c);
+                }else if(c.getVecesVisitada() == maxVisitas){
+                    masVisitadas.add(c);
+                }
             }
         }
-    
+        return masVisitadas;
 
+
+
+
+        }
     //Getters y setters.
-        public ArrayList<ArrayList<Casilla>> getPosiciones() {
-            return posiciones;
-        }
+    public ArrayList<ArrayList<Casilla>> getPosiciones() {
+        return posiciones;
+    }
 
-        public void setPosiciones(ArrayList<ArrayList<Casilla>> posiciones) {
-            this.posiciones = posiciones;
-        }
+    public void setPosiciones(ArrayList<ArrayList<Casilla>> posiciones) {
+        this.posiciones = posiciones;
+    }
 
-        public HashMap<String, Grupo> getGrupos() {
-            return grupos;
-        }
+    public HashMap<String, Grupo> getGrupos() {
+        return grupos;
+    }
 
-        public void setGrupos(HashMap<String, Grupo> grupos) {
-            this.grupos = grupos;
-        }
+    public void setGrupos(HashMap<String, Grupo> grupos) {
+        this.grupos = grupos;
+    }
 
-        public Jugador getBanca() {
-            return banca;
-        }
+    public Jugador getBanca() {
+        return banca;
+    }
 
-        public void setBanca(Jugador banca) {
-            this.banca = banca;
-        }
+    public void setBanca(Jugador banca) {
+        this.banca = banca;
+    }
 
 }
