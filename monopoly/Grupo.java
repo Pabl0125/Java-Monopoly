@@ -309,7 +309,14 @@ class Grupo {
 
     public void sumarRentabilidad(float cantidad) {
         this.rentabilidad += cantidad;
-        
+    }
+
+    public float getRentabilidad() {
+        return this.rentabilidad;
+    }
+
+    public void setRentabilidad(float rentabilidad) {
+        this.rentabilidad = rentabilidad;
     }
 
 

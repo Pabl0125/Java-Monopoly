@@ -581,7 +581,7 @@ public class Menu {
         for (ArrayList<Casilla> lado : posiciones) {
             for (Casilla c : lado) {
 
-                if(c.getTipo().equals("Solar") && !c.getDuenho().equals("Banca") && c.getGrupo().equals(grupo)){
+                if(c.getTipo().equals("Solar") && !c.getDuenho().getNombre().equals("Banca") && c.getGrupo().equals(grupo)){
 
                     ArrayList<Edificacion> edificios = c.getEdificios();
                     ArrayList<Edificacion> hoteles = new ArrayList<Edificacion>();
@@ -1085,9 +1085,9 @@ public class Menu {
     public void mostrarEstadisticasJuego(){
 
         System.out.println("{");
-        System.out.println("casillaMasRentable: " + ",");
-        System.out.println("grupoMasRentable: " +  ",");
-        System.out.println("casillaMasFrecuentada: " + tablero.buscarCasillaMasVisitada() + ",");
+        System.out.println("casillaMasRentable: " + corchetesToComas(tablero.buscarCasillaMasVisitada()) + ",");
+        System.out.println("grupoMasRentable: " + corchetesToComas(tablero.buscarGrupoMasRentable()) +  ",");
+        System.out.println("casillaMasFrecuentada: " + corchetesToComas(tablero.buscarCasillaMasVisitada()) + ",");
         System.out.println("jugador(es)MasVueltas: " + corchetesToComas(buscarJugadorConMasVueltas()) + ",");
         System.out.println("jugadorEnCabeza: " );
         System.out.println("}");

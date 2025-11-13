@@ -2,6 +2,7 @@ package monopoly;
 
 import partida.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.HashMap;
 
 
@@ -309,11 +310,35 @@ public class Tablero {
             }
         }
         return masVisitadas;
+    }
 
+    //Método para buscar el grupo más rentable del juego
+    public ArrayList<String> buscarGrupoMasRentable(){
+        ArrayList <String> masRentables = new ArrayList<String>();
+        float maxRentabilidad = 0.0f;
 
+        Iterator<HashMap.Entry<String, Grupo>> iterator = this.grupos.entrySet().iterator();
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Grupo> entry = iterator.next();
+            Grupo grupo = entry.getValue();
+            float rentabilidadGrupo = grupo.getRentabilidad();
 
-
+            if (rentabilidadGrupo > maxRentabilidad) {
+                maxRentabilidad = rentabilidadGrupo;
+                masRentables.clear();
+                masRentables.add(entry.getKey());
+            } else if (rentabilidadGrupo == maxRentabilidad) {
+                masRentables.add(entry.getKey());
+            }
         }
+
+        return masRentables;
+    }
+    
+
+
+
+
     //Getters y setters.
     public ArrayList<ArrayList<Casilla>> getPosiciones() {
         return posiciones;
