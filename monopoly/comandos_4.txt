@@ -52,3 +52,13 @@ edificar piscina
 edificar piscina
 edificar casa
 lanzar dados 4+4
+lanzar dados 9+9
+lanzar dados 9+9
+lanzar dados 2+2
+salir carcel
+lanzar dados 3+4
+ver tablero
+lanzar dados 1+2
+ver tablero 
+lanzar dados 9+8
+ver tablero

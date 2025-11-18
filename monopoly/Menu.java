@@ -365,9 +365,9 @@ public class Menu {
             // Si la casilla es de tipo Suerte o Comunidad, ejecutar la carta desde Menu
             if (casillaFinal.getTipo() != null) {
                 if (casillaFinal.getTipo().equals("Suerte")) {
-                    this.cartaSuerte(this.numCartaSuerte);
+                    this.cartaSuerte();
                 } else if (casillaFinal.getTipo().equals("Comunidad")) {
-                    this.cartaCajaComunidad(this.numCartaCajaCom);
+                    this.cartaCajaComunidad();
                 }
             }
 
@@ -436,9 +436,9 @@ public class Menu {
             // Si la casilla es de tipo Suerte o Comunidad, ejecutar la carta desde Menu
             if (casillaFinal.getTipo() != null) {
                 if (casillaFinal.getTipo().equals("Suerte")) {
-                    this.cartaSuerte(this.numCartaSuerte);
+                    this.cartaSuerte();
                 } else if (casillaFinal.getTipo().equals("Comunidad")) {
-                    this.cartaCajaComunidad(this.numCartaCajaCom);
+                    this.cartaCajaComunidad();
                 }
             }
 
@@ -805,10 +805,10 @@ public class Menu {
     }
     
     //Función que realiza las acciones asociadas a las cartas de suerte
-    private void cartaSuerte(int numCartaSuerte){
+    private void cartaSuerte(){
         Jugador jugadorActual = jugadores.get(turno);
-        System.out.println("--- Carta de Suerte número " + numCartaSuerte + " ---");
-        switch(numCartaSuerte){
+        System.out.println("--- Carta de Suerte número " + this.numCartaSuerte + " ---");
+        switch(this.numCartaSuerte){
             case 1:
                 System.out.println("Decides hacer un viaje de placer. Avanza hasta Solar19. \nSi pasas por la casilla de Salida, cobra 2.000.000€.");
                 int posDestino = tablero.encontrar_casilla("Solar19").getPosicion();
@@ -888,16 +888,16 @@ public class Menu {
                 System.out.println("Error: Número de carta no válido.");
                 break;
         }
-        numCartaSuerte++;
-        if(numCartaSuerte > 7){
-            numCartaSuerte = 1;
+        this.numCartaSuerte++;
+        if(this.numCartaSuerte > 7){
+            this.numCartaSuerte = 1;
         }
     }
 
-    private void cartaCajaComunidad(int numCartaCajaComunidad){
-        System.out.println("--- Carta de Caja de Comunidad número " + numCartaCajaComunidad + " ---");
+    private void cartaCajaComunidad(){
+        System.out.println("--- Carta de Caja de Comunidad número " + this.numCartaCajaCom + " ---");
         Jugador jugadorActual = jugadores.get(turno);
-        switch (numCartaCajaComunidad) {
+        switch (this.numCartaCajaCom) {
             case 1:
                 System.out.println("Paga 500.000€ por un fin de semana en un balneario de 5 estrellas.");
                 jugadorActual.sumarFortuna(-500000f);
@@ -910,7 +910,11 @@ public class Menu {
                 break;
             case 3:
                 System.out.println("Colócate en la casilla de Salida. Cobra 2.000.000€.");
-                jugadorActual.getAvatar().moverAvatar(tablero, 1);
+                int posicionSalida = tablero.encontrar_casilla("Salida").getPosicion();
+                int posicion = jugadorActual.getAvatar().getLugar().getPosicion();
+                int desp = posicionSalida - posicion;
+                jugadorActual.getAvatar().moverAvatar(tablero, desp);
+                
                 break;
             case 4:
                 System.out.println("Devolución de Hacienda. Cobra 500.000€.");
@@ -931,29 +935,10 @@ public class Menu {
                 System.out.println("Error: Número de carta no válido.");
                 break;
         }
-        numCartaCajaComunidad++;
-        if(numCartaCajaComunidad > 6){
-            numCartaCajaComunidad = 1;
+        this.numCartaCajaCom++;
+        if(this.numCartaCajaCom > 6){
+            this.numCartaCajaCom = 1;
         }
-    }
-
-    // Helper: tras un movimiento efectuado por una carta, evaluar la casilla destino
-    // y ejecutar (si procede) otra carta. Devuelve true si el jugador sigue siendo solvente.
-    private boolean evaluarTrasMovimientoPorCarta(Jugador jugadorActual, int tirada) {
-        Casilla destino = jugadorActual.getAvatar().getLugar();
-        boolean solvente = destino.evaluarCasilla(jugadorActual, banca, tirada, this.tablero);
-        if (!solvente) {
-            System.out.println(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + destino.getNombre());
-            return false;
-        }
-        if (destino.getTipo() != null) {
-            if (destino.getTipo().equals("Suerte")) {
-                this.cartaSuerte(this.numCartaSuerte);
-            } else if (destino.getTipo().equals("Comunidad")) {
-                this.cartaCajaComunidad(this.numCartaCajaCom);
-            }
-        }
-        return true;
     }
 
     // Método que realiza las acciones asociadas al comando 'vender tipo_edificio nombre_casilla cantidad'.
