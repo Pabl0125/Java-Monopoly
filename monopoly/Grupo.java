@@ -312,6 +312,9 @@ class Grupo {
         }
     }
 
+    public ArrayList<Casilla> getMiembros() {
+        return this.miembros;
+    }
     public void sumarRentabilidad(float cantidad) {
         this.rentabilidad += cantidad;
     }

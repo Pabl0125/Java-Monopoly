@@ -249,17 +249,17 @@ public class Tablero {
         parking.setValor(parking.getValor() + valor);
     }
 
-        //Método usado para buscar la casilla con el nombre pasado como argumento:
-        public Casilla encontrar_casilla(String nombre){
-            for (ArrayList<Casilla> cs:posiciones){
-                for (Casilla c:cs){
-                    if (c.getNombre().equals(nombre)){
-                        return c;
-                    }
+    //Método usado para buscar la casilla con el nombre pasado como argumento:
+    public Casilla encontrar_casilla(String nombre){
+        for (ArrayList<Casilla> cs:posiciones){
+            for (Casilla c:cs){
+                if (c.getNombre().equals(nombre)){
+                    return c;
                 }
             }
-            return null;
         }
+        return null;
+    }
 
     //Método para encontrar una casilla por su número de posición (1-40)
     public Casilla encontrar_casilla_por_posicion(int posicion) {

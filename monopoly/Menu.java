@@ -151,7 +151,7 @@ public class Menu {
                         // vender [tipo] [casilla] [cantidad]
                         venderEdificacion(partesComando[1], partesComando[2], partesComando[3]);
                     }
-                    else System.err.println("Invalid command. Formato: vender <tipo_edificio> <nombre_casilla> <cantidad>");
+                    else System.err.println("Invalid command");
                     break;
                 case "estadisticas":
                     if(partesComando.length == 1){
@@ -554,22 +554,18 @@ public class Menu {
     //Función para listar todos los edificios de la partida
     private void listarEdificios(){
         ArrayList<ArrayList<Casilla>> posiciones = tablero.getPosiciones();
-
+        int edificaciones = 0;
         for (ArrayList<Casilla> lado : posiciones) {
             for (Casilla c : lado) {
-
-                if(c.getTipo().equals("Solar") && !c.getDuenho().equals("Banca")){
-
-                    ArrayList<Edificacion> edificios = c.getEdificios();
-
-                    for(Edificacion edificio : edificios){
-                        
-                        Jugador dueño = c.getDuenho();
-                        Avatar avatarDueño = dueño.getAvatar();
+                if(c.getTipo().equals("Solar") && !c.getDuenho().getNombre().equals("Banca") && !c.getEdificios().isEmpty()){
+                    edificaciones = 1;
+                    for(Edificacion edificio : c.getEdificios()){
+                        Jugador duenho = c.getDuenho();
+                        Avatar avatarDueño = duenho.getAvatar();
                         System.out.println(
                             "{\n" +
                             "\tid: " + edificio.toString() + ",\n" +
-                            "\tpropietario: " + dueño.getNombre() + ",\n" +
+                            "\tpropietario: " + duenho.getNombre() + ",\n" +
                             "\tcasilla: " + c.getNombre() + ",\n" +
                             "\tgrupo: " + c.getGrupo().colorToNombreGrupo() + ",\n" +
                             "\tcoste: " + edificio.getValor() + "€,\n" +
@@ -578,11 +574,14 @@ public class Menu {
                 }
             }
         }
+        if (edificaciones==0){
+            System.out.println("No hay edificaciones en la partida");
+        }
     }
     public Grupo StringToGrupo(String color){
         // Se convierte el color de entrada a minúsculas para asegurar la coincidencia
         // y se busca directamente en el HashMap. Es mucho más eficiente.
-        Grupo grupo = tablero.getGrupos().get(color.toLowerCase());
+        Grupo grupo = tablero.getGrupos().get(color);
         if (grupo == null) {
             System.err.println("Error: El grupo '" + color + "' no existe.");
         }
@@ -590,53 +589,95 @@ public class Menu {
     }
     //Función para listar los edificios de un grupo concreto
     private void listarEdificiosPorGrupo(Grupo grupo){
+        ArrayList<Casilla> miembrosGrupo = grupo.getMiembros();
+        boolean puedeConstruirCasa = false;
+        boolean puedeConstruirHotel = false;
+        boolean puedeConstruirPiscina = false;
+        boolean puedeConstruirPista = false;
 
-        ArrayList<ArrayList<Casilla>> posiciones = tablero.getPosiciones();
-        
-        for (ArrayList<Casilla> lado : posiciones) {
-            for (Casilla c : lado) {
+        for (Casilla c : miembrosGrupo) {
+            ArrayList<Edificacion> edificios = c.getEdificios();
 
-                if(c.getTipo().equals("Solar") && !c.getDuenho().getNombre().equals("Banca") && c.getGrupo().equals(grupo)){
+            // Agrupar por tipo
+            ArrayList<String> casas = new ArrayList<>();
+            ArrayList<String> hoteles = new ArrayList<>();
+            ArrayList<String> piscinas = new ArrayList<>();
+            ArrayList<String> pistas = new ArrayList<>();
 
-                    ArrayList<Edificacion> edificios = c.getEdificios();
-                    ArrayList<Edificacion> hoteles = new ArrayList<Edificacion>();
-                    ArrayList<Edificacion> casas = new ArrayList<Edificacion>();
-                    ArrayList<Edificacion> piscinas = new ArrayList<Edificacion>();
-                    ArrayList<Edificacion> pistasDeportivas = new ArrayList<Edificacion>();
-                    
-                    for(Edificacion edificio : edificios){
-                        
-                        Jugador dueño = c.getDuenho();
-                        Avatar avatarDueño = dueño.getAvatar();
+            int numeroCasas = 0;
+            boolean casillaTieneHotel = false;
+            boolean casillaTienePiscina = false;
+            boolean casillaTienePista = false;
 
-                        switch(edificio.getTipo()){
-                            case "hotel":
-                                hoteles.add(edificio);
-                                break;
-                            case "casa":
-                                casas.add(edificio);
-                                break;
-                            case "piscina":
-                                piscinas.add(edificio);
-                                break;
-                            case "pista deportiva":
-                                pistasDeportivas.add(edificio);
-                                break;
-                        }
-
+            if (edificios != null && !edificios.isEmpty()) {
+                for (Edificacion e : edificios) {
+                    String tipo = e.getTipo();
+                    switch (tipo) {
+                        case "casa":
+                            casas.add(e.toString());
+                            numeroCasas++;
+                            break;
+                        case "hotel":
+                            hoteles.add(e.toString());
+                            casillaTieneHotel = true;
+                            break;
+                        case "piscina":
+                            piscinas.add(e.toString());
+                            casillaTienePiscina = true;
+                            break;
+                        case "pista deportiva":
+                            pistas.add(e.toString());
+                            casillaTienePista = true;
+                            break;
+                        default:
+                            // Otros tipos
+                            break;
                     }
-                    System.out.println(
-                            "{\n" +
-                            "\tpropiedad: " + c.getNombre() + ",\n" +
-                            "\thoteles: " + hoteles + ",\n" +
-                            "\tcasas: " + casas + ",\n" +
-                            "\tpiscinas: " + piscinas + ",\n" +
-                            "\tpistas deportivas: " + pistasDeportivas + ",\n" +
-                            "\talquiler: " + c.getImpuesto()+ "€,\n" +
-                            "}");
                 }
             }
+
+            // Determinar si en esta casilla aún se puede construir cada tipo (reglas derivadas de edificar())
+            boolean puedeCasa = !casillaTieneHotel && numeroCasas < 4;
+            boolean puedeHotel = !casillaTieneHotel && numeroCasas == 4;
+            boolean puedePiscina = !casillaTienePiscina && casillaTieneHotel; // requiere hotel existente
+            boolean puedePista = !casillaTienePista && casillaTienePiscina; // solo debe no existir ya
+
+            // Acumular a nivel de grupo
+            if (puedeCasa) puedeConstruirCasa = true;
+            if (puedeHotel) puedeConstruirHotel = true;
+            if (puedePiscina) puedeConstruirPiscina = true;
+            if (puedePista) puedeConstruirPista = true;
+
+        // Construir una sola cadena con toda la información y hacer un único println
+        String hotelesStr = hoteles.isEmpty() ? "-" : hoteles.toString();
+        String casasStr = casas.isEmpty() ? "-" : casas.toString();
+        String piscinasStr = piscinas.isEmpty() ? "-" : piscinas.toString();
+        String pistasStr = pistas.isEmpty() ? "-" : pistas.toString();
+        String alquilerStr = String.valueOf(c.impuestoTotalCasilla());
+
+        System.out.println("{\n" +
+            "\tpropiedad: " + c.getNombre() + ",\n" +
+            "\thoteles: " + hotelesStr + ",\n" +
+            "\tcasas: " + casasStr + ",\n" +
+            "\tpiscinas: " + piscinasStr + ",\n" +
+            "\tpistasDeDeporte: " + pistasStr + ",\n" +
+            "\talquiler: " + alquilerStr + "\n" +
+            "},");
+
         }
+
+        // Resumen de lo que aún puede construirse en el grupo
+        ArrayList<String> listaPuede = new ArrayList<>();
+        ArrayList<String> listaNoPuede = new ArrayList<>();
+
+        if (puedeConstruirPista) listaPuede.add("pista de deporte"); else listaNoPuede.add("pistas de deporte");
+        if (puedeConstruirPiscina) listaPuede.add("piscina"); else listaNoPuede.add("piscinas");
+        if (puedeConstruirHotel) listaPuede.add("hoteles"); else listaNoPuede.add("hoteles");
+        if (puedeConstruirCasa) listaPuede.add("casas"); else listaNoPuede.add("casas");
+
+        System.out.println("Aún se pueden edificar: " + String.join(", ", listaPuede) + ".");
+        System.out.println("No se pueden construir : " + String.join(", ", listaNoPuede) + ".");
+        
     }
     
 
@@ -710,6 +751,11 @@ public class Menu {
             if(edificioRecorrido.getTipo().equals("hotel")) casillaTieneHotel =true;
             if(edificioRecorrido.getTipo().equals("casa")) numeroCasas++;
         }
+        //Si tienes hotel o 4 casas no puedes contruir mas casas
+        if((numeroCasas ==4 || casillaTieneHotel) && tipoEdificio.equals("casa")){
+            System.out.println("No se puede edificar mas casas en la casilla " + casillaActual.getNombre());
+            return;
+        }
         //Comprobar que hay sitio para edificar
         if((casillaTieneHotel && casillaTienePiscina && casillaTienePistaDeportiva)){
             System.out.println("No se puede edificar ningun edificio mas en esta casilla ni en el grupo al que la casillla pertenece");
@@ -754,12 +800,14 @@ public class Menu {
             System.out.println("Se han eliminado las casas para poder construir el hotel");
         }
         Edificacion nuevaEdificacion = new Edificacion(casillaActual,tipoEdificio); //El contructor asigna el edificio a la casilla automaticamente
+        
         System.out.println("Se ha edificado un " + tipoEdificio + " en " + casillaActual.getNombre() + ". La fortuna de " + jugadorActual.getNombre() + " se reduce en " + costeEdificio + "€");
     }
     
     //Función que realiza las acciones asociadas a las cartas de suerte
     private void cartaSuerte(int numCartaSuerte){
         Jugador jugadorActual = jugadores.get(turno);
+        System.out.println("--- Carta de Suerte número " + numCartaSuerte + " ---");
         switch(numCartaSuerte){
             case 1:
                 System.out.println("Decides hacer un viaje de placer. Avanza hasta Solar19. \nSi pasas por la casilla de Salida, cobra 2.000.000€.");
@@ -787,6 +835,8 @@ public class Menu {
                 jugadorActual.sumarGastos(totalAPagar); //Sumar el total a pagar a los gastos del jugador actual
                 for (Jugador j : jugadores) { //Pagar a cada jugador
                     if (!j.equals(jugadorActual)) { 
+                        j.sumarFortuna(250000f); //Sumar 250.000€ a la fortuna de cada jugador
+                        j.sumarDineroPremios(250000f); //Sumar 250.000€ a los premios/inversiones/bote de cada jugador
                     }
                 }
                 break;
@@ -845,12 +895,14 @@ public class Menu {
     }
 
     private void cartaCajaComunidad(int numCartaCajaComunidad){
+        System.out.println("--- Carta de Caja de Comunidad número " + numCartaCajaComunidad + " ---");
         Jugador jugadorActual = jugadores.get(turno);
         switch (numCartaCajaComunidad) {
             case 1:
                 System.out.println("Paga 500.000€ por un fin de semana en un balneario de 5 estrellas.");
                 jugadorActual.sumarFortuna(-500000f);
                 jugadorActual.sumarGastos(500000f);
+                tablero.aumentarBoteParking(500000f);
                 break;
             case 2:
                 System.out.println("Te investigan por fraude de identidad. Ve a la Cárcel.\nVe directamente sin pasar por la casilla de Salida y sin cobrar los 2.000.000€.");
@@ -987,30 +1039,30 @@ public class Menu {
 
         //Comprobar que el jugador sea duenho de la casilla
         if(!c.getDuenho().equals(JugadorActual)){
-            System.out.println("El jugador " + JugadorActual.getNombre() + "no puede hipotecar " + c.getNombre() +". No es una propiedad que le pertenece.");
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar " + c.getNombre() +". No es una propiedad que le pertenece.");
             return;
         }
         //Comprobar que la casilla no este ya hipotecada
         if(c.getEstarHipotecada()){
-            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar" + c.getNombre() + ". Ya esta hipotecada");  
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar " + c.getNombre() + ". Ya esta hipotecada");  
             return;
         } 
         
         //Si la casilla es solar y tiene edificaciones
         if(c.getTipo().equals("Solar") && !c.getEdificios().isEmpty()){
-            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar" + c.getNombre() + ". Primero debe vender todos sus edificios.");
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede hipotecar " + c.getNombre() + ". Primero debe vender todos sus edificios.");
         }else if(c.getTipo().equals("Solar") && c.getEdificios().isEmpty()){
             banca.sumarFortuna(-c.getHipoteca());
             JugadorActual.sumarFortuna(c.getHipoteca());
             c.setEstarHipotecada(true);
-            System.out.println("El jugador " + JugadorActual.getNombre() + "recibe " + c.getHipoteca() + "€ por hipotecar " + c.getNombre());
+            System.out.println("El jugador " + JugadorActual.getNombre() + " recibe " + c.getHipoteca() + "€ por hipotecar " + c.getNombre());
             if(c.getGrupo() != null && c.getGrupo().esDuenhoGrupo(JugadorActual)){
                 System.out.println("No puede recibir alquileres ni edificar en el grupo " + c.getGrupo().colorToNombreGrupo());
             }else{
-                System.out.println("No se puede recibir alquiletes.");
+                System.out.println("No se puede recibir alquileres.");
             }
         }else{
-            System.out.println("La casilla " + c.getNombre() + "no es de tipo Solar. No se puede hipotecar.");
+            System.out.println("La casilla " + c.getNombre() + " no es de tipo Solar. No se puede hipotecar.");
         }
         return;
 
@@ -1026,17 +1078,17 @@ public class Menu {
         }
 
         if(!c.getTipo().equals("Solar")){
-            System.out.println("La casilla " + c.getNombre() + "no es de tipo Solar. No se puede deshipotecar.");
+            System.out.println("La casilla " + c.getNombre() + " no es de tipo Solar. No se puede deshipotecar.");
             return;
         }   
         //Comprobar que el jugador sea duenho de la casilla
         if(!c.getDuenho().equals(JugadorActual)){
-            System.out.println("El jugador " + JugadorActual.getNombre() + "no puede deshipotecar " + c.getNombre() +". No es una propiedad que le pertenece.");
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede deshipotecar " + c.getNombre() +". No es una propiedad que le pertenece.");
             return;
         }
         //Comprobar que la casilla no este ya hipotecada
         if(!c.getEstarHipotecada()){
-            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede deshipotecar" + c.getNombre() + ". No esta hipotecada");  
+            System.out.println("El jugador " + JugadorActual.getNombre() + " no puede deshipotecar " + c.getNombre() + ". No esta hipotecada");  
         } 
 
         if(JugadorActual.getFortuna() < c.getHipoteca()){
@@ -1049,11 +1101,11 @@ public class Menu {
         banca.sumarFortuna(c.getHipoteca());
         c.setEstarHipotecada(false);
 
-        System.out.println("El jugador " + JugadorActual.getNombre() + "paga " + c.getHipoteca() + "€ por deshipotecar " + c.getNombre() + ".");
+        System.out.println("El jugador " + JugadorActual.getNombre() + " paga " + c.getHipoteca() + "€ por deshipotecar " + c.getNombre() + ".");
         if(c.getGrupo() != null && c.getGrupo().esDuenhoGrupo(JugadorActual)){
             System.out.println("Ahora puede recibir alquileres y edificar en el grupo " + c.getGrupo().colorToNombreGrupo() + ".");
         }else{
-            System.out.println("Ahora se puede recibir alquiletes.");
+            System.out.println("Ahora se puede recibir alquileres.");
         }
         return;
     }
@@ -1062,7 +1114,7 @@ public class Menu {
     public void mostrarEstadisticas(Jugador jugador){
         System.out.println("{");
         System.out.println("dineroInvertido: " + jugador.getDineroInvertido());
-        System.out.println("pagoTasasEIMpuestos: " + jugador.getDineroTasasImpuestos());
+        System.out.println("pagoTasasEImpuestos: " + jugador.getDineroTasasImpuestos());
         System.out.println("pagoDeAlquileres: " + jugador.getDineroPagoAlquileres());
         System.out.println("cobroDeAlquileres: " + jugador.getDineroCobroAlquileres());
         System.out.println("pasarPorCasillaDeSalida: " + jugador.getDineroSalida());

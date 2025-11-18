@@ -13,14 +13,14 @@ public class Edificacion {
     public Edificacion(Casilla casilla, String tipo) {
         this.tipo = tipo;
         this.casilla = casilla;
-        casilla.getEdificios().add(this);
         this.grupo = casilla.getGrupo();
         grupo = casilla.getGrupo();
         alquiler = (casilla.getGrupo()).getAlquilerEdificioPorGrupo(tipo);
-        
+        valor = grupo.getPrecioEdificioPorGrupo(tipo);
         //Actualizamos Id y aumentamos el currentId
         currenIdCount++;
         this.id = currenIdCount;
+        casilla.getEdificios().add(this);
     }
     
     //Getters
