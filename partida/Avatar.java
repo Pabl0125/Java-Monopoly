@@ -74,7 +74,7 @@ public class Avatar {
             this.jugador.sumarFortuna(2000000f); // Añadimos 2000000 al saldo del jugador
             this.jugador.sumarDineroSalida(2000000f);  //Sumamos el dinero a la estadistica
             this.jugador.sumarNumeroDeVueltas(1);       //Sumamos otra vuelta
-            System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000 al saldo del jugador " + this.jugador.getNombre() + ".");
+            System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000€ al saldo del jugador " + this.jugador.getNombre() + ".");
         }
 
         // 3. Encontrar la nueva casilla y actualizar el estado

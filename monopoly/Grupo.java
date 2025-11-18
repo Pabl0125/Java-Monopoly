@@ -126,7 +126,12 @@ class Grupo {
     * Valor devuelto: true si es dueño de todas las casillas del grupo, false en otro caso.
      */
     public boolean esDuenhoGrupo(Jugador jugador) {
-        return false;
+        for (Casilla casilla : this.miembros) {
+            if (casilla.getDuenho() != jugador) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //Setters y getters:    

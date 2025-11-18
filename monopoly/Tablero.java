@@ -127,7 +127,7 @@ public class Tablero {
 
         // Guardar grupos en el HashMap del Tablero
         this.grupos.put("Verde", gVerde);
-        this.grupos.put("Azul Oscuro", gAzulOscuro);
+        this.grupos.put("Azul", gAzulOscuro);
         
         // Actualizar grupo de Transporte (Completa el grupo de 4)
         this.grupos.get("Transporte").anhadirCasilla(c36);

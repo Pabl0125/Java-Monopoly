@@ -110,7 +110,7 @@ public class Casilla{
             case "Especial":
                 switch (this.nombre){
                     case "Parking":
-                        System.out.println("¡" + actual.getNombre() + "ha llegado al parking!");
+                        System.out.println("¡" + actual.getNombre() + " ha llegado al parking!");
                         //Si cae en el parking tenemos que ver si hay bote y si lo hay, actualizar el saldo
                         //tanto del jugador como el valor de la casilla
                         if(this.valor > 0){
@@ -119,6 +119,8 @@ public class Casilla{
                             actual.sumarFortuna(this.valor);
                             actual.sumarDineroPremios(this.valor);
                             this.valor = 0;
+                        } else {
+                            System.out.println("El parking no tiene dinero en el bote.");
                         }
                         break;
                     case "IrACarcel":
