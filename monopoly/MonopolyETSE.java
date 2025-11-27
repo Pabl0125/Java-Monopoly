@@ -9,7 +9,7 @@ public class MonopolyETSE {
     public static void main(String[] args) {
         Menu menu = new Menu();
         menu.iniciarPartida();
-        menu.lecturaFichero("monopoly/comandos_4.txt");
+        menu.lecturaFichero("monopoly/comandos.txt");
     }
 
 

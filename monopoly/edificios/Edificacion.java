@@ -1,6 +1,8 @@
-package monopoly;
+package monopoly.edificios;
 
-public class Edificacion {
+import monopoly.Grupo;
+import monopoly.casillas.Casilla;
+public abstract class Edificacion {
     private String tipo; //Tipo de edificación (casa, hotel, etc.)
     private Casilla casilla; //Casilla a la que pertenece la edificación
     private float valor; //Valor de la edificación

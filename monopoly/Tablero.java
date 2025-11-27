@@ -3,6 +3,9 @@ package monopoly;
 import partida.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import monopoly.casillas.Casilla;
+
 import java.util.HashMap;
 
 
@@ -336,8 +339,22 @@ public class Tablero {
     }
     
 
+    public void moverA(String nombreCasilla, Jugador jugador) {
+        Casilla destino = this.encontrar_casilla(nombreCasilla);
+        if (destino != null) {
+            int posActual = jugador.getAvatar().getLugar().getPosicion();
+            int posDestino = destino.getPosicion();
+            int desplazamiento = posDestino - posActual;
+            jugador.getAvatar().moverAvatar(this, desplazamiento);
+        }
+    }
 
-
+    public void pagarImpuesto(Jugador jugador, float cantidad) {
+        jugador.sumarFortuna(-cantidad);
+        jugador.sumarGastos(cantidad);
+        jugador.sumarDineroTasasImpuestos(cantidad);
+        this.aumentarBoteParking(cantidad);
+    }
 
     //Getters y setters.
     public ArrayList<ArrayList<Casilla>> getPosiciones() {
