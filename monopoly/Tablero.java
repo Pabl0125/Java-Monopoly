@@ -1,10 +1,8 @@
 package monopoly;
-
+import monopoly.*;
 import partida.*;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import monopoly.casillas.Casilla;
 
 import java.util.HashMap;
 
@@ -248,8 +246,8 @@ public class Tablero {
     
     //Metodo para aumentar el bote del parking
     public void aumentarBoteParking(float valor){
-        Casilla parking = this.encontrar_casilla("Parking");
-        parking.setValor(parking.getValor() + valor);
+        Parking parking = this.encontrar_casilla("Parking");
+        parking.sumarBoteParking(valor);
     }
 
     //Método usado para buscar la casilla con el nombre pasado como argumento:

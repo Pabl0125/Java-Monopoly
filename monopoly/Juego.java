@@ -3,6 +3,7 @@ package monopoly;
 import monopoly.casillas.Casilla;
 import monopoly.edificios.*;
 import monopoly.interfaces.Comando;
+import monopoly.interfaces.Consola;
 import monopoly.cartas.*;
 import monopoly.edificios.Edificacion;
 import monopoly.interfaces.Comando;
@@ -40,6 +41,7 @@ public class Juego implements Comando{
     private int numCartaSuerte; //Número de carta de suerte que se va a sacar.
     private int numCartaCajaCom; //Número de carta de caja de comunidad que se va a sacar.
     
+    
 
     // Método para inciar una partida: crea los jugadores y avatares.
     public void iniciarPartida() {
@@ -58,6 +60,25 @@ public class Juego implements Comando{
         numCartaSuerte = 1;
         numCartaCajaCom = 1;
         
+    }
+    //Metodo publico para obtener el numero de turno del juego
+    public int getTurno(){
+        return turno;
+    }
+    //Metodo publico para obtener la instancia del objeto Jugador Actual
+    public Jugador getJugadorActual(){
+        return jugadores.get(turno);
+    }
+    //Metodo para obtener el tablero de juego actual
+    public Tablero getTablero(){
+        return tablero;
+    }
+    public ConsolaNormal getConsola(){
+        return consola;
+    }
+    //Mentodo para obtener el jugador Banca de juego actual
+    public Jugador getBanca(){
+        return banca;
     }
     
     public void lecturaFichero(String fichero){

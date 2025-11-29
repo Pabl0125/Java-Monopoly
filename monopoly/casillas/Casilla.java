@@ -1,27 +1,26 @@
 package monopoly.casillas;
+import monopoly.*;
 import partida.*;
-
 import java.util.ArrayList;
 
-import monopoly.Grupo;
-import monopoly.Tablero;
-import monopoly.edificios.Edificacion;
 
 public abstract class Casilla{
 
-    private String nombre;                        //Nombre de la casilla
-    private String tipo;                          //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto). Protected para que las subclases puedan acceder directamente a ella
-    private int posicion;                         //Posición que ocupa la casilla en el tablero
-    private ArrayList<Avatar> avatares;           //Avatares que están situados en la casilla.
-    private int vecesVisitada;                    //Número de veces que ha sido visitada la casilla
+    private String nombre;                  //Nombre de la casilla
+    private String tipo;                    //Tipo de casilla (Solar, Especial, Transporte, Servicios, Comunidad, Suerte y Impuesto). Protected para que las subclases puedan acceder directamente a ella
+    private int posicion;                   //Posición que ocupa la casilla en el tablero
+    private ArrayList<Avatar> avatares;     //Avatares que están situados en la casilla.
+    private int vecesVisitada;              //Número de veces que ha sido visitada la casilla
+    private Juego juego;                    //Juego al que pertenece la casilla
 
     ///////////////CONSTRUCTOR///////////////
-    public Casilla(String nombre, int posicion){
+    public Casilla(String nombre, int posicion, Juego juego){
         this.nombre = nombre;
-        this.tipo = this.getClass().getName();      //El tipo de la casilla es equivalente al nombre de la clase
+        this.tipo = this.getClass().getSimpleName();      //El tipo de la casilla es equivalente al nombre de la clase
         this.avatares = new ArrayList<>(); 
         this.posicion = posicion;
         this.vecesVisitada = 0;
+        this.juego = juego;
     }
 
     ///////////////METODOS ABSTRACTOS///////////////
@@ -44,6 +43,13 @@ public abstract class Casilla{
     }
     public int getVecesVisitada(){
         return this.vecesVisitada;
+    }
+    public Juego getJuego(){
+        return this.juego;
+    }
+    ///////////////SETTERS////////////////
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     //////////////METODOS SOBREESCRITOS///////////////
@@ -68,6 +74,18 @@ public abstract class Casilla{
     }
     public void visitarCasilla(){
         this.vecesVisitada += 1;
+    }
+    public String getListaJugadoresEnCasilla(){
+        StringBuilder jugadoresEnCasilla = new StringBuilder();
+        if (this.avatares.isEmpty()) {
+            jugadoresEnCasilla.append("Ninguno");
+        } 
+        else {
+            ArrayList<String> nombresJugadores = new ArrayList<String>();
+            this.avatares.forEach(avatar -> nombresJugadores.add(avatar.getJugador().getNombre()));
+            jugadoresEnCasilla.append(String.join(", ", nombresJugadores));
+        }
+        return jugadoresEnCasilla.toString();
     }
 
 }

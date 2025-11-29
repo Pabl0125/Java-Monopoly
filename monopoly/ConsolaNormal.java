@@ -1,5 +1,6 @@
 package monopoly;
-
+import monopoly.*;
+import partida.*;
 
 import java.util.Scanner;
 
@@ -8,7 +9,6 @@ public class ConsolaNormal implements monopoly.interfaces.Consola {
     @Override
     public String leer(String descripcion) {
         System.out.println(descripcion);
-        
         return scanner.nextLine();
 
     }

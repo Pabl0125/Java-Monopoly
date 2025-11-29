@@ -11,7 +11,6 @@ public class CartaCajaComunidad extends Carta {
     public CartaCajaComunidad(int num, String descripcion) {
         super(num, descripcion);
     }
-
     //Método para ejecutar la acción de la carta
     @Override
     public void accion(Tablero tablero, Jugador jugadorActual, ArrayList<Jugador> jugadores) {
