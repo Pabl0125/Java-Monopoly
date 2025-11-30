@@ -4,8 +4,8 @@ import partida.*;
 
 public final class Transporte extends Propiedad{
     
-    public Transporte(String nombre, int posicion, Juego juego, Grupo grupo){
-        super(nombre, posicion, juego, grupo);                //Llamammos al contructor de la clase pade
+    public Transporte(String nombre, int posicion, Juego juego){
+        super(nombre, posicion, juego);                //Llamammos al contructor de la clase pade
         this.setValor(500000);                  //Las casillas de transporte y de servicio tienen un precio de compra inicial de 500.000€. 
         this.setAlquiler(250000);           //El alquiler de una casilla de transporte es de 250.000€.
     }

@@ -13,7 +13,7 @@ public abstract class Propiedad extends Casilla{
     private float valor;          //Valor de esa casilla
     private float alquiler;       //Suma que otros jugadores deberan abonar tras caer en la casilla
 
-    public Propiedad(String nombre, int posicion, Juego juego, Grupo grupo){
+    public Propiedad(String nombre, int posicion, Juego juego){
         this.valor = 0;
         this.alquiler = 0;
         this.grupo = null;

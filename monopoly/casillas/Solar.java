@@ -9,8 +9,8 @@ public final class Solar extends Propiedad{
     private float hipoteca;                     //Valor otorgado por hipotecar una casilla
     private boolean estarHipotecada;            //Booleano que indica si la casilla ha sido hipotecada o no
 
-    public Solar(String nombre, int posicion, Juego juego, Grupo grupo){
-        super(nombre, posicion, juego, grupo);                            //Llamammos al contructor de la clase pade
+    public Solar(String nombre, int posicion, Juego juego){
+        super(nombre, posicion, juego);                            //Llamammos al contructor de la clase pade
         this.edificios = new ArrayList<>();
         this.hipoteca = 0;
         this.estarHipotecada = false;

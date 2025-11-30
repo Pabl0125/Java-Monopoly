@@ -1,12 +1,10 @@
 package monopoly;
 
-import monopoly.casillas.Casilla;
-import monopoly.edificios.*;
-import monopoly.interfaces.Comando;
-import monopoly.interfaces.Consola;
 import monopoly.cartas.*;
-import monopoly.edificios.Edificacion;
-import monopoly.interfaces.Comando;
+import monopoly.casillas.*;
+import monopoly.edificios.*;
+import monopoly.excepciones.*;
+import monopoly.interfaces.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +51,7 @@ public class Juego implements Comando{
         avatares = new ArrayList<Avatar>();
         banca = new Jugador();
         jugadores.add(banca);
-        tablero = new Tablero(banca);
+        tablero = new Tablero(banca, this);
         turno = 1;
         dado1 = new Dado();
         dado2 = new Dado();
@@ -800,15 +798,16 @@ public class Juego implements Comando{
             consola.imprimir("No se puede edificar en una casilla de tipo '" + casillaActual.getTipo() + "'.");
             return;
         }
+        //Casting explicito para asegurarnos de que aplicamos metodos de propiedad sobre la casilla
+        Solar solarActual = (Solar) casillaActual;
 
         // Comprobar que el jugador es el dueño de la casilla
-        if (!casillaActual.getDuenho().equals(jugadorActual)) {
-            consola.imprimir("No eres el dueño de la casilla '" + casillaActual.getNombre() + "'.");
+        if (!solarActual.getDuenho().equals(jugadorActual)) {
+            consola.imprimir("No eres el dueño de la casilla '" + solarActual.getNombre() + "'.");
             return;
         }
-
         //Comprobar que el jugador posee todas las casillas del grupo
-        Grupo grupo = casillaActual.getGrupo();
+        Grupo grupo = solarActual.getGrupo();
         if (grupo == null) {
             consola.imprimir("Error: La casilla no pertenece a ningún grupo.");
             return;
@@ -830,7 +829,7 @@ public class Juego implements Comando{
         boolean casillaTienePiscina = false;
         boolean casillaTienePistaDeportiva =false;
         int numeroCasas=0;
-        Iterator<Edificacion> iterator = casillaActual.getEdificios().iterator();
+        Iterator<Edificacion> iterator = solarActual.getEdificios().iterator();
         while(iterator.hasNext()){
             Edificacion edificioRecorrido = iterator.next();
             if(edificioRecorrido.getTipo().equals("piscina")) casillaTienePiscina=true;
@@ -855,12 +854,12 @@ public class Juego implements Comando{
         }
         //No se puede adificar mas de una piscina
         if(casillaTienePiscina && tipoEdificio.equals("piscina")){
-            consola.imprimir("No se puede edificar una piscina ya que ya existe una en la casilla " + casillaActual.getNombre());
+            consola.imprimir("No se puede edificar una piscina ya que ya existe una en la casilla " + solarActual.getNombre());
             return;
         }
         //Comprobar si acasa ya existe un hotel, pista deportiva o piscina cuando se quiere crear una
         if(casillaTienePistaDeportiva && tipoEdificio.equals("pista deportiva")){
-            consola.imprimir("No se puede edificar una pista deportiva ya que ya existe una en la casilla " + casillaActual.getNombre());
+            consola.imprimir("No se puede edificar una pista deportiva ya que ya existe una en la casilla " + solarActual.getNombre());
             return;
         }
         // Comprobar que la casilla dispone de un hotel para crear una piscina
@@ -875,7 +874,7 @@ public class Juego implements Comando{
         }
         //Comprobar que el jugador tiene suficiente dinero
         if (jugadorActual.getFortuna() < costeEdificio) {
-            consola.imprimir("La fortuna de "+ jugadorActual + " no es suficinete para edificar un" + tipoEdificio + " en la casilla " + casillaActual.getNombre());
+            consola.imprimir("La fortuna de "+ jugadorActual + " no es suficinete para edificar un" + tipoEdificio + " en la casilla " + solarActual.getNombre());
             return;
         }
         //Hacer el pago por la contruccion y realizar la edificacion
@@ -883,22 +882,22 @@ public class Juego implements Comando{
         jugadorActual.sumarGastos(costeEdificio);
         //Si vamos a crear un hotel y hemos comprobado que existen 4 casas tenemos que eliminar las casas
         if(tipoEdificio.equals("hotel")){
-            casillaActual.getEdificios().removeIf(edificio -> edificio.getTipo().equals("casa"));
+            solarActual.getEdificios().removeIf(edificio -> edificio.getTipo().equals("casa"));
             consola.imprimir("Se han eliminado las casas para poder construir el hotel");
         }
         //Ahora cuando instanciamos un Edificio especificamos el tipo
         switch (tipoEdificio) {
             case "hotel":
-                new Hotel(casillaActual,tipoEdificio);
+                solarActual.anhadirEdificacion(new Hotel());
                 break;
             case "piscina":
-                new Piscina(casillaActual,tipoEdificio); 
+                solarActual.anhadirEdificacion(new Piscina());
                 break;
             case "pista deportiva":
-                new PistaDeportiva(casillaActual,tipoEdificio); 
+                solarActual.anhadirEdificacion(null);(new PistaDeportiva());
                 break;
             case "casa":
-                new Casa(casillaActual,tipoEdificio);
+                solarActual.anhadirEdificacion(new Casa());
                 break;
             default:
                 break;
