@@ -1,7 +1,7 @@
 package partida;
 
-import monopoly.*;
-
+import monopoly.casillas.Casilla;
+import monopoly.Tablero;
 import java.util.ArrayList;
 
 import java.util.Random;

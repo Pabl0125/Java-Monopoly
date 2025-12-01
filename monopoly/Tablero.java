@@ -1,11 +1,9 @@
 package monopoly;
-import monopoly.*;
 import partida.*;
 import monopoly.casillas.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.TransferHandler.TransferSupport;
 
 import java.util.HashMap;
 
@@ -15,7 +13,7 @@ public class Tablero {
     private ArrayList<ArrayList<Casilla>> posiciones; //Posiciones del tablero: se define como un arraylist de arraylists de casillas (uno por cada lado del tablero).
     private HashMap<String, Grupo> grupos; //Grupos del tablero, almacenados como un HashMap con clave String (será el color del grupo).
     private Jugador banca; //Un jugador que será la banca.
-    private Juego juego;
+    private final Juego juego;
     
     //Constructor: únicamente le pasamos el jugador banca (que se creará desde el menú).
     public Tablero(Jugador banca, Juego juego) {
@@ -285,7 +283,7 @@ public class Tablero {
 
     //Metodo para buscar la casilla más rentable del juego
     public ArrayList<String> buscarCasillaMasRentable(){
-        ArrayList <String> masRentables = new ArrayList<String>();
+        ArrayList<String> masRentables = new ArrayList<>();
         float maxRentabilidad = 0.0f;
 
         for (ArrayList<Casilla> lado : this.posiciones) {
@@ -327,7 +325,7 @@ public class Tablero {
 
     //Método para buscar el grupo más rentable del juego
     public ArrayList<String> buscarGrupoMasRentable(){
-        ArrayList <String> masRentables = new ArrayList<String>();
+        ArrayList<String> masRentables = new ArrayList<>();
         float maxRentabilidad = 0.0f;
 
         Iterator<HashMap.Entry<String, Grupo>> iterator = this.grupos.entrySet().iterator();

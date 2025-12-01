@@ -2,7 +2,15 @@ package partida;
 
 import java.util.ArrayList;
 
-import monopoly.*;
+import monopoly.casillas.Casilla;
+import monopoly.casillas.Propiedad;
+import monopoly.casillas.Impuesto;
+import monopoly.casillas.Transporte;
+import monopoly.casillas.Servicio;
+import monopoly.edificios.Edificacion;
+import monopoly.Tablero;
+import monopoly.Valor;
+import monopoly.Juego;
 
 public class Jugador {
 
@@ -35,7 +43,7 @@ public class Jugador {
         this.enCarcel = false; //Al crear el jugador, no está en la carcel.
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
-        this.propiedades=new ArrayList<Casilla>();//Al crear el jugador, la banca posee todas las propiedadades.
+        this.propiedades=new ArrayList<>();//Al crear el jugador, la banca posee todas las propiedadades.
         this.vueltas = 0;
     }
 
@@ -52,7 +60,7 @@ public class Jugador {
         this.enCarcel = false; //Al crear el jugador, no está en la car
         this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
-        this.propiedades = new ArrayList<Casilla>(); //Al crear el jugador, no tiene propiedades.
+        this.propiedades = new ArrayList<>(); //Al crear el jugador, no tiene propiedades.
         this.vecesEnCarcel = 0;
         this.dineroPremios = 0;
         this.dineroSalida = 0;
@@ -148,10 +156,10 @@ public class Jugador {
 
     public String edificiosJugador(){
         String edificiosFormato = "";
-        ArrayList<Edificacion> edificaciones = new ArrayList<Edificacion>();
+        ArrayList<Edificacion> edificaciones = new ArrayList<>();
         for(Casilla c: this.getPropiedades()){
-            for(Edificacion e: c.getEdificios()){
-                 edificaciones.add(e);
+            if (c instanceof Solar solar){
+                edificaciones.addAll(solar.getEdificios());
             }
         }
         if(edificaciones.isEmpty()){
@@ -164,6 +172,47 @@ public class Jugador {
         return edificiosFormato;
     }
     
+    public void cobrarImpuesto(Juego juego){
+        float impuesto = ((Impuesto) this.getAvatar().getLugar()).getImpuesto();
+        this.sumarFortuna(-impuesto);
+        this.sumarDineroTasasImpuestos(impuesto);
+        juego.getTablero().aumentarBoteParking(impuesto);
+        juego.getBanca().sumarFortuna(impuesto);
+    }
+
+    public void cobrarAlquiler(Propiedad p){
+        float alquiler = p.getAlquiler();
+        this.sumarFortuna(-alquiler);
+        this.sumarDineroPagoAlquileres(alquiler);
+        p.getDuenho().sumarFortuna(alquiler);
+        p.getDuenho().sumarDineroCobroAlquileres(alquiler);
+    }
+
+    public int numeroDeTransportes(){
+        int contador = 0;
+        for(Casilla c: this.getPropiedades()){
+            if(c instanceof Transporte){
+                contador++;
+            }
+
+        }
+        return contador;
+    }
+
+    public int numeroDeServicios(){
+        int contador = 0;
+        for(Casilla c: this.getPropiedades()){
+            if(c instanceof Servicio){
+                contador++;
+            }
+
+        }
+        return contador;
+    }
+    public boolean esSolvente(){
+        return this.fortuna >= 0;
+    }
+
 
     //Getters y setters: 
     public String getNombre() {
