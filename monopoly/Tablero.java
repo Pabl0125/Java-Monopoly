@@ -174,7 +174,7 @@ public class Tablero {
         gServicios.anhadirCasilla(c13);
         this.grupos.put("Servicios", gServicios);
     }
-
+    /* 
     public void imprimirTablero() {
             String[][] tablero = new String[11][11];
             // Lado Sur 
@@ -250,6 +250,7 @@ public class Tablero {
         }
         return texto_base;
     }
+    */
     
     //Metodo para aumentar el bote del parking
     public void aumentarBoteParking(float valor){

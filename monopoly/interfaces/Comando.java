@@ -14,31 +14,31 @@ public interface Comando{
 
     void listarEdificiosPorGrupo(String grupoNombre);  //Implementado
 
-    void lanzarDados();
+    void lanzarDados(); //Implementado
     
-    void lanzarDados(String tiradaForzada);
+    void lanzarDados(String tirada); //Implementado
 
-    void acabarTurno();
+    void acabarTurno(); //Implementado
 
-    void salirCarcel();
+    void salirCarcel();     //Implementado
 
     void descJugador(String nombre);    //Implementado
 
     void descCasilla(String nombreCasilla); //Implementado
 
-    void comprar(String nombreCasilla);
+    void comprar(String nombreCasilla); //Implementado
 
-    void venderEdificacion(String tipo, String casilla, String cantidad);
+    void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr);  //Implementado
 
-    void mostrarEstadisticas();
+    void mostrarEstadisticasJuego(); //Implementado
 
-    void mostrarEstadisticas(String nombreJugador);
+    void mostrarEstadisticas(String jugador);   //Implementado
 
-    void edificar(String tipoEdificio);
+    void edificar(String tipoEdificio);  //Implementado
 
-    void verTablero();
+    void verTablero();  //Implementado
 
-    void hipotecar(String nombreCasilla);
+    void hipotecarPropiedad(String casilla);   //Implementado
 
-    void deshipotecar(String nombreCasilla);
-}
+    void deshipotecar(String casilla);      //Implementado
+}  
