@@ -30,7 +30,7 @@ public final class Solar extends Propiedad{
         this.estarHipotecada = estarHipotecada;
     }
 
-    ////////////////METODOS GENERICOS/////////////////////
+    ////////////////METODOS GENERICOS/////////////////////      q   1
     
     public void eliminarEdificacion(Edificacion edificacion){
         this.edificios.remove(edificacion);
@@ -48,6 +48,7 @@ public final class Solar extends Propiedad{
         }
         setAlquiler(total);
     }
+
     
     /////////////////METODOS SOBREESCRITOS/////////////////////
     @Override
@@ -68,8 +69,14 @@ public final class Solar extends Propiedad{
         Jugador jugadorActual = getJuego().getJugadorActual();
         //CASO 1: El solar es de un tercero y se debe pagar el importe correspondiente al alquiler de la propiedad
         if(!this.getDuenho().equals(getJuego().getBanca()) && !this.getDuenho().equals(jugadorActual)){
-            jugadorActual.cobrarAlquiler(this);
-            return jugadorActual.esSolvente();      //Nota: Si acaso el saldo del jugador era menor que el dinero del alquiler saldra como no solvente pues tendra saldo negativo
+            if(this.estarHipotecada){
+                getJuego().getConsola().imprimir("Has caído en una propiedad hipotecada. No pagas alquiler.");
+                return true;
+            }else{
+                jugadorActual.cobrarAlquiler(this);
+                return jugadorActual.esSolvente();      //Nota: Si acaso el saldo del jugador era menor que el dinero del alquiler saldra como no solvente pues tendra saldo negativo
+            }
+            
         }
         //CASO 2: El solar es del jugador que ha caido en la casilla
         else if(this.getDuenho().equals(jugadorActual)){ //Caso de que el dueño sea el mismo jugador

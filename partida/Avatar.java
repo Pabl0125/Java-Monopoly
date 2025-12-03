@@ -17,37 +17,48 @@ public class Avatar {
     private Jugador jugador; //Un jugador al que pertenece ese avatar.
     private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
 
-    //Constructor vacío
-    public Avatar() {
-    }
+    ////////////CONSTRUCTORES//////////////
 
-    /*Constructor principal. Requiere éstos parámetros:
-    * Tipo del avatar, jugador al que pertenece, lugar en el que estará ubicado, y un arraylist con los
-    * avatares creados (usado para crear un ID distinto del de los demás avatares).
-     */
     public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
         this.generarId(avCreados);
         this.tipo = tipo;
         this.jugador = jugador;
         this.lugar = lugar;
-        //Añadimos el avatar a la lista de avatares de su casilla inicial
         if (lugar != null) {
             lugar.anhadirAvatar(this);
         }
     }
-    //A continuación, tenemos otros métodos útiles para el desarrollo del juego.
-    /*Método que permite mover a un avatar a una casilla concreta. Parámetros:
-    * - El tablero, para poder encontrar la nueva casilla.
-    * - Un entero que indica el numero de casillas a moverse (será el valor sacado en la tirada de los dados).
-    * ESTA VERSIÓN ACEPTA MOVIMIENTOS HACIA ATRÁS (VALORES NEGATIVOS).
-     */
+    //////////////////GETTERS Y SETTERS///////////////
+    public String getId() {
+        return id;
+    }
+    public String getTipo() {
+        return tipo;
+    }
+    public Jugador getJugador() {
+        return jugador;
+    }
+    public Casilla getLugar() {
+        return lugar;
+    }
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+    }
+    public void setLugar(Casilla lugar) {
+        this.lugar = lugar;
+    }
+
+    ///////////METODOS GENERICOS///////////
     public void moverAvatar(Tablero tablero, int valorTirada) {
         if (this.lugar == null) {
             System.err.println("Error: el avatar no está en ninguna casilla.");
             return;
         }
 
-        // 1. Eliminar el avatar de la casilla actual
+        // Eliminar el avatar de la casilla actual
         this.lugar.eliminarAvatar(this);
 
         // 2. Calcular la nueva posición, dando la vuelta al tablero si es necesario y 
@@ -73,14 +84,14 @@ public class Avatar {
         }
 
         if (pasoPorSalida) {
-            // El avatar ha pasado por la casilla de salida en movimiento hacia adelante
-            this.jugador.sumarFortuna(2000000f); // Añadimos 2000000 al saldo del jugador
-            this.jugador.sumarDineroSalida(2000000f);  //Sumamos el dinero a la estadistica
-            this.jugador.sumarNumeroDeVueltas(1);       //Sumamos otra vuelta
+                                                               // El avatar ha pasado por la casilla de salida en movimiento hacia adelante
+            this.jugador.sumarFortuna(Valor.SUMA_VUELTA);         // Añadimos 2000000 al saldo del jugador
+            this.jugador.sumarDineroSalida(Valor.SUMA_VUELTA);    //Sumamos el dinero a la estadistica
+            this.jugador.sumarVueltas(1);                //Sumamos otra vuelta
             System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000€ al saldo del jugador " + this.jugador.getNombre() + ".");
         }
 
-        // 3. Encontrar la nueva casilla y actualizar el estado
+        // Encontrar la nueva casilla y actualizar el estado
         Casilla nuevaCasilla = tablero.encontrar_casilla_por_posicion(nuevaPosicion);
         this.setLugar(nuevaCasilla); // Actualizamos la casilla en el avatar
         
@@ -90,10 +101,7 @@ public class Avatar {
         this.lugar.anhadirAvatar(this);
     }
 
-    /*Método que permite  mayúscula. Parámetros:
-    * - Un arraylist de logenerar un ID para un avatar. Sólo lo usamos en esta clase (por ello es privado).
-    * El ID generado será una letras avatares ya creados, con el objetivo de evitar que se generen dos ID iguales.
-     */
+
     private void generarId(ArrayList<Avatar> avCreados) {
         Random rand = new Random();
         char letra;
@@ -119,30 +127,7 @@ public class Avatar {
     }
 
 
-
-
-    //Getters y setters:
-    public String getId() {
-        return id;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-    public Jugador getJugador() {
-        return jugador;
-    }
-    public Casilla getLugar() {
-        return lugar;
-    }
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-    public void setJugador(Jugador jugador) {
-        this.jugador = jugador;
-    }
-    public void setLugar(Casilla lugar) {
-        this.lugar = lugar;
-    }
+    ///////////////METODOS SOBREESCRITOS///////////////
     @Override
     public String toString() {
         System.out.println("Avatar " + this.id + " (" + this.tipo + ") del jugador " + this.jugador.getNombre() +

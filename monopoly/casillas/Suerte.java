@@ -14,12 +14,8 @@ public final class Suerte extends Accion{
     }
     @Override
     public boolean evaluarCasilla(){
-        getJuego().getConsola().imprimir(getJuego().getJugadorActual().getNombre() + " ha caído en " + getJuego().getJugadorActual().getAvatar().getLugar().getNombre() + " y debe tomar una carta de Suerte");
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //A continuacion aqui se debe implementar la logica de coger una carta y ejecutar la accion correspondiente
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+        this.getJuego().getConsola().imprimir(getJuego().getJugadorActual().getNombre() + " ha caído en " + getJuego().getJugadorActual().getAvatar().getLugar().getNombre() + " y debe tomar una carta de Suerte");
+        this.getJuego().sacarCartaSuerte(getJuego().getJugadorActual());
         return getJuego().getJugadorActual().esSolvente();
     }
     

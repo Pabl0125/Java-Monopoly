@@ -16,7 +16,7 @@ public Impuesto(String nombre, int posicion,Juego juego){
     }
     @Override
     public boolean evaluarCasilla(){
-        getJuego().getJugadorActual().cobrarImpuesto(getJuego());     //En el metodo cobrarImpuesto ya se implementa la logica de las estadisticas y del bote del parking        
+        getJuego().getJugadorActual().cobrarImpuesto(this);     //En el metodo cobrarImpuesto ya se implementa la logica de las estadisticas y del bote del parking        
         if(getJuego().getJugadorActual().esSolvente())return true;
         else return false;
     }

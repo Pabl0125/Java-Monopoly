@@ -13,12 +13,8 @@ public final class CajaComunidad extends Casilla{
     }
     @Override
     public boolean evaluarCasilla(){
-        getJuego().getConsola().imprimir(getJuego().getJugadorActual().getNombre() + " ha caído en " + getJuego().getJugadorActual().getAvatar().getLugar().getNombre() + " y debe tomar una carta de Caja de Comunidad.");
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //A continuacion aqui se debe implementar la logica de coger una carta y ejecutar la accion correspondiente
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// 
+        this.getJuego().getConsola().imprimir(getJuego().getJugadorActual().getNombre() + " ha caído en " + getJuego().getJugadorActual().getAvatar().getLugar().getNombre() + " y debe tomar una carta de Caja de Comunidad.");
+        this.getJuego().sacarCartaCajaComunidad(getJuego().getJugadorActual());
         return getJuego().getJugadorActual().esSolvente();
     }
 }

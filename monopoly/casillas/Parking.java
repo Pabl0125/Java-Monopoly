@@ -27,7 +27,7 @@ public final class Parking extends Accion{
             getJuego().getJugadorActual().sumarDineroPremios(this.bote);
             this.bote = 0;      //Tras el cobro el bote se reinicia a 0
         } else {
-            System.out.println("El parking no tiene dinero en el bote.");
+            getJuego().getConsola().imprimir("El parking no tiene dinero en el bote.");
         }
         return true;
     }

@@ -6,7 +6,7 @@ import partida.*;
 public class Especial extends Casilla{
     
     public Especial(String nombre, int posicion, Juego juego){
-        super(nombre, posicion,juego);                    //Llamamos al contructor de la clase padre
+        super(nombre,posicion,juego);                    //Llamamos al contructor de la clase padre
     }
     /////////////METODOS SOBREESCRITOS/////////////
     @Override
@@ -26,6 +26,7 @@ public class Especial extends Casilla{
                 getJuego().getConsola().imprimir("¡" + getJuego().getJugadorActual().getNombre() + " ha llegado a la salida!");
                 ////////////////////////////////////////////////////////////////////////////////////////////
                 //Al jugador luego se le debe sumar la cantidad correspondiente por pasar por la salida
+                //Esto está implementado en el método de la clase Avatar --> moverAvatar();
                 ////////////////////////////////////////////////////////////////////////////////////////////
                 return true;
             case "IrACarcel":

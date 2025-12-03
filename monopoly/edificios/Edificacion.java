@@ -1,11 +1,11 @@
 package monopoly.edificios;
 
 public abstract class Edificacion {
-    private final String tipo;                //Tipo de edificación (casa, hotel, etc.)
+    private final String tipo;          //Tipo de edificación (casa, hotel, etc.)
     private float valor;                //Valor de la edificación
     private float alquiler;             //Alquiler que genera la edificación
     private static int currenIdCount;   //Lleva la cuenta de los ids
-    private final int id;                     //Id de la edificacion actual
+    private final int id;               //Id de la edificacion actual
     
     public Edificacion() {
         currenIdCount++;
@@ -31,8 +31,6 @@ public abstract class Edificacion {
     public void setAlquiler(float alquiler){
         this.alquiler = alquiler;
     }
-    /////////////////METODOS GENERICOS//////////////////
-
 
     //////////////////METODOS SOBREESCRITOS/////////////
     @Override
