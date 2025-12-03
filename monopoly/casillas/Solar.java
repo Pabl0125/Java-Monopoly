@@ -5,8 +5,8 @@ import partida.*;
 import java.util.ArrayList;
 
 public final class Solar extends Propiedad{
-    private ArrayList<Edificacion> edificios;   //ArrayList de edificaciones que posee la casilla
-    private float hipoteca;                     //Valor otorgado por hipotecar una casilla
+    private final ArrayList<Edificacion> edificios;   //ArrayList de edificaciones que posee la casilla
+    private final float hipoteca;                     //Valor otorgado por hipotecar una casilla
     private boolean estarHipotecada;            //Booleano que indica si la casilla ha sido hipotecada o no
 
     public Solar(String nombre, int posicion, Juego juego){
@@ -61,7 +61,7 @@ public final class Solar extends Propiedad{
                 "\nRentabilidad: " + this.getRentabilidad() +
                 "\nHipotecada: " + this.getEstarHipotecada()+
                 "\nAlquiler: " + this.getAlquiler() +
-                "\nJugadores: " + this.getListaJugadoresEnCasilla().toString().trim();
+                "\nJugadores: " + this.getListaJugadoresEnCasilla().trim();
     }
     @Override
     public boolean evaluarCasilla(){

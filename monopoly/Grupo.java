@@ -2,15 +2,13 @@ package monopoly;
 import monopoly.casillas.*;
 import partida.*;
 import java.util.ArrayList;
-import java.util.Properties;
 
-import monopoly.casillas.Casilla;
 
 
 public class Grupo {
 
     //Atributos
-    private ArrayList<Propiedad> miembros; //Casillas miembros del grupo.
+    private final ArrayList<Propiedad> miembros; //Casillas miembros del grupo.
     private String colorGrupo; //Color del grupo
     private int numCasillas; //Número de casillas del grupo.
     private float precioCasa;
@@ -21,34 +19,34 @@ public class Grupo {
 
     ////////////////////CONSTRUCTORES////////////////////
     public Grupo() {
-        this.miembros = new ArrayList<Propiedad>();
+        this.miembros = new ArrayList<>();
         this.colorGrupo = null;                         //Convendria luego meterle un color a los genericos
         this.numCasillas = 0;
         this.rentabilidad = 0;
     }
 
     public Grupo(Propiedad cas1, Propiedad cas2, String colorGrupo) {
-        this.miembros = new ArrayList<Propiedad>();
+        this.miembros = new ArrayList<>();
         this.miembros.add(cas1);
         this.miembros.add(cas2);
-        cas1.setGrupo(this);
-        cas2.setGrupo(this);
         this.colorGrupo = colorGrupo;
         this.numCasillas = 2;
         asignarPreciosEdificios(colorGrupo);
+        cas1.setGrupo(this);
+        cas2.setGrupo(this);
     }
 
     public Grupo(Propiedad cas1, Propiedad cas2, Propiedad cas3, String colorGrupo) {
-        this.miembros = new ArrayList<Propiedad>();
+        this.miembros = new ArrayList<>();
         miembros.add(cas1);
         miembros.add(cas3);
         miembros.add(cas2);
-        cas1.setGrupo(this);
-        cas2.setGrupo(this);
-        cas3.setGrupo(this);
         this.colorGrupo = colorGrupo;
         this.numCasillas = 3;
         asignarPreciosEdificios(colorGrupo);
+        cas1.setGrupo(this);
+        cas2.setGrupo(this);
+        cas3.setGrupo(this);
     }
 
     //////////////////////METODOS GENERICOS////////////////////

@@ -230,8 +230,7 @@ public class Juego implements Comando{
                         mostrarEstadisticasJuego();
                     }
                     else if(partesComando.length == 2){
-                        String jugador = partesComando[1];
-                        mostrarEstadisticas(jugador);
+                        mostrarEstadisticas(partesComando[1]);
                     }
                     else System.err.println("Invalid command");
                     break;
@@ -245,7 +244,7 @@ public class Juego implements Comando{
                     break;
                 case "ver":
                     if(partesComando.length == 2 && partesComando[1].equals("tablero")){
-                        tablero.imprimirTablero();
+                        verTablero();
                     }
                     else System.err.println("Invalid command");
                     break;
@@ -376,7 +375,8 @@ public class Juego implements Comando{
         }
     }
     
-    private void lanzarDados(String tirada) {
+    @Override   
+    public void lanzarDados(String tirada) {
         Jugador jugadorActual = jugadores.get(turno);
         Avatar avatarActual = jugadorActual.getAvatar();
         int doblesSeguidos = 0;
@@ -462,8 +462,8 @@ public class Juego implements Comando{
 
     }
 
-    
-    private void lanzarDados() {
+    @Override
+    public void lanzarDados() {
         Jugador jugadorActual = jugadores.get(turno);
         Avatar avatarActual = jugadorActual.getAvatar();
         int doblesSeguidos = 0;
@@ -526,7 +526,8 @@ public class Juego implements Comando{
     /*Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
     * Parámetro: cadena de caracteres con el nombre de la casilla.
      */
-    private void comprar(String nombre) {
+    @Override
+    public void comprar(String nombre) {
         //Busco si existe una casilla con ese nombre
         Casilla c = tablero.encontrar_casilla(nombre);
         if (c == null) {
@@ -558,7 +559,8 @@ public class Juego implements Comando{
 
 
     //Método que ejecuta todas las acciones relacionadas con el comando 'salir carcel'. 
-    private void salirCarcel() {
+    @Override
+    public void salirCarcel() {
         if (jugadores == null || jugadores.isEmpty()) {
             consola.imprimir("No hay jugadores en la partida.");
             return;
@@ -578,7 +580,6 @@ public class Juego implements Comando{
         }else{
             consola.imprimir(jugadorActual.getNombre() + " no tiene suficiente dinero para pagar la fianza de " + String.format("%,.0f", fianza).replace(",",".") + "€.");
             consola.imprimir("Debe intentar sacar dobles o declararse en bancarrota si no puede conseguir el dinero.");
-            //POSTERIORMENTE SE IMPLEMENTARÁ LA CASUÍSTICA DE SACAR DOBLES/BANCARROTA/CARTA DE LA SUERTE
         }
      
     }
@@ -767,7 +768,8 @@ public class Juego implements Comando{
     
 
     // Método que realiza las acciones asociadas al comando 'acabar turno'.
-    private void acabarTurno() {
+    @Override
+    public void acabarTurno() {
         if(jugadores == null || jugadores.isEmpty()){
             consola.imprimir("No hay jugadores en la partida.");
             return;
@@ -788,7 +790,8 @@ public class Juego implements Comando{
         consola.imprimir("Nombre:" + this.jugadores.get(turno).getNombre() + "\nAvatar: " + this.jugadores.get(turno).getAvatar().getId());
     }
 
-    private void edificar(String tipoEdificio) {
+    @Override
+    public void edificar(String tipoEdificio) {
         Jugador jugadorActual = jugadores.get(turno);
         Avatar avatarActual = jugadorActual.getAvatar();
         Casilla casillaActual = avatarActual.getLugar();
@@ -913,6 +916,7 @@ public class Juego implements Comando{
     - nombre_casilla: nombre de la casilla donde se encuentran los edificios.
     - cantidad: número de edificios a vender.
     */
+    @Override
     public void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr){
         Jugador jugadorActual = jugadores.get(turno);
         int cantidad;
@@ -979,6 +983,7 @@ public class Juego implements Comando{
         }
     }
 
+    @Override
     public void hipotecarPropiedad(String casilla){
         Casilla c = tablero.encontrar_casilla(casilla);
         Jugador JugadorActual = jugadores.get(turno);
@@ -1020,6 +1025,7 @@ public class Juego implements Comando{
 
     }
 
+    @Override
     public void deshipotecar(String casilla){
         Casilla c = tablero.encontrar_casilla(casilla);
         Jugador JugadorActual = jugadores.get(turno);
@@ -1062,7 +1068,7 @@ public class Juego implements Comando{
         return;
     }
     
-
+    @Override
     public void mostrarEstadisticas(String jugador){
         Jugador jugadorEncontrado = null;
         for (Jugador jugadorE: jugadores){
@@ -1086,6 +1092,7 @@ public class Juego implements Comando{
         consola.imprimir("}");
 
     }
+
     public ArrayList<String> buscarJugadorConMasVueltas(){
         ArrayList<String> jugadoresMasVueltas = new ArrayList<String>();
         int numeroMaximoVueltas = 0;
@@ -1134,6 +1141,7 @@ public class Juego implements Comando{
         return array.stream().collect(Collectors.joining(","));
     }
 
+    @Override
     public void mostrarEstadisticasJuego(){
         consola.imprimir("{");
         consola.imprimir("casillaMasRentable: " + corchetesToComas(tablero.buscarCasillaMasRentable()) + ",");
@@ -1142,5 +1150,91 @@ public class Juego implements Comando{
         consola.imprimir("jugador(es)MasVueltas: " + corchetesToComas(buscarJugadorConMasVueltas()) + ",");
         consola.imprimir("jugadorEnCabeza: " + corchetesToComas(buscarJugadorEnCabeza()) + ",");
         consola.imprimir("}");
+    }
+
+    /*
+    Método para mostrar el tablero actual por pantalla.
+    Anteriormente implementado en la clase Tablero.
+    Adaptado para implementarse aquí (clase Juego).
+    */
+    @Override
+    public void verTablero() {
+            String[][] mostrar = new String[11][11];
+            // Lado Sur 
+            ArrayList<Casilla> sur = tablero.getPosiciones().get(0);
+            for (int i = 0; i < 10; i++) {  //Se insertaron las casillas del lado sur en orden inverso (salida empieza a la izquierda)
+                mostrar[10][10 - i] = formatearCasilla(sur.get(i));    //Por lo que se deben imprimir en orden inverso.
+            }
+            // Lado Oeste 
+            ArrayList<Casilla> oeste = tablero.getPosiciones().get(1);
+            for (int i = 0; i < 10; i++) {
+                mostrar[10 - i][0] = formatearCasilla(oeste.get(i));
+            }
+            // Lado Norte
+            ArrayList<Casilla> norte = tablero.getPosiciones().get(2);
+            for (int i = 0; i < 10; i++) {
+                mostrar[0][i] = formatearCasilla(norte.get(i));
+            }
+            // Lado Este
+            ArrayList<Casilla> este = tablero.getPosiciones().get(3);
+            for (int i = 0; i < 10; i++) {
+                mostrar[i][10] = formatearCasilla(este.get(i));
+            }
+            // Rellenar espacios vacíos
+            for (int i = 1; i < 10; i++) {
+                for (int j = 1; j < 10; j++) {
+                    // Ajustar el espacio central al ancho de la casilla + 3 caracteres ([... ])
+                    mostrar[i][j] = "               ";
+                }
+            }
+            // Imprimir el tablero
+            for (int i = 0; i < mostrar.length; i++) {
+                for (int j = 0; j < mostrar.length; j++){
+                    if(i == 0 || i == 10 || j == 0 || j == 10){
+                        System.out.print("[" + mostrar[i][j] + " ]");
+                    } else {
+                        System.out.print(mostrar[i][j]);
+                    }
+            }
+            System.out.println();
+        }
+    }
+
+    /*
+    Método privado para darle formato a cada casilla que
+    se imprimirá en el tablero.
+    */
+    private String formatearCasilla(Casilla c){
+        String nombre = c.getNombre();
+        String avatares = "";
+        // 1. Obtener la cadena de texto base (sin colores)
+        if(c.getAvatares() != null && !c.getAvatares().isEmpty()){
+            avatares = "&";
+            for(Avatar a : c.getAvatares()){
+                avatares += a.getId();
+            }
+        }
+
+        String texto_base = nombre + " " + avatares; // Combinar nombre y avatares
+
+        // 2. Aplicar el ancho fijo de 10 caracteres al texto BASE
+        if(texto_base.length() < 12){
+            texto_base = String.format("%-12s", texto_base);
+        } else if(texto_base.length() > 12){
+            texto_base = texto_base.substring(0, 12);
+        }
+
+        // AHORA, añadir el color (si existe) al texto BASE formateado
+        if(c instanceof Propiedad){
+            Propiedad p = (Propiedad) c;
+            Grupo g = p.getGrupo();
+            if(g != null && g.getcolorGrupo() != null){
+                // Concatenamos las secuencias ANSI al String que ya tiene 10 caracteres
+                return g.getcolorGrupo() + texto_base + Valor.RESET;
+            } else {
+                return texto_base;
+            }            
+        }
+        return texto_base;
     }
 }

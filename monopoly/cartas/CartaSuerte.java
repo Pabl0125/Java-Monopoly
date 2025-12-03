@@ -2,6 +2,7 @@ package monopoly.cartas;
 
 import partida.Jugador;
 import monopoly.Tablero;
+import monopoly.casillas.Transporte;
 
 import java.util.ArrayList;
 
@@ -84,7 +85,7 @@ public class CartaSuerte extends Carta {
                 }
 
                 tablero.moverA(casillaDestino, jugadorActual);
-                Jugador duenho = tablero.encontrar_casilla(casillaDestino).getDuenho();
+                Jugador duenho =((Transporte) tablero.encontrar_casilla(casillaDestino)).getDuenho();
                 System.out.println("Si caes en una propiedad de otro jugador, el pago será el doble de lo normal.");
 
                 if (duenho.getNombre().equals("Banca")) {
@@ -93,7 +94,7 @@ public class CartaSuerte extends Carta {
                 } else if (!duenho.equals(jugadorActual)) {
 
                     //Si la casilla tiene dueño y no es el jugador actual
-                    float pagoNormal = tablero.encontrar_casilla(casillaDestino).getImpuesto();
+                    float pagoNormal = ((Transporte) tablero.encontrar_casilla(casillaDestino)).getAlquiler();
                     System.out.println("La propiedad tiene dueño. Debes pagar el doble: " + (pagoNormal * 2) + "€.");
                     float pagoDoble = pagoNormal * 2;
                     //Realizar el pago

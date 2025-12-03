@@ -7,6 +7,16 @@ import monopoly.edificios.Edificacion;
 import partida.*;
 import java.util.ArrayList;
 
+import monopoly.casillas.Casilla;
+import monopoly.casillas.Propiedad;
+import monopoly.casillas.Impuesto;
+import monopoly.casillas.Transporte;
+import monopoly.casillas.Servicio;
+import monopoly.edificios.Edificacion;
+import monopoly.Tablero;
+import monopoly.Valor;
+import monopoly.Juego;
+
 public class Jugador {
 
     //Atributos:
@@ -30,6 +40,14 @@ public class Jugador {
     
     //Constructor vacío. Se usará para crear la banca.
     public Jugador() {
+        this.nombre="Banca"; //Se asigna el nombre del jugador.
+        this.avatar = null; //La banca no tiene avatar.
+        this.fortuna=Valor.FORTUNA_BANCA; //La banca empieza con 1.
+        this.gastos = 0; //Al crear el jugador, no ha realizado ningún gasto.
+        this.enCarcel = false; //Al crear el jugador, no está en la carcel.
+        this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
+        this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
+        this.propiedades=new ArrayList<>();//Al crear el jugador, la banca posee todas las propiedadades.
         this.nombre="Banca"; 
         this.avatar = null; 
         this.fortuna=Valor.FORTUNA_BANCA; 
@@ -39,6 +57,22 @@ public class Jugador {
         this.vueltas = 0;
         this.propiedades=new ArrayList<>();
         this.vueltas = 0;
+    }
+
+    /*Constructor principal. Requiere parámetros:
+    * Nombre del jugador, tipo del avatar que tendrá, casilla en la que empezará y ArrayList de
+    * avatares creados (usado para dos propósitos: evitar que dos jugadores tengan el mismo nombre y
+    * que dos avatares tengan mismo ID). Desde este constructor también se crea el avatar.
+     */
+    public Jugador(String nombre, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados) {
+        this.nombre = nombre;//Se asigna el nombre del jugador.
+        this.avatar = new Avatar(tipoAvatar, this, inicio, avCreados);//Se crea el avatar del jugador.
+        this.fortuna=Valor.FORTUNA_INICIAL; //Cada jugador empieza con Valor.Fortunainicial
+        this.gastos = 0; //Al crear el jugador, no ha realizado ningún gasto.
+        this.enCarcel = false; //Al crear el jugador, no está en la car
+        this.tiradasCarcel = 0; //Al crear el jugador, no ha tirado para salir de la carcel.
+        this.vueltas = 0; //Al crear el jugador, no ha dado ninguna vuelta.
+        this.propiedades = new ArrayList<>(); //Al crear el jugador, no tiene propiedades.
         this.vecesEnCarcel = 0;
         this.dineroPremios = 0;
         this.dineroSalida = 0;
@@ -151,6 +185,10 @@ public class Jugador {
     }
     public String edificiosEnPropiedad(){
         String edificiosFormato = "";
+        ArrayList<Edificacion> edificaciones = new ArrayList<>();
+        for(Casilla c: this.getPropiedades()){
+            if (c instanceof Solar solar){
+                edificaciones.addAll(solar.getEdificios());
         ArrayList<Edificacion> edificaciones = new ArrayList<Edificacion>();
 
         for(Propiedad c: this.getPropiedades()){
@@ -168,6 +206,48 @@ public class Jugador {
         }
         return edificiosFormato;
     }
+    
+    public void cobrarImpuesto(Juego juego){
+        float impuesto = ((Impuesto) this.getAvatar().getLugar()).getImpuesto();
+        this.sumarFortuna(-impuesto);
+        this.sumarDineroTasasImpuestos(impuesto);
+        juego.getTablero().aumentarBoteParking(impuesto);
+        juego.getBanca().sumarFortuna(impuesto);
+    }
+
+    public void cobrarAlquiler(Propiedad p){
+        float alquiler = p.getAlquiler();
+        this.sumarFortuna(-alquiler);
+        this.sumarDineroPagoAlquileres(alquiler);
+        p.getDuenho().sumarFortuna(alquiler);
+        p.getDuenho().sumarDineroCobroAlquileres(alquiler);
+    }
+
+    public int numeroDeTransportes(){
+        int contador = 0;
+        for(Casilla c: this.getPropiedades()){
+            if(c instanceof Transporte){
+                contador++;
+            }
+
+        }
+        return contador;
+    }
+
+    public int numeroDeServicios(){
+        int contador = 0;
+        for(Casilla c: this.getPropiedades()){
+            if(c instanceof Servicio){
+                contador++;
+            }
+
+        }
+        return contador;
+    }
+    public boolean esSolvente(){
+        return this.fortuna >= 0;
+    }
+
 
     //Cobra el impuesto correspondiente a la casilla en la que esta 
     // el jugador y actualizar estadisticas y bote del parking

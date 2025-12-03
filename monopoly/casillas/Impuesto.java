@@ -1,10 +1,9 @@
 package monopoly.casillas;
-import java.util.ArrayList;
+
 import monopoly.*;
-import partida.*;
 
 public class Impuesto extends Casilla{
-    private float impuesto;                         //Cantidad a pagar por caer en la casilla que se añade al bote del parking
+    private final float impuesto;                         //Cantidad a pagar por caer en la casilla que se añade al bote del parking
 
 public Impuesto(String nombre, int posicion,Juego juego){
         super(nombre,posicion,juego);                     //Llamammos al contructor de la clase padre

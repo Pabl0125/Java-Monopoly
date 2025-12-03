@@ -1,5 +1,7 @@
 package partida;
 
+import monopoly.casillas.Casilla;
+import monopoly.Tablero;
 import monopoly.*;
 import monopoly.casillas.Casilla;
 
