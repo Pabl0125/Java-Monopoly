@@ -4,6 +4,7 @@ import monopoly.casillas.Casilla;
 import monopoly.Tablero;
 import monopoly.*;
 import monopoly.casillas.Casilla;
+import monopoly.excepciones.JuegoException;
 
 import java.util.ArrayList;
 
@@ -52,10 +53,9 @@ public class Avatar {
     }
 
     ///////////METODOS GENERICOS///////////
-    public void moverAvatar(Tablero tablero, int valorTirada) {
+    public void moverAvatar(Tablero tablero, int valorTirada) throws JuegoException {
         if (this.lugar == null) {
-            System.err.println("Error: el avatar no está en ninguna casilla.");
-            return;
+            throw new JuegoException("Error: el avatar no está en ninguna casilla.");
         }
 
         // Eliminar el avatar de la casilla actual

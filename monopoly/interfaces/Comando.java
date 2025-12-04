@@ -1,44 +1,46 @@
 package monopoly.interfaces;
 
+import monopoly.excepciones.MonopolyException;
+
 public interface Comando{
     
-    void crearJugador(String nombre, String tipoAvatar);    //Implementado
+    void crearJugador(String nombre, String tipoAvatar) throws MonopolyException;
 
-    void mostrarJugadorTurno();  //Implementado
+    void mostrarJugadorTurno() throws MonopolyException;
 
-    void listarJugadores(); //Implementado
+    void listarJugadores() throws MonopolyException;
 
-    void listarEnVenta();   //Implementado
+    void listarEnVenta() throws MonopolyException;
 
-    void listarEdificios(); //Implementado
+    void listarEdificios() throws MonopolyException;
 
-    void listarEdificiosPorGrupo(String grupoNombre);  //Implementado
+    void listarEdificiosPorGrupo(String grupoNombre) throws MonopolyException;
 
-    void lanzarDados(); //Implementado
+    void lanzarDados() throws MonopolyException;
     
-    void lanzarDados(String tirada); //Implementado
+    void lanzarDados(String tirada) throws MonopolyException;
 
-    void acabarTurno(); //Implementado
+    void acabarTurno() throws MonopolyException;
 
-    void salirCarcel();     //Implementado
+    void salirCarcel() throws MonopolyException;
 
-    void descJugador(String nombre);    //Implementado
+    void descJugador(String nombre) throws MonopolyException;
 
-    void descCasilla(String nombreCasilla); //Implementado
+    void descCasilla(String nombreCasilla) throws MonopolyException;
 
-    void comprar(String nombreCasilla); //Implementado
+    void comprar(String nombreCasilla) throws MonopolyException;
 
-    void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr);  //Implementado
+    void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr) throws MonopolyException;
 
-    void mostrarEstadisticasJuego(); //Implementado
+    void mostrarEstadisticasJuego() throws MonopolyException;
 
-    void mostrarEstadisticas(String jugador);   //Implementado
+    void mostrarEstadisticas(String jugador) throws MonopolyException;
 
-    void edificar(String tipoEdificio);  //Implementado
+    void edificar(String tipoEdificio) throws MonopolyException;
 
-    void verTablero();  //Implementado
+    void verTablero() throws MonopolyException;
 
-    void hipotecarPropiedad(String casilla);   //Implementado
+    void hipotecarPropiedad(String casilla) throws MonopolyException;
 
-    void deshipotecar(String casilla);      //Implementado
-}  
+    void deshipotecar(String casilla) throws MonopolyException;
+}
