@@ -1,5 +1,6 @@
 package monopoly.casillas;
 import monopoly.*;
+import monopoly.excepciones.MonopolyException;
 import partida.*;
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public abstract class Casilla{
 
     ///////////////METODOS ABSTRACTOS///////////////
     public abstract String infoCasilla();
-    public abstract boolean evaluarCasilla();
+    public abstract boolean evaluarCasilla() throws MonopolyException;
     
     ///////////////GETTERS////////////////
 

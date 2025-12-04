@@ -1,5 +1,7 @@
 package monopoly.casillas;
 import monopoly.*;
+import monopoly.excepciones.BancarrotaException;
+import monopoly.excepciones.DineroInsuficienteException;
 import partida.*;
 public final class Servicio extends Propiedad{
     
@@ -18,7 +20,7 @@ public final class Servicio extends Propiedad{
                        "\nJugadores: " + getListaJugadoresEnCasilla();
     }
     @Override
-    public boolean evaluarCasilla(){
+    public boolean evaluarCasilla() throws BancarrotaException, DineroInsuficienteException{
         Jugador jugadorActual = getJuego().getJugadorActual();        
 
         //CASO 1: El servico es de un tercero y se debe pagar el importe correspondiente al alquiler de la propiedad por el factor multiplicador
@@ -41,7 +43,9 @@ public final class Servicio extends Propiedad{
             this.setAlquiler(this.getAlquiler() * multiplicador);
             jugadorActual.cobrarAlquiler(this);
             this.setAlquiler(this.getAlquiler() / multiplicador);   //Reiniciamos el alquiler
-            return jugadorActual.esSolvente();      //Nota: Si acaso el saldo del jugador era menor que el dinero del alquiler saldra como no solvente pues tendra saldo negativo
+            if(!jugadorActual.esSolvente())
+                throw new BancarrotaException("El jugador " + jugadorActual.getNombre() + " ha entrado en bancarrota.");
+            return true;
         }
         //CASO 2: El servicio es del jugador que ha caido en la casilla
         else if(this.getDuenho().equals(jugadorActual)){ //Caso de que el dueño sea el mismo jugador
@@ -55,8 +59,7 @@ public final class Servicio extends Propiedad{
                 getJuego().getConsola().imprimir("Usa el comando 'comprar' para adquirirla.");
                 return true;    //el jugador es solvente y puede comprar la propiedad
             } else {
-                getJuego().getConsola().imprimir("No tienes saldo suficiente para comprar esta casilla.");
-                return true; //El jugador sigue siendo solvente, dejara de serlo solo si compra la casilla, pues su saldo pasara a ser negativo
+                throw new DineroInsuficienteException("No tienes saldo suficiente para comprar esta casilla.");
             }
         } 
         else return true;   //En caso de errores

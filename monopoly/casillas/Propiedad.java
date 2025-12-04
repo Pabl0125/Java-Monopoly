@@ -1,6 +1,8 @@
 package monopoly.casillas;
 import java.util.ArrayList;
 import monopoly.*;
+import monopoly.excepciones.ComandoImposibleException;
+import monopoly.excepciones.DineroInsuficienteException;
 import partida.*;
 
 public abstract class Propiedad extends Casilla{
@@ -56,7 +58,7 @@ public abstract class Propiedad extends Casilla{
         this.grupo.sumarRentabilidad(cantidad);
     }
     //Si acaso la propiedad esta en venta la compra el juegdor solicitante, sino imprime un mensaje de error
-    public void comprarPropiedad(Jugador solicitante) {
+    public void comprarPropiedad(Jugador solicitante) throws DineroInsuficienteException, ComandoImposibleException {
         if (this.duenho.equals(getJuego().getBanca())) {            //Solo se puede comprar si el dueño es la banca.
             if (solicitante.getFortuna() >= this.valor) {           //Comprobar que el jugador tiene saldo suficiente.
                 solicitante.sumarGastos(this.valor);                //Añadir el valor de la casilla a los gastos del jugador.
@@ -67,9 +69,9 @@ public abstract class Propiedad extends Casilla{
                 this.duenho.getPropiedades().add(this);             //El duenho tiene que anhadirlo a su lista de propiedades
                 getJuego().getConsola().imprimir(solicitante.getNombre() + " ha comprado la casilla " + this.getNombre() + " por " + this.valor + "€.");
             }
-            else getJuego().getConsola().imprimir("No tienes saldo suficiente para comprar esta casilla.");
+            else throw new DineroInsuficienteException("No tienes saldo suficiente para comprar esta casilla.");
         } 
-        else getJuego().getConsola().imprimir("Esta casilla ya tiene dueño.");
+        else throw new ComandoImposibleException("Esta casilla ya tiene dueño.");
     }
 
     public void infoCasillaEnVenta() {
