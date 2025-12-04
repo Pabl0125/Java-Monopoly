@@ -15,10 +15,10 @@ public abstract class Propiedad extends Casilla{
     private float valor;          //Valor de esa casilla
     private float alquiler;       //Suma que otros jugadores deberan abonar tras caer en la casilla
 
-    public Propiedad(String nombre, int posicion, Juego juego){
+    public Propiedad(String nombre, int posicion, Juego juego, float valor, float alquiler){
         super(nombre,posicion,juego);                    //Llamammos al contructor de la clase padre
-        this.valor = 0;
-        this.alquiler = 0;
+        this.valor = valor;
+        this.alquiler = alquiler;
         this.grupo = null;
         this.duenho = juego.getBanca();     //OJO --> FALTA NOTIFICAR A LA BANCA QUE TIENE LA PROPIEDAD
         this.rentabilidad = 0;

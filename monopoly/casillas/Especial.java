@@ -1,5 +1,6 @@
 package monopoly.casillas;
 import monopoly.*;
+import monopoly.excepciones.AccionInvalidaException;
 import partida.*;
 
 
@@ -31,7 +32,13 @@ public class Especial extends Casilla{
                 return true;
             case "IrACarcel":
                 getJuego().getConsola().imprimir("¡" + getJuego().getJugadorActual().getNombre() + " va a la cárcel!");
-                getJuego().getJugadorActual().encarcelar(getJuego().getTablero());
+                try{
+                    getJuego().getJugadorActual().encarcelar();
+                }
+                catch(AccionInvalidaException e){
+                    getJuego().getConsola().imprimir(e.getMessage());
+                    getJuego().getConsola().imprimir("No se ha podido encarcelar al jugador por caer en la casilla carcel");
+                }
                 return true;     //Ir a la carcel no cuesta dinero, por lo que es imposible quebrar
             default:
                 return true;    //Por defecto diremos que el jugador es solvente

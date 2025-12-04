@@ -2,19 +2,39 @@ package monopoly.casillas;
 import monopoly.*;
 import monopoly.edificios.*;
 import monopoly.excepciones.ConstruccionException;
+import monopoly.excepciones.DineroInsuficienteException;
 import partida.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public final class Solar extends Propiedad{
     private final ArrayList<Edificacion> edificios;   //ArrayList de edificaciones que posee la casilla
     private final float hipoteca;                     //Valor otorgado por hipotecar una casilla
     private boolean estarHipotecada;            //Booleano que indica si la casilla ha sido hipotecada o no
+    private float precioCasa;
+    private float precioHotel;
+    private float precioPiscina;
+    private float precioPistaDeportiva;
+    private float alquilerCasa;
+    private float alquilerHotel;
+    private float alquilerPiscina;
+    private float alquilerPistaDeportiva;
 
-    public Solar(String nombre, int posicion, Juego juego){
-        super(nombre, posicion, juego);                            //Llamammos al contructor de la clase pade
+    ////////////////CONSTRUCTOR/////////////////////
+
+    public Solar(String nombre, int posicion, Juego juego, float valor, float alquiler, float precioCasa,float precioHotel, float precioPiscina, float precioPistaDeportiva, float alquilerCasa, float alquilerHotel){
+        super(nombre, posicion, juego,valor,alquiler);  //Llamammos al contructor de la clase pade
         this.edificios = new ArrayList<>();
-        this.hipoteca = 0;
+        this.hipoteca = valor/2;            // En la tabla la hipoteca
         this.estarHipotecada = false;
+        this.precioCasa = precioCasa;
+        this.precioHotel = precioHotel;
+        this.precioPiscina = precioPiscina;
+        this.precioPistaDeportiva = precioPistaDeportiva;
+        this.alquilerCasa = alquilerCasa;
+        this.alquilerHotel = alquilerHotel;
+        this.alquilerPiscina = alquilerHotel/5;
+        this.alquilerPistaDeportiva = alquilerHotel/5;
     }
     ////////////////GETTERS Y SETTERS/////////////////////
 
@@ -36,7 +56,7 @@ public final class Solar extends Propiedad{
     public void eliminarEdificacion(Edificacion edificacion){
         this.edificios.remove(edificacion);
     }
-    public void anhadirEdificacion(Edificacion edificio){
+    private void anhadirEdificacion(Edificacion edificio){
         this.edificios.add(edificio);
     }
     public int getNumEdificaciones(){
@@ -49,14 +69,90 @@ public final class Solar extends Propiedad{
         }
         setAlquiler(total);
     }
-    public void Edificar() throws ConstruccionException{
-        
+    public void Edificar(Edificacion edificacion) throws ConstruccionException, DineroInsuficienteException{
+                
+        // Comprobar que el jugador es el dueño de la casilla
+        if (!this.getDuenho().equals(getJuego().getJugadorActual())) {
+            throw new ConstruccionException("No eres el dueño de la casilla '" + this.getNombre() + "'.");        }
+        //Comprobar que el jugador posee todas las casillas del grupo
+        Grupo grupo = this.getGrupo();
+        if (grupo == null) {
+            throw new ConstruccionException("Error: La casilla no pertenece a ningún grupo.");
+        }
+        if (!grupo.esDuenhoGrupo(getJuego().getJugadorActual())) {
+            throw new ConstruccionException("Debes ser dueño de todas las propiedades del grupo " + grupo.colorToNombreGrupo() + " para poder edificar.");
+        }
+        // Comprobar que el tipo de edificio es válido
+        float costeEdificio = grupo.getPrecioEdificioPorGrupo(this.getTipo());
+        if (costeEdificio <= 0) {
+            throw new ConstruccionException("El tipo de edificio '" + this.getTipo() + "' no es válido.");
+        }
+
+        //comprobaciones con respecto a las casillas que ya existen
+        boolean casillaTieneHotel = false;
+        boolean casillaTienePiscina = false;
+        boolean casillaTienePistaDeportiva =false;
+        int numeroCasas=0;
+        Iterator<Edificacion> iterator = this.getEdificios().iterator();
+        while(iterator.hasNext()){
+            Edificacion edificioRecorrido = iterator.next();
+            if(edificioRecorrido.getTipo().equals("piscina")) casillaTienePiscina=true;
+            if(edificioRecorrido.getTipo().equals("pista deportiva")) casillaTienePistaDeportiva=true;
+            if(edificioRecorrido.getTipo().equals("hotel")) casillaTieneHotel =true;
+            if(edificioRecorrido.getTipo().equals("casa")) numeroCasas++;
+        }
+        //Si tienes hotel o 4 casas no puedes contruir mas casas
+        if((numeroCasas ==4 || casillaTieneHotel) && edificacion.getTipo().equals("Casa")){
+            throw new ConstruccionException("No se puede edificar mas casas en la casilla " + this.getNombre());
+        }
+        //Comprobar que hay sitio para edificar
+        if((casillaTieneHotel && casillaTienePiscina && casillaTienePistaDeportiva)){
+            throw new ConstruccionException("No se puede edificar ningun edificio mas en esta casilla ni en el grupo al que la casillla pertenece");
+        }
+        //Comprobar si acaso ya existe un hotel, pista deportiva o piscina cuando se quiere crear una
+        if(casillaTieneHotel && edificacion.getTipo().equals("Hotel")){
+            throw new ConstruccionException("No se puede edificar un hotel ya que ya existe un hotel en la casilla " + this.getNombre());
+        }
+        //No se puede adificar mas de una piscina
+        if(casillaTienePiscina && edificacion.getTipo().equals("Piscina")){
+            throw new ConstruccionException("No se puede edificar una piscina ya que ya existe una en la casilla " + this.getNombre());
+        }
+        //Comprobar si acasa ya existe un hotel, pista deportiva o piscina cuando se quiere crear una
+        if(casillaTienePistaDeportiva && edificacion.getTipo().equals("pista deportiva")){
+            throw new ConstruccionException("No se puede edificar una pista deportiva ya que ya existe una en la casilla " + this.getNombre());
+        }
+        // Comprobar que la casilla dispone de un hotel para crear una piscina
+        if(!casillaTieneHotel && edificacion.getTipo().equals("Piscina")){
+            throw new ConstruccionException("No se puede edificar una piscina ya que no se dispone de un hotel.");
+        }
+        // Comprobar si acaso se quiere construir un hotel que el jugador tiene 4 casas en ese hotel
+        if(!(numeroCasas==4) && edificacion.getTipo().equals("Hotel")){
+            throw new ConstruccionException("No se disponen de las cuatro casa necesarias para contruir el hotel");
+        }
+        //Comprobar que el jugador tiene suficiente dinero
+        if (getJuego().getJugadorActual().getFortuna() < costeEdificio) {
+            throw new DineroInsuficienteException("La fortuna de "+ getJuego().getJugadorActual() + " no es suficinete para edificar un" + getJuego().getJugadorActual() + " en la casilla " + this.getNombre());
+        }
+        //Hacer el pago por la contruccion y realizar la edificacion
+        getJuego().getJugadorActual().sumarFortuna(-costeEdificio);
+        getJuego().getJugadorActual().sumarGastos(costeEdificio);
+        //Si vamos a crear un hotel y hemos comprobado que existen 4 casas tenemos que eliminar las casas
+        if(edificacion.getTipo().equals("Hotel")){
+            this.getEdificios().removeIf(edificio -> edificio.getTipo().equals("casa"));
+            getJuego().getConsola().imprimir("Se han eliminado las casas para poder construir el hotel");
+            
+        }
+        //Tras todas las comprobaciones pertinentes finalemente edificamos en el solar
+        anhadirEdificacion(edificacion);
+        this.getJuego().getConsola().imprimir("Se ha edificado un " + edificacion.getTipo() + " en " + this.getNombre() + ". La fortuna de " + getJuego().getJugadorActual().getNombre() + " se reduce en " + costeEdificio + "€");
+
+
     }
 
     
     /////////////////METODOS SOBREESCRITOS/////////////////////
     @Override
-    public String infoCasilla(){        // --> OJO: FALTA ADJUNTAR LOS VALORES DE LOS PRECIOS DE COMPRA Y ALQUILER DE LAS EDIFICACIONES 
+    public String infoCasilla(){
         return "Nombre: " + this.getNombre() +
                 "\nTipo: " + this.getTipo() +
                 "\nValor: " + this.getValor() +
@@ -66,6 +162,14 @@ public final class Solar extends Propiedad{
                 "\nRentabilidad: " + this.getRentabilidad() +
                 "\nHipotecada: " + this.getEstarHipotecada()+
                 "\nAlquiler: " + this.getAlquiler() +
+                "\nPrecio Casa: " + this.precioCasa +
+                "\nPrecio Hotel: " + this.precioHotel +
+                "\nPrecio Piscina: " + this.precioPiscina +
+                "\nPrecio Pista de Deporte: " + this.precioPistaDeportiva +
+                "\nAlquiler Casa: " + this.alquilerCasa +
+                "\nAlquiler Hotel: " + this.alquilerHotel +
+                "\nAlquiler Piscina: " + this.alquilerPiscina +
+                "\nAlquiler Pista de Deporte: " + this.alquilerPistaDeportiva +
                 "\nJugadores: " + this.getListaJugadoresEnCasilla().trim();
     }
     @Override

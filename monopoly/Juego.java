@@ -137,7 +137,8 @@ public class Juego implements Comando{
     * Método que interpreta el comando introducido y toma la accion correspondiente.
     * Parámetro: cadena de caracteres (el comando).
     */
-    private void analizarComando(String comando) throws MonopolyException {
+    private void analizarComando(String comando) {
+        try{
         consola.imprimir("\n>> " + comando );     //Impresion del comando insertado
         String[] partesComando = comando.split(" ");
         consola.imprimir("");
@@ -256,7 +257,11 @@ public class Juego implements Comando{
                     // Se ejecuta si el comando no coincide con ningún case
                     throw new ComandoInvalidoException("Comando desconocido '" + comandoPrincipal + "'");
 
+                }
             }
+        }
+        catch (MonopolyException e) {   //Este bloque catch atrapara cualquier excepcion que se le plantee
+            consola.imprimir(e.getMessage());
         }
     }
 
@@ -363,7 +368,7 @@ public class Juego implements Comando{
     }
     
     @Override   
-    public void lanzarDados(String tirada) throws AccionInvalidaException, BancarrotaException {
+    public void lanzarDados(String tirada) throws AccionInvalidaException {
         Jugador jugadorActual = jugadores.get(turno);
         Avatar avatarActual = jugadorActual.getAvatar();
         int doblesSeguidos = 0;
@@ -409,7 +414,13 @@ public class Juego implements Comando{
 
             // Mover avatar y mostrar movimiento
             Casilla casillaInicial = avatarActual.getLugar();
-            avatarActual.moverAvatar(this.tablero, valor1+valor2);
+            
+            try {
+                avatarActual.moverAvatar(this.tablero, valor1+valor2);
+            } catch (JuegoException e) {
+                consola.imprimir(e.getMessage());
+            }
+            
             Casilla casillaFinal = avatarActual.getLugar();
             
 
@@ -418,9 +429,14 @@ public class Juego implements Comando{
                     " hasta " + casillaFinal.getNombre() + ".");
 
             // Evaluar la casilla
-            boolean solvente = casillaFinal.evaluarCasilla();
+            try{
+                boolean solvente = casillaFinal.evaluarCasilla();
+            } catch (MonopolyException e){
+                consola.imprimir(e.getMessage());
+            }
+            
             if (!solvente) {
-                throw new BancarrotaException(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
+                //Lógica de perder, aun no implementada
             }
 
             // Si se está leyendo de un fichero, no se puede pedir una nueva tirada interactiva.
@@ -437,54 +453,63 @@ public class Juego implements Comando{
     }
 
     @Override
-    public void lanzarDados() throws BancarrotaException, AccionInvalidaException {
-        Jugador jugadorActual = jugadores.get(turno);
-        Avatar avatarActual = jugadorActual.getAvatar();
-        int doblesSeguidos = 0;
+    public void lanzarDados() throws AccionInvalidaException {
+        try{
+            Jugador jugadorActual = jugadores.get(turno);
+            Avatar avatarActual = jugadorActual.getAvatar();
+            int doblesSeguidos = 0;
 
-        boolean volverATirar;
-        do {
-            // Lanzar los dados
-            this.dado1.hacerTirada();
-            this.dado2.hacerTirada();
-            int valor1 = this.dado1.getValor();
-            int valor2 = this.dado2.getValor();
-            int total = valor1 + valor2;
+            boolean volverATirar;
+            do {
+                // Lanzar los dados
+                this.dado1.hacerTirada();
+                this.dado2.hacerTirada();
+                int valor1 = this.dado1.getValor();
+                int valor2 = this.dado2.getValor();
+                int total = valor1 + valor2;
 
-            consola.imprimir("Dados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
+                consola.imprimir("Dados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
 
-            // Comprobar dobles
-            if (valor1 == valor2) {
-                doblesSeguidos++;
-                if (doblesSeguidos == 3) {
-                    avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
-                    jugadorActual.encarcelar(this.tablero);
-                    throw new AccionInvalidaException("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
+                // Comprobar dobles
+                if (valor1 == valor2) {
+                    doblesSeguidos++;
+                    if (doblesSeguidos == 3) {
+                        avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
+                        jugadorActual.encarcelar();
+                        throw new AccionInvalidaException("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
+                    }
+                    volverATirar = true;
+                    consola.imprimir("¡Doble! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
+                } else {
+                    volverATirar = false;
+                    doblesSeguidos = 0;
                 }
-                volverATirar = true;
-                consola.imprimir("¡Doble! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
-            } else {
-                volverATirar = false;
-                doblesSeguidos = 0;
-            }
 
-            // Mover avatar y mostrar movimiento
-            Casilla casillaInicial = avatarActual.getLugar();
-            avatarActual.moverAvatar(this.tablero, valor1+valor2);
-            Casilla casillaFinal = avatarActual.getLugar();
+                // Mover avatar y mostrar movimiento
+                Casilla casillaInicial = avatarActual.getLugar();
+                avatarActual.moverAvatar(this.tablero, valor1+valor2); 
 
-            consola.imprimir("El avatar " + avatarActual.getId() +
-                    " avanza desde " + casillaInicial.getNombre() +
-                    " hasta " + casillaFinal.getNombre() + ".");
+                
+                
+                Casilla casillaFinal = avatarActual.getLugar();
 
-            // Evaluar la casilla usando su propio método
-            boolean solvente = casillaFinal.evaluarCasilla();
-            if (!solvente) {
-                throw new BancarrotaException(jugadorActual.getNombre() + " no puede cumplir con sus obligaciones en " + casillaFinal.getNombre());
-            }
+                consola.imprimir("El avatar " + avatarActual.getId() +
+                        " avanza desde " + casillaInicial.getNombre() +
+                        " hasta " + casillaFinal.getNombre() + ".");
 
-        } while (volverATirar);
+                // Evaluar la casilla usando su propio método
+                boolean solvente = casillaFinal.evaluarCasilla();
+                
+                if (!solvente) {
+                    //Lógica de perder, aun no implementada
+                }
 
+            } while (volverATirar);
+        } catch(JuegoException e){
+            consola.imprimir(e.getMessage());
+        } catch(MonopolyException e){
+            consola.imprimir(e.getMessage());
+        }
     }
 
     /*Método que ejecuta todas las acciones realizadas con el comando 'comprar nombre_casilla'.
@@ -756,105 +781,33 @@ public class Juego implements Comando{
 
     @Override
     public void edificar(String tipoEdificio) throws ConstruccionException, DineroInsuficienteException {
-        Jugador jugadorActual = jugadores.get(turno);
-        Avatar avatarActual = jugadorActual.getAvatar();
-        Casilla casillaActual = avatarActual.getLugar();
+        //La casilla donde se pretende edificar es en la que se encuentra el jugador acutalmente
+        Casilla casillaActual = getJugadorActual().getAvatar().getLugar();
 
         //Comprobar que la casilla es un solar
         if (!casillaActual.getTipo().equals("Solar")) {
-            throw new ConstruccionException("No se puede edificar en una casilla de tipo '" + casillaActual.getTipo() + "'.");        }
+            throw new ConstruccionException("No se puede edificar en una casilla de tipo '" + casillaActual.getTipo() + "'.");        
+        }
+
         //Casting explicito para asegurarnos de que aplicamos metodos de propiedad sobre la casilla
         Solar solarActual = (Solar) casillaActual;
-
-        // Comprobar que el jugador es el dueño de la casilla
-        if (!solarActual.getDuenho().equals(jugadorActual)) {
-            throw new ConstruccionException("No eres el dueño de la casilla '" + solarActual.getNombre() + "'.");        }
-        //Comprobar que el jugador posee todas las casillas del grupo
-        Grupo grupo = solarActual.getGrupo();
-        if (grupo == null) {
-            throw new ConstruccionException("Error: La casilla no pertenece a ningún grupo.");
-        }
-        if (!grupo.esDuenhoGrupo(jugadorActual)) {
-            throw new ConstruccionException("Debes ser dueño de todas las propiedades del grupo " + grupo.colorToNombreGrupo() + " para poder edificar.");
-        }
-
-        // Comprobar que el tipo de edificio es válido
-        float costeEdificio = grupo.getPrecioEdificioPorGrupo(tipoEdificio);
-        if (costeEdificio <= 0) {
-            throw new ConstruccionException("El tipo de edificio '" + tipoEdificio + "' no es válido.");
-        }
-
-        //comprobaciones con respecto a las casillas que ya existen
-        boolean casillaTieneHotel = false;
-        boolean casillaTienePiscina = false;
-        boolean casillaTienePistaDeportiva =false;
-        int numeroCasas=0;
-        Iterator<Edificacion> iterator = solarActual.getEdificios().iterator();
-        while(iterator.hasNext()){
-            Edificacion edificioRecorrido = iterator.next();
-            if(edificioRecorrido.getTipo().equals("piscina")) casillaTienePiscina=true;
-            if(edificioRecorrido.getTipo().equals("pista deportiva")) casillaTienePistaDeportiva=true;
-            if(edificioRecorrido.getTipo().equals("hotel")) casillaTieneHotel =true;
-            if(edificioRecorrido.getTipo().equals("casa")) numeroCasas++;
-        }
-        //Si tienes hotel o 4 casas no puedes contruir mas casas
-        if((numeroCasas ==4 || casillaTieneHotel) && tipoEdificio.equals("casa")){
-            throw new ConstruccionException("No se puede edificar mas casas en la casilla " + casillaActual.getNombre());
-        }
-        //Comprobar que hay sitio para edificar
-        if((casillaTieneHotel && casillaTienePiscina && casillaTienePistaDeportiva)){
-            throw new ConstruccionException("No se puede edificar ningun edificio mas en esta casilla ni en el grupo al que la casillla pertenece");
-        }
-        //Comprobar si acaso ya existe un hotel, pista deportiva o piscina cuando se quiere crear una
-        if(casillaTieneHotel && tipoEdificio.equals("hotel")){
-            throw new ConstruccionException("No se puede edificar un hotel ya que ya existe un hotel en la casilla " + casillaActual.getNombre());
-        }
-        //No se puede adificar mas de una piscina
-        if(casillaTienePiscina && tipoEdificio.equals("piscina")){
-            throw new ConstruccionException("No se puede edificar una piscina ya que ya existe una en la casilla " + solarActual.getNombre());
-        }
-        //Comprobar si acasa ya existe un hotel, pista deportiva o piscina cuando se quiere crear una
-        if(casillaTienePistaDeportiva && tipoEdificio.equals("pista deportiva")){
-            throw new ConstruccionException("No se puede edificar una pista deportiva ya que ya existe una en la casilla " + solarActual.getNombre());
-        }
-        // Comprobar que la casilla dispone de un hotel para crear una piscina
-        if(!casillaTieneHotel && tipoEdificio.equals("piscina")){
-            throw new ConstruccionException("No se puede edificar una piscina ya que no se dispone de un hotel.");
-        }
-        // Comprobar si acaso se quiere construir un hotel que el jugador tiene 4 casas en ese hotel
-        if(!(numeroCasas==4) && tipoEdificio.equals("hotel")){
-            throw new ConstruccionException("No se disponen de las cuatro casa necesarias para contruir el hotel");
-        }
-        //Comprobar que el jugador tiene suficiente dinero
-        if (jugadorActual.getFortuna() < costeEdificio) {
-            throw new DineroInsuficienteException("La fortuna de "+ jugadorActual + " no es suficinete para edificar un" + tipoEdificio + " en la casilla " + solarActual.getNombre());
-        }
-        //Hacer el pago por la contruccion y realizar la edificacion
-        jugadorActual.sumarFortuna(-costeEdificio);
-        jugadorActual.sumarGastos(costeEdificio);
-        //Si vamos a crear un hotel y hemos comprobado que existen 4 casas tenemos que eliminar las casas
-        if(tipoEdificio.equals("hotel")){
-            solarActual.getEdificios().removeIf(edificio -> edificio.getTipo().equals("casa"));
-            consola.imprimir("Se han eliminado las casas para poder construir el hotel");
-        }
-        //Ahora cuando instanciamos un Edificio especificamos el tipo
+        
         switch (tipoEdificio) {
             case "hotel":
-                solarActual.anhadirEdificacion(new Hotel());
+                solarActual.Edificar(new Hotel());
                 break;
             case "piscina":
-                solarActual.anhadirEdificacion(new Piscina());
+                solarActual.Edificar(new Piscina());
                 break;
             case "pista deportiva":
-                solarActual.anhadirEdificacion(new PistaDeportiva());
+                solarActual.Edificar(new Hotel());
                 break;
             case "casa":
-                solarActual.anhadirEdificacion(new Casa());
+                solarActual.Edificar(new Casa());
                 break;
             default:
                 break;
-        }        
-        consola.imprimir("Se ha edificado un " + tipoEdificio + " en " + casillaActual.getNombre() + ". La fortuna de " + jugadorActual.getNombre() + " se reduce en " + costeEdificio + "€");
+        }
     }
     
     @Override
@@ -920,7 +873,14 @@ public class Juego implements Comando{
         if (tipoEdificio.equalsIgnoreCase("hotel")) {
             consola.imprimir("Al vender el hotel, recuperas 4 casas en " + nombreCasilla + ".");
             for (int i = 0; i < 4; i++) {
-                casilla.anhadirEdificacion(new Casa());
+                    try{
+                        casilla.Edificar(new Casa());
+                    }
+                    catch(JuegoException e){{
+                        consola.imprimir(e.getMessage());
+                        consola.imprimir("Error al recuperar las 4 casas en " + nombreCasilla);
+                    }
+                }
             }
         }
     }

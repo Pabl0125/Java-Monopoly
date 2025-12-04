@@ -79,3 +79,4 @@ deshipotecar Solar18
 deshipotecar Solar19
 estadisticas Banca
 estadisticas banca
+ver tablero

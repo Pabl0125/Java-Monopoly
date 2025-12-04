@@ -3,6 +3,8 @@ package monopoly.cartas;
 import partida.Jugador;
 import monopoly.Tablero;
 import monopoly.casillas.Transporte;
+import monopoly.excepciones.AccionInvalidaException;
+import monopoly.excepciones.JuegoException;
 import monopoly.Juego;
 
 import java.util.ArrayList;
@@ -25,7 +27,12 @@ public class CartaSuerte extends Carta {
             case 2:
                 // Los acreedores te persiguen por impago. Ve a la Cárcel. Ve directamente sin pasar por la casilla de Salida y sin cobrar los 2.000.000€.
                 this.getConsola().imprimir(getDescripcion());
-                jugadorActual.encarcelar(tablero);
+                try{
+                    jugadorActual.encarcelar();
+
+                }catch(AccionInvalidaException e){
+                    getJuego().getConsola().imprimir(e.getMessage());
+                }
                 break;
             case 3:
                 // ¡Has ganado el bote de la lotería! Recibe 1.000.000€.
@@ -53,12 +60,16 @@ public class CartaSuerte extends Carta {
             case 5:
                 // ¡Hora punta de tráfico! Retrocede tres casillas.
                 this.getConsola().imprimir(getDescripcion());
-                jugadorActual.getAvatar().moverAvatar(tablero, -3);
+                try {
+                    jugadorActual.getAvatar().moverAvatar(tablero, -3);    
+                } catch (JuegoException e) {
+                    getJuego().getConsola().imprimir(e.getMessage());
+                }
                 break;
             case 6:
                 // Te multan por usar el móvil mientras conduces. Paga 150.000€.
                 this.getConsola().imprimir(getDescripcion());
-                tablero.pagarImpuesto(jugadorActual, 150000f);
+                jugadorActual.pagarDineroFijo(150000f);
                 break;
             case 7:
                 // Avanza hasta la casilla de transporte más cercana. Si no tiene dueño, puedes comprarla. 
@@ -99,9 +110,9 @@ public class CartaSuerte extends Carta {
                     this.getConsola().imprimir("La propiedad tiene dueño. Debes pagar el doble: " + (pagoNormal * 2) + "€.");
                     float pagoDoble = pagoNormal * 2;
                     //Realizar el pago
-                    tablero.pagarImpuesto(jugadorActual, pagoDoble);    //Aumenta el bote de Parking
-                    duenho.sumarFortuna(pagoDoble);                     //El dueño recibe el pago
-                    duenho.sumardineroCobroAlquileres(pagoDoble);       //Cuenta para estadísticas
+                    jugadorActual.pagarDineroFijo(pagoDoble);
+                    duenho.sumarFortuna(pagoDoble);
+                    duenho.sumarDineroPremios(pagoDoble);
                 }
                 break;
             default:

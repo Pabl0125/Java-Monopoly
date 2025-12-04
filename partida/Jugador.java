@@ -2,6 +2,7 @@ package partida;
 import monopoly.*;
 import monopoly.casillas.*;
 import monopoly.edificios.*;
+import monopoly.excepciones.AccionInvalidaException;
 import partida.*;
 import java.util.ArrayList;
 
@@ -179,6 +180,15 @@ public class Jugador {
         }
     }
 
+    public void pagarDineroFijo(float cantidad){
+        this.sumarFortuna(cantidad);
+        this.sumarGastos(cantidad);
+        this.sumarDineroTasasImpuestos(cantidad);
+
+        juego.getTablero().aumentarBoteParking(cantidad);
+        juego.getConsola().imprimir("Al jugador " + this.getNombre() + " se le ha cobrado" + cantidad);
+    }
+    
     public void cobrarAlquiler(Propiedad propiedad){
         float alquiler = propiedad.getAlquiler();
         this.sumarFortuna(-alquiler);
@@ -190,23 +200,20 @@ public class Jugador {
         propiedad.sumarRentabilidad(alquiler);
 
         juego.getConsola().imprimir("Al jugador" + this.getNombre() + "se le ha cobrado" + alquiler + "€ de alquiler.");
+        if(!this.esSolvente()) juego.getConsola().imprimir("El jugador ya no es solverte");
     }
     public void cobrarImpuesto(Impuesto casillaImpuesto){
         float impuesto = casillaImpuesto.getImpuesto();
-        this.sumarFortuna(-impuesto);
-        this.sumarGastos(impuesto);
-        this.sumarDineroTasasImpuestos(impuesto);
-        
-        juego.getTablero().aumentarBoteParking(impuesto);
-        juego.getConsola().imprimir("Al jugador" + this.getNombre() + "se le ha cobrado" + casillaImpuesto.getImpuesto());
+        pagarDineroFijo(impuesto);
+        if(!this.esSolvente()) juego.getConsola().imprimir("El jugador ya no es solverte");
         
     }
 
-    public void encarcelar(Tablero tablero) {
+    public void encarcelar() throws AccionInvalidaException {
+        Tablero tablero = juego.getTablero();
         Casilla casillaCarcel = tablero.encontrar_casilla("Carcel");
         if (casillaCarcel == null) {
-            System.err.println("Error crítico: No se ha encontrado la casilla 'Carcel'.");
-            return;
+            throw new AccionInvalidaException("Error crítico: No se ha encontrado la casilla 'Carcel'.");
         }
         // Eliminar el avatar de su casilla actual
         this.avatar.getLugar().eliminarAvatar(this.avatar);
@@ -219,7 +226,7 @@ public class Jugador {
     public int numeroDeServicios(){
         int numServicios = 0;
         for(Casilla c: this.getPropiedades()){
-            if(c.getTipo().equals("Servicio")){
+            if(c instanceof Servicio){
                 numServicios++;
             }
         }
@@ -228,7 +235,7 @@ public class Jugador {
     public int numeroDeTransportes(){
         int numTransportes = 0;
         for(Casilla c: this.getPropiedades()){
-            if(c.getTipo().equals("Transporte")){
+            if(c instanceof Transporte){
                 numTransportes++;
             }
         }

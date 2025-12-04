@@ -13,12 +13,12 @@ import java.util.Random;
 public class Avatar {
 
     //Atributos
-    private String id; //Identificador: una letra generada aleatoriamente.
-    private String tipo; //Sombrero, Esfinge, Pelota, Coche
-    private Jugador jugador; //Un jugador al que pertenece ese avatar.
-    private Casilla lugar; //Los avatares se sitúan en casillas del tablero.
+    private String id;              //Identificador: una letra generada aleatoriamente.
+    private String tipo;            //Sombrero, Esfinge, Pelota, Coche
+    private Jugador jugador;        //Un jugador al que pertenece ese avatar.
+    private Casilla lugar;          //Los avatares se sitúan en casillas del tablero.
 
-    ////////////CONSTRUCTORES//////////////
+    //////////////////////CONSTRUCTORES//////////////////////
 
     public Avatar(String tipo, Jugador jugador, Casilla lugar, ArrayList<Avatar> avCreados) {
         this.generarId(avCreados);
@@ -29,7 +29,7 @@ public class Avatar {
             lugar.anhadirAvatar(this);
         }
     }
-    //////////////////GETTERS Y SETTERS///////////////
+    //////////////////////GETTERS Y SETTERS//////////////////////
     public String getId() {
         return id;
     }
@@ -52,7 +52,7 @@ public class Avatar {
         this.lugar = lugar;
     }
 
-    ///////////METODOS GENERICOS///////////
+    //////////////////////METODOS GENERICOS//////////////////////
     public void moverAvatar(Tablero tablero, int valorTirada) throws JuegoException {
         if (this.lugar == null) {
             throw new JuegoException("Error: el avatar no está en ninguna casilla.");
@@ -69,7 +69,7 @@ public class Avatar {
 
         if (valorTirada > 0) {
             // Movimiento hacia adelante: si se supera 39, se considera haber pasado por Salida
-            if (nuevaPosicion > 40) {
+            if (nuevaPosicion >= 40) {
                 nuevaPosicion = nuevaPosicion % 40;
                 pasoPorSalida = true;
             }
@@ -88,7 +88,7 @@ public class Avatar {
             this.jugador.sumarFortuna(Valor.SUMA_VUELTA);         // Añadimos 2000000 al saldo del jugador
             this.jugador.sumarDineroSalida(Valor.SUMA_VUELTA);    //Sumamos el dinero a la estadistica
             this.jugador.sumarVueltas(1);                //Sumamos otra vuelta
-            System.out.println("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000€ al saldo del jugador " + this.jugador.getNombre() + ".");
+            this.getJugador().getJuego().getConsola().imprimir("El avatar " + this.id + " ha pasado por la casilla de salida. Se añaden 2000000€ al saldo del jugador " + this.jugador.getNombre() + ".");
         }
 
         // Encontrar la nueva casilla y actualizar el estado
@@ -97,7 +97,7 @@ public class Avatar {
         
         this.getLugar().visitarCasilla(); // Incrementamos el contador de visitas de la casilla
 
-        // 4. Añadir el avatar a la lista de la nueva casilla
+        // Añadir el avatar a la lista de la nueva casilla
         this.lugar.anhadirAvatar(this);
     }
 
@@ -126,11 +126,10 @@ public class Avatar {
         avCreados.add(this);
     }
 
-
     ///////////////METODOS SOBREESCRITOS///////////////
     @Override
     public String toString() {
-        System.out.println("Avatar " + this.id + " (" + this.tipo + ") del jugador " + this.jugador.getNombre() +
+        this.getJugador().getJuego().getConsola().imprimir("Avatar " + this.id + " (" + this.tipo + ") del jugador " + this.jugador.getNombre() +
                 " está en la casilla " + this.lugar.getNombre() + " (posición " + this.lugar.getPosicion() + ").");
         return "";
     }

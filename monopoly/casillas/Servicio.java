@@ -5,10 +5,8 @@ import monopoly.excepciones.DineroInsuficienteException;
 import partida.*;
 public final class Servicio extends Propiedad{
     
-    public Servicio(String nombre, int posicion, Juego juego){
-        super(nombre, posicion, juego);                //Llamammos al contructor de la clase pade
-        this.setValor(500000);                  //Las casillas de transporte y de servicio tienen un precio de compra inicial de 500.000€. 
-        this.setAlquiler(50000);           //El alquiler de una casilla de transporte es de 250.000€.
+    public Servicio(String nombre, int posicion, Juego juego, float valor, float alquiler){
+        super(nombre, posicion, juego,valor,alquiler);                //Llamammos al contructor de la clase pade
     }
     ///////////////////////METODOS SOBREESCRITOS///////////////////////
     @Override

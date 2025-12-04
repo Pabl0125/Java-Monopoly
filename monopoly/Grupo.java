@@ -147,15 +147,15 @@ public class Grupo {
     public void setRentabilidad(float rentabilidad) {
         this.rentabilidad = rentabilidad;
     }
-    float getPrecioEdificioPorGrupo(String tipo) {
+    public float getPrecioEdificioPorGrupo(String tipo) {
         switch (tipo) {
-            case "casa":
+            case "Casa":
                 return this.precioCasa;
-            case "hotel":
+            case "Hotel":
                 return this.precioHotel;
             case "piscina":
                 return this.precioPiscina;
-            case "pista deportiva":
+            case "PistaDeportiva":
                 return this.precioPistaDeporte;
             default:
                 return 0.0f;

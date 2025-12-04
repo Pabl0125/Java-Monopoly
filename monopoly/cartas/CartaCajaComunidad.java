@@ -4,6 +4,7 @@ import partida.Jugador;
 import monopoly.Tablero;
 import monopoly.ConsolaNormal;
 import monopoly.Juego;
+import monopoly.excepciones.JuegoException;
 
 import java.util.ArrayList;
 
@@ -21,12 +22,18 @@ public class CartaCajaComunidad extends Carta {
             case 1:
                 //Paga 500.000€ por un fin de semana en un balneario de 5 estrellas.
                 this.getConsola().imprimir(getDescripcion());
-                tablero.pagarImpuesto(jugadorActual, 500000f);
+                jugadorActual.pagarDineroFijo(500000f);
                 break;
             case 2:
                 //Te investigan por fraude de identidad. Ve a la Cárcel. Ve directamente sin pasar por la casilla de Salida y sin cobrar los 2.000.000€.
                 this.getConsola().imprimir(getDescripcion());
-                jugadorActual.encarcelar(tablero);
+
+                try {
+                    jugadorActual.encarcelar();
+                } catch (Exception e) {
+                    this.getConsola().imprimir(e.getMessage());
+                }
+
                 break;
             case 3:
                 //Colócate en la casilla de Salida. Cobra 2.000.000€.
@@ -42,7 +49,18 @@ public class CartaCajaComunidad extends Carta {
             case 5:
                 //Retrocede hasta Solar1 para comprar antigüedades exóticas.
                 this.getConsola().imprimir(getDescripcion());
-                tablero.moverA("Solar1", jugadorActual);
+                //Mover con desplazamiento negativo para no pasar por salida:
+                int posicionActual = jugadorActual.getAvatar().getLugar().getPosicion();
+                int posicionDestino = tablero.encontrar_casilla("Solar1").getPosicion();
+                int desplazamiento = posicionDestino - posicionActual;
+                if (desplazamiento > 0) {
+                    desplazamiento -= 40;
+                }
+                try {jugadorActual.getAvatar().moverAvatar(tablero, desplazamiento);
+                } catch (JuegoException e) {
+                    this.getConsola().imprimir(e.getMessage());
+                }
+                
                 break;
             case 6:
                 //Ve a Solar20 para disfrutar del San Fermín.\nSi pasas por la casilla de Salida, cobra 2.000.000€.
