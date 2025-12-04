@@ -30,7 +30,7 @@ public class Juego implements Comando{
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
-    private Dado dado2;
+    private Dado dado2; 
     private Jugador banca; //El jugador banca.
     private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
     private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
@@ -55,7 +55,7 @@ public class Juego implements Comando{
         dado2 = new Dado();
         numCartaSuerte = 1;
         numCartaCajaCom = 1;
-        
+        this.consola = new ConsolaNormal();
     }
     ////////////////////GETTERS Y SETTERS////////////////////
     public int getTurno(){
@@ -139,7 +139,7 @@ public class Juego implements Comando{
     * Parámetro: cadena de caracteres (el comando).
     */
     private void analizarComando(String comando) {
-        consola.imprimir("\n>> " + comando );     //Impresion del comando insertado
+        consola.imprimir("\n>> " + comando );                  //Impresion del comando insertado
         String[] partesComando = comando.split(" ");
         consola.imprimir("");
             if(partesComando.length > 0){

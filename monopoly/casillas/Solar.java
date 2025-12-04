@@ -1,6 +1,7 @@
 package monopoly.casillas;
 import monopoly.*;
 import monopoly.edificios.*;
+import monopoly.excepciones.ConstruccionException;
 import partida.*;
 import java.util.ArrayList;
 
@@ -30,7 +31,7 @@ public final class Solar extends Propiedad{
         this.estarHipotecada = estarHipotecada;
     }
 
-    ////////////////METODOS GENERICOS/////////////////////      q   1
+    ////////////////METODOS GENERICOS/////////////////////
     
     public void eliminarEdificacion(Edificacion edificacion){
         this.edificios.remove(edificacion);
@@ -47,6 +48,9 @@ public final class Solar extends Propiedad{
             total += edificio.getAlquiler();
         }
         setAlquiler(total);
+    }
+    public void Edificar() throws ConstruccionException{
+        
     }
 
     
