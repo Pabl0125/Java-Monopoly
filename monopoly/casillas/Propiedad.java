@@ -15,12 +15,12 @@ public abstract class Propiedad extends Casilla{
     private float valor;          //Valor de esa casilla
     private float alquiler;       //Suma que otros jugadores deberan abonar tras caer en la casilla
 
-    public Propiedad(String nombre, int posicion, Juego juego, float valor, float alquiler){
-        super(nombre,posicion,juego);                    //Llamammos al contructor de la clase padre
+    public Propiedad(String nombre, int posicion, float valor, float alquiler, Jugador duenho){
+        super(nombre,posicion);                    //Llamammos al contructor de la clase padre
         this.valor = valor;
         this.alquiler = alquiler;
         this.grupo = null;
-        this.duenho = juego.getBanca();     //OJO --> FALTA NOTIFICAR A LA BANCA QUE TIENE LA PROPIEDAD
+        this.duenho = duenho;     //OJO --> FALTA NOTIFICAR A LA BANCA QUE TIENE LA PROPIEDAD
         this.rentabilidad = 0;
     }
     ////////////////GETERS Y SETTERS////////////////
@@ -58,16 +58,16 @@ public abstract class Propiedad extends Casilla{
         this.grupo.sumarRentabilidad(cantidad);
     }
     //Si acaso la propiedad esta en venta la compra el juegdor solicitante, sino imprime un mensaje de error
-    public void comprarPropiedad(Jugador solicitante) throws DineroInsuficienteException, ComandoImposibleException {
-        if (this.duenho.equals(getJuego().getBanca())) {            //Solo se puede comprar si el dueño es la banca.
+    public void comprarPropiedad(Jugador solicitante, Jugador banca) throws DineroInsuficienteException, ComandoImposibleException {
+        if (this.duenho.equals(banca)) {            //Solo se puede comprar si el dueño es la banca.
             if (solicitante.getFortuna() >= this.valor) {           //Comprobar que el jugador tiene saldo suficiente.
                 solicitante.sumarGastos(this.valor);                //Añadir el valor de la casilla a los gastos del jugador.
                 solicitante.sumarFortuna(-this.valor);              //Restar el importe correspondiente a la casilla que se ha pagado
                 solicitante.sumarDineroInvertido(valor);            //Actulizamos las estadisticas
-                getJuego().getBanca().sumarFortuna(this.valor);     //Sumar el valor de la casilla al saldo de la banca.
+                banca.sumarFortuna(this.valor);     //Sumar el valor de la casilla al saldo de la banca.
                 this.duenho = solicitante;                          //Cambiar el dueño de la casilla al jugador que la compra.
                 this.duenho.getPropiedades().add(this);             //El duenho tiene que anhadirlo a su lista de propiedades
-                getJuego().getConsola().imprimir(solicitante.getNombre() + " ha comprado la casilla " + this.getNombre() + " por " + this.valor + "€.");
+                Juego.consola.imprimir(solicitante.getNombre() + " ha comprado la casilla " + this.getNombre() + " por " + this.valor + "€.");
             }
             else throw new DineroInsuficienteException("No tienes saldo suficiente para comprar esta casilla.");
         } 
@@ -76,12 +76,12 @@ public abstract class Propiedad extends Casilla{
 
     public void infoCasillaEnVenta() {
     if (this.duenho != null && this.duenho.getNombre().equals("Banca")) {
-        getJuego().getConsola().imprimir("La casilla " + this.getNombre() + " está en venta por " + this.getValor() + "€.");
-        getJuego().getConsola().imprimir("{");
-        getJuego().getConsola().imprimir("nombre: " + this.getNombre() + ",");
-        getJuego().getConsola().imprimir("tipo: " + this.getTipo() + ",");
-        getJuego().getConsola().imprimir("valor: " + this.valor + "\n},");
-        if (this.getTipo().equals("Solar") && this.grupo != null) getJuego().getConsola().imprimir("grupo: " + this.grupo.colorToNombreGrupo() + ",\n");
+        Juego.consola.imprimir("La casilla " + this.getNombre() + " está en venta por " + this.getValor() + "€.");
+        Juego.consola.imprimir("{");
+        Juego.consola.imprimir("nombre: " + this.getNombre() + ",");
+        Juego.consola.imprimir("tipo: " + this.getTipo() + ",");
+        Juego.consola.imprimir("valor: " + this.valor + "\n},");
+        if (this.getTipo().equals("Solar") && this.grupo != null) Juego.consola.imprimir("grupo: " + this.grupo.colorToNombreGrupo() + ",\n");
         }
     }
 }

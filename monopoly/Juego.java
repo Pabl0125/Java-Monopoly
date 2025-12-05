@@ -22,27 +22,18 @@ public class Juego implements Comando{
     public static ConsolaNormal consola;//Implementacion de la interfaz Consola de forma estática para que todos los métodos puedan usarla
     private ArrayList<Jugador> jugadores; //Jugadores de la partida.
     private ArrayList<Avatar> avatares; //Avatares en la partida.
-    private ArrayList<Carta> mazoSuerte; //Mazo de cartas de suerte.
-    private ArrayList<Carta> mazoCajaComunidad; //Mazo de cartas de caja de comunidad.
-    private int indiceSuerte; //Índice de la siguiente carta de suerte a sacar.
-    private int indiceCajaComunidad; //Índice de la siguiente carta de caja de comunidad a sacar.
     private int turno = 0; //Índice correspondiente a la posición en el arrayList del jugador (y el avatar) que tienen el turno
     private int lanzamientos; //Variable para contar el número de lanzamientos de un jugador en un turno.
     private Tablero tablero; //Tablero en el que se juega.
     private Dado dado1; //Dos dados para lanzar y avanzar casillas.
     private Dado dado2; 
     private Jugador banca; //El jugador banca.
-    private boolean tirado; //Booleano para comprobar si el jugador que tiene el turno ha tirado o no.
-    private boolean solvente; //Booleano para comprobar si el jugador que tiene el turno es solvente, es decir, si ha pagado sus deudas.
     private int numCartaSuerte; //Número de carta de suerte que se va a sacar.
     private int numCartaCajaCom; //Número de carta de caja de comunidad que se va a sacar.
-    
-    
 
     ////////////////////CONSTRUCTOR////////////////////
     public void iniciarPartida() {
         //Crear jugadores y avatares.
-        inicializarMazos();
         int indiceSuerte = 0;
         int indiceCajaComunidad = 0;
         jugadores = new ArrayList<Jugador>();
@@ -70,9 +61,14 @@ public class Juego implements Comando{
     public ConsolaNormal getConsola(){
         return consola;
     }
+    public ArrayList<Jugador> getJugadores() {
+        return jugadores;
+    }
     public Jugador getBanca(){
         return banca;
     }
+
+    //////////////////METODOS GENERICOS//////////////////
     
     public void lecturaFichero(String fichero) throws MonopolyException {
         File file = new File(fichero);
@@ -92,51 +88,6 @@ public class Juego implements Comando{
         }
     }
 
-    private void inicializarMazos() {
-        mazoSuerte = new ArrayList<>();
-        mazoSuerte.add(new CartaSuerte(1, this, "Decides hacer un viaje de placer. Avanza hasta Solar19. Si pasas por la casilla de Salida, cobra 2.000.000€."));
-        mazoSuerte.add(new CartaSuerte(2, this, "Los acreedores te persiguen por impago. Ve a la Cárcel. Ve directamente sin pasar por la casilla de Salida y sin cobrar los 2.000.000€."));
-        mazoSuerte.add(new CartaSuerte(3, this, "¡Has ganado el bote de la lotería! Recibe 1.000.000€."));
-        mazoSuerte.add(new CartaSuerte(4, this, "Has sido elegido presidente de la junta directiva. Paga a cada jugador 250.000€."));
-        mazoSuerte.add(new CartaSuerte(5, this, "¡Hora punta de tráfico! Retrocede tres casillas."));
-        mazoSuerte.add(new CartaSuerte(6, this, "Te multan por usar el móvil mientras conduces. Paga 150.000€."));
-        mazoSuerte.add(new CartaSuerte(7, this, "Avanza hasta la casilla de transporte más cercana. Si no tiene dueño, puedes comprarla. Si tiene dueño, paga al dueño el doble de la operación indicada."));
-        
-        mazoCajaComunidad = new ArrayList<>();
-        mazoCajaComunidad.add(new CartaCajaComunidad(1, this,"Paga 500.000€ por un fin de semana en un balneario de 5 estrellas."));
-        mazoCajaComunidad.add(new CartaCajaComunidad(2, this, "Te investigan por fraude de identidad. Ve a la Cárcel. Ve directamente sin pasar por la casilla de Salida y sin cobrar los 2.000.000€."));
-        mazoCajaComunidad.add(new CartaCajaComunidad(3, this, "Colócate en la casilla de Salida. Cobra 2.000.000€."));
-        mazoCajaComunidad.add(new CartaCajaComunidad(4, this, "Devolución de Hacienda. Cobra 500.000€."));
-        mazoCajaComunidad.add(new CartaCajaComunidad(5, this, "Retrocede hasta Solar1 para comprar antigüedades exóticas."));
-        mazoCajaComunidad.add(new CartaCajaComunidad(6, this, "Ve a Solar20 para disfrutar del San Fermín.\\nSi pasas por la casilla de Salida, cobra 2.000.000€."));
-    }
-
-    public void sacarCartaSuerte(Jugador jugadorActual) {
-        // Se saca la carta que indica el índice
-        Carta carta = mazoSuerte.get(indiceSuerte);
-        
-        // Se ejecuta su acción
-        carta.accion(this.tablero, jugadorActual, this.jugadores);
-        
-        // Se avanza el índice para la próxima vez, volviendo al inicio si es necesario
-        indiceSuerte = (indiceSuerte + 1) % mazoSuerte.size();
-    }
-
-    public void sacarCartaCajaComunidad(Jugador jugadorActual) {
-        // Se saca la carta que indica el índice
-        Carta carta = mazoCajaComunidad.get(indiceCajaComunidad);
-
-        // Se ejecuta su acción
-        carta.accion(this.tablero, jugadorActual, this.jugadores);
-
-        // Se avanza el índice y se vuelve al principio si se llega al final
-        indiceCajaComunidad = (indiceCajaComunidad + 1) % mazoCajaComunidad.size();
-    }
-
-    /**
-    * Método que interpreta el comando introducido y toma la accion correspondiente.
-    * Parámetro: cadena de caracteres (el comando).
-    */
     private void analizarComando(String comando) {
         try{
         consola.imprimir("\n>> " + comando );     //Impresion del comando insertado
@@ -430,12 +381,12 @@ public class Juego implements Comando{
 
             // Evaluar la casilla
             try{
-                boolean solvente = casillaFinal.evaluarCasilla();
+                boolean solvente = casillaFinal.evaluarCasilla(this.tablero, jugadorActual, total);
             } catch (MonopolyException e){
                 consola.imprimir(e.getMessage());
             }
             
-            if (!solvente) {
+            if (true) {
                 //Lógica de perder, aun no implementada
             }
 
@@ -498,7 +449,7 @@ public class Juego implements Comando{
                         " hasta " + casillaFinal.getNombre() + ".");
 
                 // Evaluar la casilla usando su propio método
-                boolean solvente = casillaFinal.evaluarCasilla();
+                boolean solvente = casillaFinal.evaluarCasilla(this.tablero, jugadorActual, total);
                 
                 if (!solvente) {
                     //Lógica de perder, aun no implementada
@@ -533,7 +484,7 @@ public class Juego implements Comando{
             throw new ComandoImposibleException("El jugador " + this.jugadores.get(turno).getNombre() + " ya es dueño de la casilla '" + nombre + "'.");
         }
         
-        p.comprarPropiedad(jugadores.get(turno));
+        p.comprarPropiedad(jugadores.get(turno), this.banca);
 
         Jugador jugadorActual = jugadores.get(turno);
         if (!jugadorActual.getPropiedades().contains(c)) {
@@ -568,12 +519,10 @@ public class Juego implements Comando{
     // Método que realiza las acciones asociadas al comando 'listar enventa'.
     @Override
     public void listarEnVenta() {
-        for (ArrayList<Casilla> lado : tablero.getPosiciones()) {
-            for (Casilla c : lado) {
-                if(c instanceof Propiedad){
-                    Propiedad p = (Propiedad) c;
-                    p.infoCasillaEnVenta(); // Cada casilla decide si imprime info
-                }
+        for (Casilla c : tablero.getCasillas()) {
+            if(c instanceof Propiedad){
+                Propiedad p = (Propiedad) c;
+                p.infoCasillaEnVenta(); // Cada casilla decide si imprime info
             }
         }
     }
@@ -618,26 +567,24 @@ public class Juego implements Comando{
     //Función para listar todos los edificios de la partida
     @Override
     public void listarEdificios() throws ComandoImposibleException{
-        ArrayList<ArrayList<Casilla>> posiciones = tablero.getPosiciones();
+        ArrayList<Casilla> casillas = tablero.getCasillas();
         boolean edificaciones = false;
-        for (ArrayList<Casilla> lado : posiciones) {
-            for (Casilla c : lado) {
-                if(!(c instanceof Solar)){
-                    continue;       //Pasamos a analizar la siguiente casillas
-                }
-                Solar solar = (Solar) c;
-                if(!solar.getDuenho().getNombre().equals("Banca") && !solar.getEdificios().isEmpty()){
-                    edificaciones = true;
-                    for(Edificacion edificio : solar.getEdificios()){
-                        consola.imprimir(
-                            "{\n" +
-                            "\tid: " + edificio.toString() + ",\n" +
-                            "\tpropietario: " + solar.getDuenho().getNombre() + ",\n" +
-                            "\tcasilla: " + solar.getNombre() + ",\n" +
-                            "\tgrupo: " + solar.getGrupo().colorToNombreGrupo() + ",\n" +
-                            "\tcoste: " + edificio.getValor() + "€,\n" +
-                            "}");
-                    }
+        for (Casilla c : casillas) {
+            if(!(c instanceof Solar)){
+                continue;       //Pasamos a analizar la siguiente casillas
+            }
+            Solar solar = (Solar) c;
+            if(!solar.getDuenho().getNombre().equals("Banca") && !solar.getEdificios().isEmpty()){
+                edificaciones = true;
+                for(Edificacion edificio : solar.getEdificios()){
+                    consola.imprimir(
+                        "{\n" +
+                        "\tid: " + edificio.toString() + ",\n" +
+                        "\tpropietario: " + solar.getDuenho().getNombre() + ",\n" +
+                        "\tcasilla: " + solar.getNombre() + ",\n" +
+                        "\tgrupo: " + solar.getGrupo().colorToNombreGrupo() + ",\n" +
+                        "\tcoste: " + edificio.getValor() + "€,\n" +
+                        "}");
                 }
             }
         }
@@ -794,16 +741,16 @@ public class Juego implements Comando{
         
         switch (tipoEdificio) {
             case "hotel":
-                solarActual.Edificar(new Hotel());
+                solarActual.Edificar(new Hotel(), getJugadorActual());
                 break;
             case "piscina":
-                solarActual.Edificar(new Piscina());
+                solarActual.Edificar(new Piscina(), getJugadorActual());
                 break;
             case "pista deportiva":
-                solarActual.Edificar(new Hotel());
+                solarActual.Edificar(new PistaDeportiva(), getJugadorActual());
                 break;
             case "casa":
-                solarActual.Edificar(new Casa());
+                solarActual.Edificar(new Casa(), getJugadorActual());
                 break;
             default:
                 break;
@@ -874,7 +821,7 @@ public class Juego implements Comando{
             consola.imprimir("Al vender el hotel, recuperas 4 casas en " + nombreCasilla + ".");
             for (int i = 0; i < 4; i++) {
                     try{
-                        casilla.Edificar(new Casa());
+                        casilla.Edificar(new Casa(), jugadorActual);
                     }
                     catch(JuegoException e){{
                         consola.imprimir(e.getMessage());
@@ -1062,30 +1009,27 @@ public class Juego implements Comando{
     @Override
     public void verTablero() {
             String[][] mostrar = new String[11][11];
+            ArrayList<Casilla> casillas = tablero.getCasillas();
             // Lado Sur 
-            ArrayList<Casilla> sur = tablero.getPosiciones().get(0);
-            for (int i = 0; i < 10; i++) {  //Se insertaron las casillas del lado sur en orden inverso (salida empieza a la izquierda)
-                mostrar[10][10 - i] = formatearCasilla(sur.get(i));    //Por lo que se deben imprimir en orden inverso.
-            }
-            // Lado Oeste 
-            ArrayList<Casilla> oeste = tablero.getPosiciones().get(1);
             for (int i = 0; i < 10; i++) {
-                mostrar[10 - i][0] = formatearCasilla(oeste.get(i));
+                mostrar[10][10 - i] = formatearCasilla(casillas.get(i));
+            }
+            // Lado Oeste
+            for (int i = 0; i < 10; i++) {
+                mostrar[10 - i][0] = formatearCasilla(casillas.get(10 + i));
             }
             // Lado Norte
-            ArrayList<Casilla> norte = tablero.getPosiciones().get(2);
             for (int i = 0; i < 10; i++) {
-                mostrar[0][i] = formatearCasilla(norte.get(i));
+                mostrar[0][i] = formatearCasilla(casillas.get(20 + i));
             }
             // Lado Este
-            ArrayList<Casilla> este = tablero.getPosiciones().get(3);
             for (int i = 0; i < 10; i++) {
-                mostrar[i][10] = formatearCasilla(este.get(i));
+                mostrar[i][10] = formatearCasilla(casillas.get(30 + i));
             }
+            
             // Rellenar espacios vacíos
             for (int i = 1; i < 10; i++) {
                 for (int j = 1; j < 10; j++) {
-                    // Ajustar el espacio central al ancho de la casilla + 3 caracteres ([... ])
                     mostrar[i][j] = "               ";
                 }
             }

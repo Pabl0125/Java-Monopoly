@@ -5,7 +5,7 @@ import partida.*;
 public abstract class Accion extends Casilla{
     
     ///////////////CONSTRUCTOR///////////////
-    public Accion(String nombre, int posicion, Juego juego){
-        super(nombre, posicion,juego);     //Llamamos al contructor de la clase padre
+    public Accion(String nombre, int posicion){
+        super(nombre, posicion);     //Llamamos al contructor de la clase padre
     }
 }

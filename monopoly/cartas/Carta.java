@@ -11,17 +11,14 @@ public abstract class Carta {
 
     private final String descripcion;
     private final int num;
-    private final Juego juego;
 
     public Carta(){
-        this.juego = null;
         this.descripcion = "";
         this.num = 0;   
     }
 
 
-    public Carta(int num, Juego juego, String descripcion){
-        this.juego = juego;
+    public Carta(int num, String descripcion){
         this.descripcion = descripcion;
         this.num = num;
     }
@@ -36,10 +33,5 @@ public abstract class Carta {
     public int getNum() {
         return num;
     }
-    public Juego getJuego() {
-        return juego;
-    }
-    public ConsolaNormal getConsola() {
-        return this.juego.getConsola();
-    }
+
 }

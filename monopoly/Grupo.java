@@ -20,33 +20,18 @@ public class Grupo {
     ////////////////////CONSTRUCTORES////////////////////
     public Grupo() {
         this.miembros = new ArrayList<>();
-        this.colorGrupo = null;                         //Convendria luego meterle un color a los genericos
+        this.colorGrupo = null;
         this.numCasillas = 0;
         this.rentabilidad = 0;
+        asignarPreciosEdificios(null);
     }
 
-    public Grupo(Propiedad cas1, Propiedad cas2, String colorGrupo) {
+    public Grupo(String colorGrupo) {
         this.miembros = new ArrayList<>();
-        this.miembros.add(cas1);
-        this.miembros.add(cas2);
         this.colorGrupo = colorGrupo;
-        this.numCasillas = 2;
+        this.numCasillas = 0;
+        this.rentabilidad = 0;
         asignarPreciosEdificios(colorGrupo);
-        cas1.setGrupo(this);
-        cas2.setGrupo(this);
-    }
-
-    public Grupo(Propiedad cas1, Propiedad cas2, Propiedad cas3, String colorGrupo) {
-        this.miembros = new ArrayList<>();
-        miembros.add(cas1);
-        miembros.add(cas3);
-        miembros.add(cas2);
-        this.colorGrupo = colorGrupo;
-        this.numCasillas = 3;
-        asignarPreciosEdificios(colorGrupo);
-        cas1.setGrupo(this);
-        cas2.setGrupo(this);
-        cas3.setGrupo(this);
     }
 
     //////////////////////METODOS GENERICOS////////////////////

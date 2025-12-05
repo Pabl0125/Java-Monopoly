@@ -6,8 +6,8 @@ import partida.*;
 
 public class Especial extends Casilla{
     
-    public Especial(String nombre, int posicion, Juego juego){
-        super(nombre,posicion,juego);                    //Llamamos al contructor de la clase padre
+    public Especial(String nombre, int posicion){
+        super(nombre,posicion);                    //Llamamos al contructor de la clase padre
     }
     /////////////METODOS SOBREESCRITOS/////////////
     @Override
@@ -18,26 +18,26 @@ public class Especial extends Casilla{
         else return "Información no disponible para la casilla '" + this.getNombre() + "'.";        
     }
     @Override
-    public boolean evaluarCasilla(){
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada){
         switch (this.getNombre()) {
             case "Carcel":
-                getJuego().getConsola().imprimir(getJuego().getJugadorActual().getNombre() + " ha caido en la la casilla Carcel");
+                Juego.consola.imprimir(jugadorActual.getNombre() + " ha caido en la la casilla Carcel");
                 return true;
             case "Salida":
-                getJuego().getConsola().imprimir("¡" + getJuego().getJugadorActual().getNombre() + " ha llegado a la salida!");
+                Juego.consola.imprimir("¡" + jugadorActual.getNombre() + " ha llegado a la salida!");
                 ////////////////////////////////////////////////////////////////////////////////////////////
                 //Al jugador luego se le debe sumar la cantidad correspondiente por pasar por la salida
                 //Esto está implementado en el método de la clase Avatar --> moverAvatar();
                 ////////////////////////////////////////////////////////////////////////////////////////////
                 return true;
             case "IrACarcel":
-                getJuego().getConsola().imprimir("¡" + getJuego().getJugadorActual().getNombre() + " va a la cárcel!");
+                Juego.consola.imprimir("¡" + jugadorActual.getNombre() + " va a la cárcel!");
                 try{
-                    getJuego().getJugadorActual().encarcelar();
+                    jugadorActual.encarcelar();
                 }
                 catch(AccionInvalidaException e){
-                    getJuego().getConsola().imprimir(e.getMessage());
-                    getJuego().getConsola().imprimir("No se ha podido encarcelar al jugador por caer en la casilla carcel");
+                    Juego.consola.imprimir(e.getMessage());
+                    Juego.consola.imprimir("No se ha podido encarcelar al jugador por caer en la casilla carcel");
                 }
                 return true;     //Ir a la carcel no cuesta dinero, por lo que es imposible quebrar
             default:
