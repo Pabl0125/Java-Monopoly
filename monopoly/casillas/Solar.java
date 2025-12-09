@@ -84,9 +84,9 @@ public final class Solar extends Propiedad{
             throw new ConstruccionException("Debes ser dueño de todas las propiedades del grupo " + grupo.colorToNombreGrupo() + " para poder edificar.");
         }
         // Comprobar que el tipo de edificio es válido
-        float costeEdificio = grupo.getPrecioEdificioPorGrupo(this.getTipo());
+        float costeEdificio = grupo.getPrecioEdificioPorGrupo(edificacion.getTipo());
         if (costeEdificio <= 0) {
-            throw new ConstruccionException("El tipo de edificio '" + this.getTipo() + "' no es válido.");
+            throw new ConstruccionException("El tipo de edificio '" + edificacion.getTipo() + "' no es válido.");
         }
 
         //comprobaciones con respecto a las casillas que ya existen
@@ -145,7 +145,7 @@ public final class Solar extends Propiedad{
         }
         //Tras todas las comprobaciones pertinentes finalemente edificamos en el solar
         anhadirEdificacion(edificacion);
-        Juego.consola.imprimir("Se ha edificado un " + edificacion.getTipo() + " en " + this.getNombre() + ". La fortuna de " + jugadorActual.getNombre() + " se reduce en " + costeEdificio + "€");
+        Juego.consola.imprimir("Se ha edificado un/a " + edificacion.getTipo() + " en " + this.getNombre() + ". La fortuna de " + jugadorActual.getNombre() + " se reduce en " + costeEdificio + "€");
     }
 
     

@@ -1,54 +1,54 @@
 package monopoly.interfaces;
 
-import monopoly.excepciones.MonopolyException;
+import monopoly.excepciones.*;
 
 public interface Comando{
     
-    void crearJugador(String nombre, String tipoAvatar) throws MonopolyException;
+    void crearJugador(String nombre, String tipoAvatar) throws ComandoImposibleException;
 
-    void mostrarJugadorTurno() throws MonopolyException;
+    void mostrarJugadorTurno();
 
-    void listarJugadores() throws MonopolyException;
+    void listarJugadores();
 
-    void listarEnVenta() throws MonopolyException;
+    void listarEnVenta();
 
-    void listarEdificios() throws MonopolyException;
+    void listarEdificios() throws ComandoImposibleException;
 
-    void listarEdificiosPorGrupo(String grupoNombre) throws MonopolyException;
+    void listarEdificiosPorGrupo(String grupoNombre) throws ComandoImposibleException;
 
-    void lanzarDados() throws MonopolyException;
+    void lanzarDados() throws AccionInvalidaException;
     
-    void lanzarDados(String tirada) throws MonopolyException;
+    void lanzarDados(String tirada) throws AccionInvalidaException;
 
-    void acabarTurno() throws MonopolyException;
+    void acabarTurno() throws ComandoImposibleException;
 
-    void salirCarcel() throws MonopolyException;
+    void salirCarcel() throws ComandoImposibleException, DineroInsuficienteException;
 
-    void descJugador(String nombre) throws MonopolyException;
+    void descJugador(String nombre);
 
-    void descCasilla(String nombreCasilla) throws MonopolyException;
+    void descCasilla(String nombreCasilla) throws ComandoImposibleException;
 
-    void comprar(String nombreCasilla) throws MonopolyException;
+    void comprar(String nombreCasilla) throws ComandoImposibleException, DineroInsuficienteException;
 
-    void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr) throws MonopolyException;
+    void venderEdificacion(String tipoEdificio, String nombreCasilla, String cantidadStr) throws ComandoImposibleException, ArgumentosComandoException;
 
-    void mostrarEstadisticasJuego() throws MonopolyException;
+    void mostrarEstadisticasJuego();
 
-    void mostrarEstadisticas(String jugador) throws MonopolyException;
+    void mostrarEstadisticas(String jugador) throws ComandoImposibleException;
 
-    void edificar(String tipoEdificio) throws MonopolyException;
+    void edificar(String tipoEdificio) throws ConstruccionException, DineroInsuficienteException;
 
-    void verTablero() throws MonopolyException;
+    void verTablero();
 
-    void hipotecarPropiedad(String casilla) throws MonopolyException;
+    void hipotecarPropiedad(String casilla) throws ComandoImposibleException;
 
-    void deshipotecar(String casilla) throws MonopolyException;
+    void deshipotecar(String casilla) throws ComandoImposibleException, DineroInsuficienteException;
 
-    void proponerTrato(String jugadorDestino, String propiedadOfrecida, String propiedadSolicitada, String dineroOfrecido, String dineroSolicitado) throws MonopolyException;
+    void proponerTrato(String jugadorDestino, String propiedadOfrecida, String propiedadSolicitada, String dineroOfrecido, String dineroSolicitado) throws TratoException, ComandoImposibleException;
 
-    void aceptarTrato(String trato) throws MonopolyException;
+    void aceptarTrato(String trato) throws ComandoImposibleException, DineroInsuficienteException;
 
     void listarTratos();
 
-    void eliminarTrato(String stringTrato);
+    void eliminarTrato(String stringTrato) throws ComandoImposibleException;
 }

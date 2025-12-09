@@ -39,7 +39,7 @@ public final class CajaComunidad extends Casilla{
     public void incrementarIndiceCajaComunidad(){
         indiceCajaComunidad++;
         
-        if(indiceCajaComunidad >= mazoCajaComunidad.size()) indiceCajaComunidad = 0; 
+        if(indiceCajaComunidad >= mazoCajaComunidad.size()) indiceCajaComunidad = 1; 
     }
     
 
@@ -56,13 +56,10 @@ public final class CajaComunidad extends Casilla{
 
     @Override
     public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada){
-        Juego.consola.imprimir(jugadorActual.getNombre() + " ha caído en " + jugadorActual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Caja de Comunidad.");
 
         CartaCajaComunidad carta = sacarCartaCajaComunidad();
-        Juego.consola.imprimir("Carta de Caja de Comunidad: " + carta.getDescripcion());
-        //Se ejecuta la accion correspondiente a la carta
-        carta.accion(tablero, jugadorActual, jugadoresPartida);
 
+        carta.accion(tablero, jugadorActual, jugadoresPartida);
 
         return jugadorActual.esSolvente();
     }

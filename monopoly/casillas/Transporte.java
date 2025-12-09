@@ -33,7 +33,7 @@ public final class Transporte extends Propiedad{
             return true; //El jugador necesariamente es solvente al no tener que pagar por estar en su propiedad
         }
         //CASO 3: El transporte no pertenece a nadie y tiene, por lo tanto, opcion de compra
-        else if (this.getDuenho().equals(jugadorActual)) {
+        else if (this.getDuenho().getNombre().equals("Banca")) {
             this.infoCasillaEnVenta();  //Imprimimos la info de la casilla en venta
             if (jugadorActual.getFortuna() >= this.getValor()) {
                 Juego.consola.imprimir("Usa el comando 'comprar' para adquirirla.");

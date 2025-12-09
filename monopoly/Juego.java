@@ -134,35 +134,9 @@ public class Juego implements Comando{
                 case "eliminar":
                     if(partesComando.length == 2){                    
                         if(partesComando[1].startsWith("trato")){
-                            int indiceDeInicioNumerico = -1;
-                            String cadenaCompleta = new String();
-                            for (int i = 0; i < cadenaCompleta.length(); i++) {
-                                if (Character.isDigit(cadenaCompleta.charAt(i))) {
-                                    indiceDeInicioNumerico = i;
-                                    break; // Detenemos el bucle en cuanto encontramos el primer dígito
-                                }
-                            }
-                            if(indiceDeInicioNumerico < 0){
-                                throw new ArgumentosComandoException("Argumentos invalidos, el trato debe poseer un numero identificativo: trato[id]");
-                            }
-                            String parteNumerica = cadenaCompleta.substring(indiceDeInicioNumerico);
-                            int idTrato = 0;
-                            //Pasamos el numero a entero
-                            try{
-                                idTrato = Integer.parseInt(parteNumerica);
-                            }
-                            catch(NumberFormatException e){
-                                throw new ArgumentosComandoException("El número identificativo del trato a eliminar es inválido");                             
-                            }
-                            //elimina el trato de la lista de tratos del jugadora actual
-                            Trato tratoEliminar = getJugadorActual().buscarTratoPorId(idTrato);
-                            if(tratoEliminar==null){
-                                throw new ArgumentosComandoException("El trato a eliminar no existe en la lista de tratos del jugador actual");
-                            }
-                            getJugadorActual().eliminarTrato(tratoEliminar);
-                            
+                            eliminarTrato(partesComando[1]);
                         }
-                        
+                    }
                     break;
                 case "lanzar":
                     if (partesComando.length == 2 && partesComando[1].equals("dados")){
@@ -251,8 +225,10 @@ public class Juego implements Comando{
                 case "trato":
                     if(partesComando.length <= 3){
                         throw new ArgumentosComandoException("Argumentos inválidos para trato. Uso: trato <nombre_jugador: cambiar (Propiedad_ofrecida y dinero, Propiedad_solicitada y dinero)>");
-                    }else if(partesComando[2].equals("cambiar")){
+                    }
+                    else if(partesComando[2].equals("cambiar")){
                         procesarTrato(partesComando);
+                    }
                     break;
                 default:
                     // Se ejecuta si el comando no coincide con ningún case
@@ -397,20 +373,6 @@ public class Juego implements Comando{
 
             consola.imprimir("Dados forzados: " + valor1 + " y " + valor2 + " (total: " + total + ")");
 
-            // Comprobar dobles
-            /*if (valor1 == valor2) {
-                doblesSeguidos++;
-                if (doblesSeguidos == 3) {
-                    avatarActual.setLugar(tablero.encontrar_casilla("Carcel"));
-                    jugadorActual.encarcelar(this.tablero);
-                    throw new AccionInvalidaException("Tercer doble consecutivo: " + jugadorActual.getNombre() + " va directamente a la cárcel.");
-                }
-                volverATirar = true;
-                consola.imprimir("¡Doble forzado! " + jugadorActual.getNombre() + " puede volver a tirar después de evaluar la casilla.");
-            } else {
-                volverATirar = false;
-                doblesSeguidos = 0;
-            }*/
             volverATirar = false;
 
             // Mover avatar y mostrar movimiento
@@ -435,20 +397,6 @@ public class Juego implements Comando{
             } catch (MonopolyException e){
                 consola.imprimir(e.getMessage());
             }
-            
-            if (true) {
-                //Lógica de perder, aun no implementada
-            }
-
-            // Si se está leyendo de un fichero, no se puede pedir una nueva tirada interactiva.
-            // Por lo tanto, si salen dobles, el jugador podrá volver a tirar en el siguiente
-            // comando del fichero, pero no se detiene la ejecución para pedir input.
-            // if (volverATirar) {
-            //     System.out.print("Introduce una nueva tirada forzada (formato x+y): ");
-            //     Scanner sc = new Scanner(System.in);
-            //     tirada = sc.nextLine();
-            //     sc.close();
-            // }
 
         } while (volverATirar);
     }
@@ -1210,7 +1158,7 @@ public class Juego implements Comando{
             p2 = (Propiedad) c2;
 
             //Comprobar que la propiedad solicitada pertenece al jugador destino
-            if(!p2.getDuenho().equals(jugadorDestino)){
+            if(!p2.getDuenho().equals(jugadorDest)){
                 throw new TratoException("El jugador " + jugadorDestino + " no es dueño de la propiedad '" + propiedadSolicitada + "'.");
             }
         }
@@ -1394,7 +1342,9 @@ public class Juego implements Comando{
         int idTrato = extraerNumeroTrato(stringTrato);
         Trato trato = getJugadorActual().buscarTratoPorId(idTrato);
         
-
+        if(trato == null){
+            throw new ComandoImposibleException("Trato no encontrado.");
+        }
         Jugador jugador1 = trato.getJugador1();
         Jugador jugador2 = trato.getJugador2();
         Propiedad propiedadOfrecida = trato.getPropiedadOfrecida();
@@ -1516,7 +1466,5 @@ public class Juego implements Comando{
         //////////////////////////////////
         getJugadorActual().eliminarTrato(trato);
         //////////////////////////////////
-    }
-    
+    }   
 }
-    

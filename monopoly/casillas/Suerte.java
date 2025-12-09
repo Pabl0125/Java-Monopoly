@@ -42,7 +42,7 @@ public final class Suerte extends Casilla{
         indiceSuerte++;
         
         if(indiceSuerte >= mazoSuerte.size()) {
-            indiceSuerte = 0; 
+            indiceSuerte = 1; 
         }
     }
     
@@ -60,11 +60,9 @@ public final class Suerte extends Casilla{
 
     @Override
     public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada){
-        Juego.consola.imprimir(jugadorActual.getNombre() + " ha caído en " + jugadorActual.getAvatar().getLugar().getNombre() + " y debe tomar una carta de Suerte.");
 
 
         CartaSuerte carta = sacarCartaSuerte();
-        Juego.consola.imprimir("Carta de Suerte: " + carta.getDescripcion());
         
         carta.accion(tablero, jugadorActual,jugadoresPartida);
 

@@ -80,8 +80,9 @@ public abstract class Propiedad extends Casilla{
         Juego.consola.imprimir("{");
         Juego.consola.imprimir("nombre: " + this.getNombre() + ",");
         Juego.consola.imprimir("tipo: " + this.getTipo() + ",");
-        Juego.consola.imprimir("valor: " + this.valor + "\n},");
+        Juego.consola.imprimir("valor: " + this.valor + "\n");
         if (this.getTipo().equals("Solar") && this.grupo != null) Juego.consola.imprimir("grupo: " + this.grupo.colorToNombreGrupo() + ",\n");
+        Juego.consola.imprimir("}");
         }
     }
 }

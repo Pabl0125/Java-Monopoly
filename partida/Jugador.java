@@ -39,7 +39,6 @@ public class Jugador {
         this.tiradasCarcel = 0;             //Al crear el jugador, no ha tirado para salir de la carcel.
         this.vueltas = 0;                   //Al crear el jugador, no ha dado ninguna vuelta.
         this.propiedades=new ArrayList<>(); //Al crear el jugador, la banca posee todas las propiedadades.
-        this.nombre="Banca"; 
         this.avatar = null; 
         this.fortuna=Valor.FORTUNA_BANCA; 
         this.gastos = 0;
@@ -49,6 +48,7 @@ public class Jugador {
         this.propiedades=new ArrayList<>();
         this.vueltas = 0;
         this.juego = juego;
+        this.tratos = new ArrayList<>();
     }
     public Jugador(String nombreJugador, String tipoAvatar, Casilla inicio, ArrayList<Avatar> avCreados, Juego juego) {
         this.nombre = nombreJugador;
@@ -67,6 +67,7 @@ public class Jugador {
         this.dineroTasasImpuestos = 0;
         this.dineroInvertido = 0;
         this.juego = juego;
+        this.tratos = new ArrayList<>();
     }
     
     ///////////////GETTERS Y SETTERS///////////////////
@@ -193,7 +194,7 @@ public class Jugador {
         this.sumarDineroTasasImpuestos(cantidad);
 
         juego.getTablero().aumentarBoteParking(cantidad);
-        juego.getConsola().imprimir("Al jugador " + this.getNombre() + " se le ha cobrado" + cantidad);
+        juego.getConsola().imprimir("Al jugador " + this.getNombre() + " se le ha cobrado " + cantidad +"€.");
     }
     
     public void cobrarAlquiler(Propiedad propiedad){
@@ -273,6 +274,7 @@ public class Jugador {
 
 
     public Trato buscarTratoPorId(int id){
+        if(tratos.isEmpty()) return null;
         for(Trato trato: tratos){
             if(trato.getId() == id){
                 return trato;
@@ -302,7 +304,7 @@ public class Jugador {
                "\nAvatar: " + avatarInfo +
                "\nFortuna: " + this.fortuna +
                "\nPropiedades:" + this.propiedades +
-                "\nEdificios:" + this.getPropiedades();
+                "\nEdificios:" + this.edificiosEnPropiedad();
             
     }
 
