@@ -127,8 +127,9 @@ public class Juego implements Comando{
                     break;
                 case "tratos":
                     if(partesComando.length == 1){
-                        getJugadorActual().imprimirTratos();
+                        listarTratos();
                     }
+                    else throw new ComandoInvalidoException("Comando inválido, uso: trato");
                     break;
                 case "eliminar":
                     if(partesComando.length == 2){                    
@@ -241,27 +242,17 @@ public class Juego implements Comando{
                     }
                     else throw new ArgumentosComandoException("Argumentos inválidos para deshipotecar. Uso: deshipotecar <casilla>");
                     break;
+                case "aceptar":
+                        if(partesComando.length == 2 && partesComando[1].startsWith("trato")){
+                            aceptarTrato(partesComando[1]);
+                        }
+                        else throw new ArgumentosComandoException("Argumentos invalidos para aceptar <trato[numerotrato]>"); 
+                    break;  
                 case "trato":
                     if(partesComando.length <= 3){
                         throw new ArgumentosComandoException("Argumentos inválidos para trato. Uso: trato <nombre_jugador: cambiar (Propiedad_ofrecida y dinero, Propiedad_solicitada y dinero)>");
-                    }else if(partesComando[2].equals("cambiar") && (partesComando.length == 4 || partesComando.length == 6 || partesComando.length == 8)){
-                        
-                        String jugadorObjetivo = partesComando[1].replace(":", "");
-                        String propiedadOfrecida;
-                        String propiedadSolicitada;
-                        String dineroOfrecido;
-                        String dineroSolicitado;
-
-                        StringBuilder sb_contenidoParentesis = new StringBuilder();
-                        for(int i=3; i<partesComando.length; i++){
-                            sb_contenidoParentesis.append(partesComando[i]);
-                            if(i != partesComando.length -1){
-                                sb_contenidoParentesis.append(""); //Junto los strings sin espacios, despues dividire por ',' y ''
-                            }
-                        }
-                        String contenidoParentesis = sb_contenidoParentesis.toString();
-                        
-                    }
+                    }else if(partesComando[2].equals("cambiar")){
+                        procesarTrato(partesComando);
                     break;
                 default:
                     // Se ejecuta si el comando no coincide con ningún case
@@ -461,7 +452,7 @@ public class Juego implements Comando{
 
         } while (volverATirar);
     }
-
+    
     @Override
     public void lanzarDados() throws AccionInvalidaException {
         try{
@@ -1148,7 +1139,7 @@ public class Juego implements Comando{
     }
 
 
-    //Metodo auxiliar para obtener un jugador por su nombre
+        //Metodo auxiliar para obtener un jugador por su nombre
     public Jugador encontrarJugadorPorNombre(String nombreJugador) {
         for (Jugador jugador : jugadores) {
             if (jugador.getNombre().equals(nombreJugador)) {
@@ -1158,8 +1149,9 @@ public class Juego implements Comando{
         return null; // Si no se encuentra el jugador
     }
 
-    ///////////////////////Metodos de los tratos///////////////////////
-    public void ProponerTrato(String jugadorDestino, String propiedadOfrecida, String propiedadSolicitada, String dineroOfrecido, String dineroSolicitado) throws TratoException, ComandoImposibleException{
+    /////////////////////////////////////////METODOS DE LOS TRATOS/////////////////////////////////////////
+    @Override
+    public void proponerTrato(String jugadorDestino, String propiedadOfrecida, String propiedadSolicitada, String dineroOfrecido, String dineroSolicitado) throws TratoException, ComandoImposibleException{
         // Obtener el jugador actual (el que propone el trato)
         Jugador jugadorActual = jugadores.get(turno);
 
@@ -1178,67 +1170,230 @@ public class Juego implements Comando{
         Propiedad p2 = null;
         float dineroOfrec = 0.0f;
         float dineroSoli = 0.0f;
-        
-        //Comprobar que las propiedades existen en el tablero
-        if(propiedadOfrecida != null){
-            Casilla c1 = tablero.encontrar_casilla(propiedadOfrecida);
 
-            if(c1 instanceof Propiedad){
-                p1 = (Propiedad) c1;
-                //Comprobar que la propiedad ofrecida pertenece al jugador actual
+        //Procesar la propiedad ofrecida (si se ofrece)
+        if(propiedadOfrecida != null) {
+            Casilla c1 = tablero.encontrar_casilla(propiedadOfrecida);
+            
+            //Verificar que la propiedad existe
+            if(c1 == null){
+                throw new TratoException("La casilla '" + propiedadOfrecida + "' no existe.");
+            }
+            
+            //Comprobar que la propiedad ofrecida es una propiedad válida
+            if(!(c1 instanceof Propiedad)){
+                throw new TratoException("La casilla '" + propiedadOfrecida + "' no es una propiedad válida para un trato.");
+            }
+
+            p1 = (Propiedad) c1;
+
+            //Comprobar que la propiedad ofrecida pertenece al jugador actual
             if(!p1.getDuenho().equals(jugadorActual)){
                 throw new TratoException("El jugador " + jugadorActual.getNombre() + " no es dueño de la propiedad '" + propiedadOfrecida + "'.");
             }
-            }else if(c1 == null){
-                break;
-            }else{
-                throw new TratoException("La casilla '" + propiedadOfrecida + "' no es una propiedad válida.");
-            }
         }
-        
-        Casilla c2 = tablero.encontrar_casilla(propiedadSolicitada);
-        
 
-        
+        //Procesar la propiedad solicitada (si se solicita)
+        if(propiedadSolicitada != null) {
+            Casilla c2 = tablero.encontrar_casilla(propiedadSolicitada);
+            
+            //Verificar que la propiedad existe
+            if(c2 == null){
+                throw new TratoException("La casilla '" + propiedadSolicitada + "' no existe.");
+            }
+            
+            //Comprobar que la propiedad solicitada es una propiedad válida
+            if(!(c2 instanceof Propiedad)){
+                throw new TratoException("La casilla '" + propiedadSolicitada + "' no es una propiedad válida para un trato.");
+            }
 
-        if(c2 instanceof Propiedad){
             p2 = (Propiedad) c2;
+
             //Comprobar que la propiedad solicitada pertenece al jugador destino
-            if(!p2.getDuenho().getNombre().equals(jugadorDestino)){
+            if(!p2.getDuenho().equals(jugadorDestino)){
                 throw new TratoException("El jugador " + jugadorDestino + " no es dueño de la propiedad '" + propiedadSolicitada + "'.");
             }
-        }else if(c1 == null){
-            break;
-        }else{
-            throw new TratoException("La casilla '" + propiedadSolicitada + "' no es una propiedad válida.");
         }
         
+        //Procesar el dinero ofrecido (si se ofrece)
         if(dineroOfrecido != null){
             dineroOfrec = Float.parseFloat(dineroOfrecido);
+            
+            //Comprobar que el dinero ofrecido no es negativo
+            if(dineroOfrec < 0){
+                throw new TratoException("El dinero ofrecido no puede ser negativo.");
+            }
+
+            //Comprobar que el jugador actual tiene suficiente dinero para ofrecer
+            if(dineroOfrec > jugadorActual.getFortuna()){
+                throw new TratoException("El jugador " + jugadorActual.getNombre() + " no tiene suficiente dinero para ofrecer " + dineroOfrec + "€.");
+            }
         }           
 
+        //Procesar el dinero solicitado (si se solicita)
         if(dineroSolicitado != null){
             dineroSoli = Float.parseFloat(dineroSolicitado);
+
+            //Comprobar que el dinero solicitado no es negativo
+            if(dineroSoli < 0){
+                throw new TratoException("El dinero solicitado no puede ser negativo.");
+            }
+
+            //Comprobar que el jugador destino tiene el dinero solicitado
+            if(dineroSoli > jugadorDest.getFortuna()){
+                throw new TratoException("El jugador " + jugadorDest.getNombre() + " no tiene el dinero solicitado (" + dineroSoli + "€).");
+            }
+        }
+
+        //Comprobar que al menos se ofrece o se solicita algo
+        if(p1 == null && dineroOfrec == 0.0f){
+            throw new TratoException("El trato debe incluir al menos una propiedad o una cantidad de dinero ofrecida.");
+        }
+
+        if(p2 == null && dineroSoli == 0.0f){
+            throw new TratoException("El trato debe incluir al menos una propiedad o una cantidad de dinero solicitada.");
         }
 
         //Crear el trato
         Trato nuevoTrato = new Trato(jugadorActual, jugadorDest, p1, p2, dineroOfrec, dineroSoli);
+
+        //Añadir el trato a la lista de tratos del jugador destino
         jugadorDest.getTratos().add(nuevoTrato);
         
-        //Añadir el trato a la lista de tratos pendientes
-        //tratosPendientes.add(nuevoTrato);
-        consola.imprimir(jugadorDestino + "¿te doy " + ( (propiedadOfrecida != null) ? "'" + propiedadOfrecida + "'" : "") + 
-                        ( (dineroOfrecido != null) ? " y " + dineroOfrecido + "€" : "") + 
-                        " a cambio de " + 
-                        ( (propiedadSolicitada != null) ? "'" + propiedadSolicitada + "'" : "") + 
-                        ( (dineroSolicitado != null) ? " y " + dineroSolicitado + "€" : "") + "? (ID Trato: " + nuevoTrato.getId() + ")");
+        //Imprimir el mensaje de propuesta de trato
+        String mensajeOfrecido = construirMensajeTrato(propiedadOfrecida, dineroOfrecido);
+        String mensajeSolicitado = construirMensajeTrato(propiedadSolicitada, dineroSolicitado);
+        consola.imprimir(jugadorDestino + ", ¿te doy " + mensajeOfrecido + " y tu me das " + mensajeSolicitado + "?");
     }
 
+    //Metodo auxiliar para construir el mensaje del trato
+    private String construirMensajeTrato(String propiedad, String dinero){
+        StringBuilder mensaje = new StringBuilder();
 
-    public void AceptarTrato(Trato trato) throws ComandoImposibleException, DineroInsuficienteException{
+        if(propiedad != null){
+            mensaje.append("'").append(propiedad).append("'");
+        }
 
-        //ojo !!! faltan los mensajes de impresion en caso de exito o de error
+        if(dinero != null){
+            if(mensaje.length() > 0){
+                mensaje.append(" y ");
+            }
+            mensaje.append(dinero).append("€");
+        }
 
+        return mensaje.toString();
+    }
+
+    public void procesarTrato(String[] partesComando) throws ArgumentosComandoException, TratoException, ComandoImposibleException{
+        String jugadorObjetivo = partesComando[1].replace(":", "");
+        String propiedadOfrecida = null;
+        String propiedadSolicitada = null;
+        String dineroOfrecido = null;
+        String dineroSolicitado = null;
+
+        // Reconstruir el contenido entre paréntesis
+        String contenidoParentesis = String.join(" ", java.util.Arrays.copyOfRange(partesComando, 3, partesComando.length));
+        String contenido = null;
+        
+        // Quitar paréntesis
+        if (contenidoParentesis.startsWith("(") && contenidoParentesis.endsWith(")")) {
+            contenido = contenidoParentesis.substring(1, contenidoParentesis.length() - 1);
+        } else {
+            throw new ArgumentosComandoException("Formato de trato inválido. Faltan los paréntesis. Uso: trato <jugador>: cambiar (<ofrecido>, <solicitado>)");
+        }
+
+        String[] partesTrato = contenido.split(",");
+        if (partesTrato.length != 2) {
+            throw new ArgumentosComandoException("Formato de trato inválido. Se esperan dos partes separadas por coma. Uso: (<ofrecido>, <solicitado>)");
+        }
+
+        String ofrecidoStr = partesTrato[0].trim();
+        String solicitadoStr = partesTrato[1].trim();
+
+        // Procesar parte ofrecida
+        String[] ofrecidoComponentes = ofrecidoStr.split(" y ");
+        if (ofrecidoComponentes.length == 1) {
+            try {
+                Float.parseFloat(ofrecidoComponentes[0]);
+                dineroOfrecido = ofrecidoComponentes[0];
+            } catch (NumberFormatException e) {
+                propiedadOfrecida = ofrecidoComponentes[0];
+            }
+        } else if (ofrecidoComponentes.length == 2) {
+            propiedadOfrecida = ofrecidoComponentes[0];
+            dineroOfrecido = ofrecidoComponentes[1];
+        }
+
+        // Procesar parte solicitada
+        String[] solicitadoComponentes = solicitadoStr.split(" y ");
+        if (solicitadoComponentes.length == 1) {
+            try {
+                Float.parseFloat(solicitadoComponentes[0]);
+                dineroSolicitado = solicitadoComponentes[0];
+            } catch (NumberFormatException e) {
+                propiedadSolicitada = solicitadoComponentes[0];
+            }
+        } else if (solicitadoComponentes.length == 2) {
+            propiedadSolicitada = solicitadoComponentes[0];
+            dineroSolicitado = solicitadoComponentes[1];
+        }
+        proponerTrato(jugadorObjetivo, propiedadOfrecida, propiedadSolicitada, dineroOfrecido, dineroSolicitado);
+    }
+
+    //Metodo privado para extraer el entero correspondiente de una cadena de caracteres de tipo "trato<numero>"
+    //devuelve -1 en caso de lanzar error
+    private int extraerNumeroTrato(String cadena){
+        if (!cadena.startsWith("trato")) {
+            return -1;
+        }
+
+        String subCadenaNumerica = cadena.substring(5);
+        
+        for (int i = 0; i < subCadenaNumerica.length(); i++) {
+            char caracter = subCadenaNumerica.charAt(i);
+            
+            if (!Character.isDigit(caracter)) {
+                return -1;
+            }
+        }
+        try {
+            return Integer.parseInt(subCadenaNumerica);
+        } catch (NumberFormatException e) {
+            return -1; 
+        }
+    }
+    
+    @Override
+    public void listarTratos(){
+        Jugador jugadorActual = getJugadorActual();
+        if(jugadorActual.getTratos().isEmpty()){
+            Juego.consola.imprimir("No hay tratos disponibles con otros jugadores");
+            return;
+        }
+        for(Trato trato: jugadorActual.getTratos()){
+            Juego.consola.imprimir("{");
+            Juego.consola.imprimir("jugadorPropone " + trato.getJugador1().getNombre());
+            Juego.consola.imprimir("trato: cambiar (" + trato.getPropiedadOfrecida() + "," + trato.getDineroOfrecido() + ") por " + "(" + trato.getPropiedadSolicitada() + "," + trato.getDineroSolicitado() + ")");
+            Juego.consola.imprimir("}");
+        }
+    }
+
+    @Override
+    public void eliminarTrato(String stringTrato) throws ComandoImposibleException{
+        int idTrato = extraerNumeroTrato(stringTrato);
+        Trato trato = getJugadorActual().buscarTratoPorId(idTrato);
+        if(trato == null){
+            throw new ComandoImposibleException("Trato no encontrado.");
+        }
+        getJugadorActual().eliminarTrato(trato);
+    }
+    
+    @Override
+    public void aceptarTrato(String stringTrato) throws ComandoImposibleException, DineroInsuficienteException{
+
+        int idTrato = extraerNumeroTrato(stringTrato);
+        Trato trato = getJugadorActual().buscarTratoPorId(idTrato);
+        
 
         Jugador jugador1 = trato.getJugador1();
         Jugador jugador2 = trato.getJugador2();
@@ -1249,6 +1404,15 @@ public class Juego implements Comando{
 
         //CASO 1: Propiedad por propiedad
         if(propiedadOfrecida!=null && propiedadSolicitada!=null && dineroOfrecido==0 && dineroSolicitado==0){
+            //el jugador 2 no tiene la propiedad que ofrece
+            if(!jugador2.getPropiedades().contains(propiedadOfrecida)){
+                throw new ComandoImposibleException("El jugador " + jugador2.getNombre() + " no tiene la propiedad " + propiedadOfrecida.getNombre() + ".");            
+            }
+            //el jugador 1 no tiene la propiedad que se solicita
+            if(!jugador1.getPropiedades().contains(propiedadSolicitada)){
+                throw new ComandoImposibleException("El jugador " + jugador1.getNombre() + " no tiene la propiedad " + propiedadSolicitada.getNombre() + ".");
+            }
+                
             jugador1.getPropiedades().add(propiedadOfrecida);
             jugador2.getPropiedades().remove(propiedadOfrecida);
 
@@ -1256,16 +1420,97 @@ public class Juego implements Comando{
             jugador2.getPropiedades().add(propiedadSolicitada);
 
         }
-        //CASO 2: Propiedad ofrecida por dinero
-        else if(propiedadOfrecida==null && propiedadSolicitada!=null && dineroOfrecido!=0 && dineroSolicitado==0){
-            jugador1.getPropiedades().add(propiedadSolicitada);
-            jugador2.sumarFortuna(-dineroOfrecido);
-            jugador1.sumarFortuna(dineroOfrecido);
+        
+        // CASO 2: Jugador 1 recibe (propiedad) jugador 2 rebice (dinero)
+        else if(propiedadOfrecida!=null && propiedadSolicitada==null && dineroOfrecido==0 && dineroSolicitado!=0){
+            //el jugador 2 no dispone de la propiedad que oferta
+            if(!jugador2.getPropiedades().contains(propiedadOfrecida)){
+                throw new ComandoImposibleException("El jugador " + jugador2.getNombre() + " no tiene la propiedad " + propiedadOfrecida.getNombre() + ".");
+            }
+            //el jugador que acepta el trato no puede pagar al jugador que lo ofrece
+            if(dineroSolicitado > jugador1.getFortuna()){
+                throw new DineroInsuficienteException("El jugador " + jugador1.getNombre() + " no tiene suficiente dinero para pagar " + dineroSolicitado + "€.");
+            }
+            jugador1.getPropiedades().add(propiedadOfrecida);
+            jugador2.getPropiedades().remove(propiedadOfrecida);
+
+            jugador1.sumarFortuna(-dineroSolicitado);
+            jugador1.sumarGastos(dineroSolicitado);
+            jugador2.sumarFortuna(dineroSolicitado);    // jugador 2 recibe el dinero pedido
         }
 
+        // CAS0 3: Jugador 1 recibe (dinero) jugador 2 rebice (propiedad)
+        else if(propiedadOfrecida==null && propiedadSolicitada!=null && dineroOfrecido!=0 && dineroSolicitado==0){
+            //el jugador 1 no dispone de la propiedad que se solicita
+            if(!jugador1.getPropiedades().contains(propiedadSolicitada)){
+                throw new ComandoImposibleException("El jugador " + jugador1.getNombre() + " no tiene la propiedad " + propiedadSolicitada.getNombre() + ".");
+            }
+            //el jugador 2 no dispone del dinero que oferta
+            if(dineroSolicitado > jugador2.getFortuna()){
+                throw new DineroInsuficienteException("El jugador " + jugador2.getNombre() + " no tiene suficiente dinero para pagar " + dineroOfrecido + "€.");
+            }
+            jugador2.getPropiedades().add(propiedadSolicitada);
+            jugador1.getPropiedades().remove(propiedadSolicitada);
 
+            jugador2.sumarFortuna(-dineroOfrecido);
+            jugador2.sumarGastos(dineroOfrecido);
+            jugador1.sumarFortuna(dineroOfrecido);    // jugador 1 recibe el dinero ofrecido
+        }
 
+        //CASO 4: Jugador 1 recibe (dinero) jugador 2 recibe (dinero + propiedad)
 
+        else if(propiedadOfrecida==null && propiedadSolicitada!=null && dineroOfrecido!=0 && dineroSolicitado!=0){
+            //el jugador 2 no dispone del dinero para hacer la oferta
+            if(dineroOfrecido > jugador2.getFortuna()){
+                throw new DineroInsuficienteException("El jugador " + jugador2.getNombre() + " no tiene suficiente dinero para pagar " + dineroOfrecido + "€.");
+            }
+            //el jugador 1 no dispone del dinero para aceptar la oferta
+            if(dineroSolicitado > jugador1.getFortuna()){
+                throw new DineroInsuficienteException("El jugador" + jugador1.getNombre() + "no tiene suficiente dinero para pagar " + dineroSolicitado+ "€.");
+            }
+            //el jugafor 1 no dispone de la propiedad para aceptar la oferta
+            if(!jugador1.getPropiedades().contains(propiedadSolicitada)){
+                throw new ComandoImposibleException("El jugador" + jugador1.getNombre() + " no tiene la propiedad " + propiedadSolicitada.getNombre() + ".");
+            }
+
+            jugador2.getPropiedades().add(propiedadSolicitada);
+            jugador1.getPropiedades().remove(propiedadSolicitada);
+
+            jugador1.sumarFortuna(dineroOfrecido);
+            jugador2.sumarFortuna(-dineroOfrecido);
+            jugador2.sumarGastos(dineroOfrecido);
+
+            jugador2.sumarFortuna(dineroSolicitado);
+            jugador1.sumarFortuna(-dineroSolicitado);
+            jugador1.sumarGastos(dineroSolicitado);
+        }
+
+        //CASO 5: Jugador 1 recibe (dinero+propiedad) jugador 2 recibe (propiedad)
+
+        else if(propiedadOfrecida!=null && propiedadSolicitada!=null && dineroOfrecido!=0 && dineroSolicitado==0){
+            //el jugador 2 no dispone del dinero suficiente para hacer la oferta
+            if(dineroOfrecido > jugador2.getFortuna()){
+                throw new DineroInsuficienteException("El jugador" + jugador1.getNombre() + " no tiene suficiente dinero para pagar " + dineroSolicitado+ "€.");
+            }
+            //el jugador 2 no dispone de la propiedad que oferta
+            if(!jugador2.getPropiedades().contains(propiedadOfrecida)){
+                throw new ComandoImposibleException("El jugador" + jugador2.getNombre() + " no tiene la propiedad " + propiedadOfrecida.getNombre() + ".");
+            }
+            //el jugador 1 no dispone de la propiedad que se le pide
+            if(!jugador1.getPropiedades().contains(propiedadOfrecida)){
+                throw new ComandoImposibleException("El jugador " + jugador1.getNombre() + " no tiene la propiedad " + propiedadSolicitada.getNombre() + ".");
+            }
+
+            jugador1.getPropiedades().add(propiedadOfrecida);
+            jugador2.getPropiedades().remove(propiedadOfrecida);
+
+            jugador2.getPropiedades().add(propiedadSolicitada);
+            jugador1.getPropiedades().remove(propiedadSolicitada);
+
+            jugador1.sumarFortuna(dineroOfrecido);
+            jugador2.sumarFortuna(-dineroOfrecido);
+            jugador2.sumarGastos(dineroOfrecido);
+        }
 
         // EN CUALQUIERA DE ESTOS CASOS SE DEBE ELIMINAR EL TRATO DEL ARRAYLIST DE TRATOS
         //////////////////////////////////

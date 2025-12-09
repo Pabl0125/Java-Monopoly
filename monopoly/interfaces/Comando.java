@@ -43,4 +43,12 @@ public interface Comando{
     void hipotecarPropiedad(String casilla) throws MonopolyException;
 
     void deshipotecar(String casilla) throws MonopolyException;
+
+    void proponerTrato(String jugadorDestino, String propiedadOfrecida, String propiedadSolicitada, String dineroOfrecido, String dineroSolicitado) throws MonopolyException;
+
+    void aceptarTrato(String trato) throws MonopolyException;
+
+    void listarTratos();
+
+    void eliminarTrato(String stringTrato);
 }

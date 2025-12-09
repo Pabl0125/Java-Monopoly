@@ -271,18 +271,6 @@ public class Jugador {
         return this.fortuna >= 0;
     }
 
-    public void imprimirTratos(){
-        if(tratos.isEmpty()){
-            Juego.consola.imprimir("No hay tratos disponibles con otros jugadores");
-            return;
-        }
-        for(Trato trato: tratos){
-            Juego.consola.imprimir("{");
-            Juego.consola.imprimir("jugadorPropone " + trato.getJugador1().getNombre());
-            Juego.consola.imprimir("trato: cambiar (" + trato.getPropiedadOfrecida() + "," + trato.getDineroOfrecido() + ") por " + "(" + trato.getPropiedadSolicitada() + "," + trato.getDineroSolicitado() + ")");
-            Juego.consola.imprimir("}");
-        }
-    }
 
     public Trato buscarTratoPorId(int id){
         for(Trato trato: tratos){
