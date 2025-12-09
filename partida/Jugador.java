@@ -18,13 +18,14 @@ public class Jugador {
     private int vueltas;                        //Cuenta las vueltas dadas al tablero.
     private ArrayList<Propiedad> propiedades;   //Propiedades que posee el jugador.
     private Juego juego;                        //Juego al que pertenece el juegador
-    private int vecesEnCarcel;                  //Implementado
-    private float dineroPremios;                //Implementado         
-    private float dineroSalida;                 //Implementado
-    private float dineroCobroAlquileres;        //Implementado
-    private float dineroPagoAlquileres;         //Implementado
-    private float dineroTasasImpuestos;         //Implementado
-    private float dineroInvertido;              //Implementado 
+    private int vecesEnCarcel;                  //Cuenta las veces que el jugador ha ido a la carcel.
+    private float dineroPremios;                //Cuenta el dinero que el jugador ha ganado en premios.        
+    private float dineroSalida;                 //Cuenta el dinero que el jugador ha ganado al pasar por la salida.
+    private float dineroCobroAlquileres;        //Cuenta el dinero que el jugador ha ganado por cobrar alquileres.
+    private float dineroPagoAlquileres;         //Cuenta el dinero que el jugador ha pagado en alquileres.
+    private float dineroTasasImpuestos;         //Cuenta el dinero que el jugador ha pagado en tasas e impuestos.
+    private float dineroInvertido;              //Cuenta el dinero que el jugador ha invertido en comprar propiedades y construir edificios.
+    private ArrayList<Trato> tratos;            //Tratos que tiene el jugador con otros jugadores.
     
     /////////////////////CONTRUCTORES/////////////////////
     
@@ -135,6 +136,12 @@ public class Jugador {
     public float getDineroInvertido(){
         return this.dineroInvertido;
     }
+
+    public ArrayList<Trato> getTratos() {
+        return tratos;
+    }
+
+    
     //////////////////METODOS GENERICOS/////////////////////
 
     public void sumarFortuna(float valor) {
@@ -202,6 +209,7 @@ public class Jugador {
         juego.getConsola().imprimir("Al jugador" + this.getNombre() + "se le ha cobrado" + alquiler + "€ de alquiler.");
         if(!this.esSolvente()) juego.getConsola().imprimir("El jugador ya no es solverte");
     }
+
     public void cobrarImpuesto(Impuesto casillaImpuesto){
         float impuesto = casillaImpuesto.getImpuesto();
         pagarDineroFijo(impuesto);
@@ -262,6 +270,40 @@ public class Jugador {
     public boolean esSolvente(){
         return this.fortuna >= 0;
     }
+
+    public void imprimirTratos(){
+        if(tratos.isEmpty()){
+            Juego.consola.imprimir("No hay tratos disponibles con otros jugadores");
+            return;
+        }
+        for(Trato trato: tratos){
+            Juego.consola.imprimir("{");
+            Juego.consola.imprimir("jugadorPropone " + trato.getJugador1().getNombre());
+            Juego.consola.imprimir("trato: cambiar (" + trato.getPropiedadOfrecida() + "," + trato.getDineroOfrecido() + ") por " + "(" + trato.getPropiedadSolicitada() + "," + trato.getDineroSolicitado() + ")");
+            Juego.consola.imprimir("}");
+        }
+    }
+
+    public Trato buscarTratoPorId(int id){
+        for(Trato trato: tratos){
+            if(trato.getId() == id){
+                return trato;
+            }
+        }
+        return null;
+    }
+
+    public void eliminarTrato(Trato trato){
+        for(Trato t: tratos){
+            if(t.equals(trato)){
+                tratos.remove(trato);
+                Juego.consola.imprimir("Se ha eliminado el trato" + t.getId());
+                break;
+            }
+        }
+    }
+
+
 
     ////////////////METODOS SOBREESCRITOS//////////////////
 

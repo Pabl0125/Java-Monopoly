@@ -22,7 +22,6 @@ public final class CajaComunidad extends Casilla{
         mazoCajaComunidad.add(new CartaCajaComunidad(4, "Devolución de Hacienda. Cobra 500.000€."));
         mazoCajaComunidad.add(new CartaCajaComunidad(5, "Retrocede hasta Solar1 para comprar antigüedades exóticas."));
         mazoCajaComunidad.add(new CartaCajaComunidad(6, "Ve a Solar20 para disfrutar del San Fermín. Si pasas por la casilla de Salida, cobra 2.000.000€."));
-        
     }
 
     public CajaComunidad(String nombre, int posicion){
