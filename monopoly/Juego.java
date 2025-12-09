@@ -1320,7 +1320,8 @@ public class Juego implements Comando{
         }
         for(Trato trato: jugadorActual.getTratos()){
             Juego.consola.imprimir("{");
-            Juego.consola.imprimir("jugadorPropone " + trato.getJugador1().getNombre());
+            Juego.consola.imprimir("id: " + trato.getId());
+            Juego.consola.imprimir("jugadorPropone: " + trato.getJugador1().getNombre());
             Juego.consola.imprimir("trato: cambiar (" + trato.getPropiedadOfrecida() + "," + trato.getDineroOfrecido() + ") por " + "(" + trato.getPropiedadSolicitada() + "," + trato.getDineroSolicitado() + ")");
             Juego.consola.imprimir("}");
         }
