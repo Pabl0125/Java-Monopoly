@@ -20,7 +20,7 @@ public abstract class Propiedad extends Casilla{
         this.valor = valor;
         this.alquiler = alquiler;
         this.grupo = null;
-        this.duenho = duenho;     //OJO --> FALTA NOTIFICAR A LA BANCA QUE TIENE LA PROPIEDAD
+        this.duenho = duenho;
         this.rentabilidad = 0;
     }
     ////////////////GETERS Y SETTERS////////////////
@@ -53,9 +53,14 @@ public abstract class Propiedad extends Casilla{
     }
     ////////////////METODOS GENERICOS////////////////
 
-    public void sumarRentabilidad(float cantidad){
-        this.rentabilidad += cantidad;
-        this.grupo.sumarRentabilidad(cantidad);
+    public boolean perteneceAJugador(Jugador jugador){
+        return this.duenho.equals(jugador);
+    }
+    public boolean alquiler(){
+        return this.duenho.getNombre() != "Banca";
+    }
+    public float valor(){
+        return this.valor;
     }
     //Si acaso la propiedad esta en venta la compra el juegdor solicitante, sino imprime un mensaje de error
     public void comprarPropiedad(Jugador solicitante, Jugador banca) throws DineroInsuficienteException, ComandoImposibleException {
@@ -72,6 +77,11 @@ public abstract class Propiedad extends Casilla{
             else throw new DineroInsuficienteException("No tienes saldo suficiente para comprar esta casilla.");
         } 
         else throw new ComandoImposibleException("Esta casilla ya tiene dueño.");
+    }
+
+    public void sumarRentabilidad(float cantidad){
+        this.rentabilidad += cantidad;
+        this.grupo.sumarRentabilidad(cantidad);
     }
 
     public void infoCasillaEnVenta() {

@@ -1307,15 +1307,30 @@ public class Juego implements Comando{
     @Override
     public void listarTratos(){
         Jugador jugadorActual = getJugadorActual();
+
         if(jugadorActual.getTratos().isEmpty()){
             Juego.consola.imprimir("No hay tratos disponibles con otros jugadores");
             return;
         }
+
         for(Trato trato: jugadorActual.getTratos()){
             Juego.consola.imprimir("{");
             Juego.consola.imprimir("id: " + trato.getId());
             Juego.consola.imprimir("jugadorPropone: " + trato.getJugador1().getNombre());
-            Juego.consola.imprimir("trato: cambiar (" + trato.getPropiedadOfrecida() + "," + trato.getDineroOfrecido() + ") por " + "(" + trato.getPropiedadSolicitada() + "," + trato.getDineroSolicitado() + ")");
+
+            String propiedadOfrecidaStr = trato.getPropiedadOfrecida() == null
+                                        ? "Ninguna propiedad"
+                                        : trato.getPropiedadOfrecida().toString();
+
+            String propiedadSolicitadaStr = trato.getPropiedadSolicitada() == null
+                                            ? "Ninguna propiedad"
+                                            : trato.getPropiedadSolicitada().toString();
+
+            Juego.consola.imprimir("trato: cambiar (Propiedad: " + propiedadOfrecidaStr +
+                                ", Dinero: " + trato.getDineroOfrecido() + "€)" +
+                                " por " +
+                                "(Propiedad: " + propiedadSolicitadaStr +
+                                ", Dinero: " + trato.getDineroSolicitado() + "€)");
             Juego.consola.imprimir("}");
         }
     }

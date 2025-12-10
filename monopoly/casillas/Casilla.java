@@ -61,8 +61,13 @@ public abstract class Casilla{
     public String toString(){
         return nombre;
     }
-
     ///////////////METODOS GENERICOS///////////////
+    boolean estaAvatar(Avatar avatar) {
+        return this.avatares.contains(avatar);
+    }
+    int frecuenciaVisita() {
+        return this.vecesVisitada;
+    }
     public void anhadirAvatar(Avatar av) {
         this.avatares.add(av);
     }
