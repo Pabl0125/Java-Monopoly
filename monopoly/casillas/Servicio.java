@@ -1,6 +1,5 @@
 package monopoly.casillas;
 import monopoly.*;
-import monopoly.excepciones.BancarrotaException;
 import monopoly.excepciones.DineroInsuficienteException;
 import partida.*;
 public final class Servicio extends Propiedad{
@@ -18,7 +17,7 @@ public final class Servicio extends Propiedad{
                        "\nJugadores: " + getListaJugadoresEnCasilla();
     }
     @Override
-    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada) throws BancarrotaException, DineroInsuficienteException{
+    public boolean evaluarCasilla(Tablero tablero, Jugador jugadorActual, int tirada) throws DineroInsuficienteException{
 
         //CASO 1: El servico es de un tercero y se debe pagar el importe correspondiente al alquiler de la propiedad por el factor multiplicador
         if(!this.getDuenho().getNombre().equals("Banca") && !this.getDuenho().equals(jugadorActual)){
@@ -40,8 +39,7 @@ public final class Servicio extends Propiedad{
             this.setAlquiler(this.getAlquiler() * multiplicador);
             jugadorActual.cobrarAlquiler(this);
             this.setAlquiler(this.getAlquiler() / multiplicador);   //Reiniciamos el alquiler
-            if(!jugadorActual.esSolvente())
-                throw new BancarrotaException("El jugador " + jugadorActual.getNombre() + " ha entrado en bancarrota.");
+            if(!jugadorActual.esSolvente()) Juego.consola.imprimir("El jugador " + jugadorActual.getNombre() + " ha entrado en bancarrota.");
             return true;
         }
         //CASO 2: El servicio es del jugador que ha caido en la casilla
