@@ -3,6 +3,7 @@ import monopoly.*;
 import monopoly.casillas.*;
 import monopoly.edificios.*;
 import monopoly.excepciones.AccionInvalidaException;
+import monopoly.excepciones.TratoException;
 import partida.*;
 import java.util.ArrayList;
 
@@ -189,7 +190,7 @@ public class Jugador {
     }
 
     public void pagarDineroFijo(float cantidad){
-        this.sumarFortuna(cantidad);
+        this.sumarFortuna(-cantidad);
         this.sumarGastos(cantidad);
         this.sumarDineroTasasImpuestos(cantidad);
 
@@ -287,13 +288,45 @@ public class Jugador {
         for(Trato t: tratos){
             if(t.equals(trato)){
                 tratos.remove(trato);
-                Juego.consola.imprimir("Se ha eliminado el trato" + t.getId());
+                Juego.consola.imprimir("Se ha eliminado el trato" + t.getId() + " de la lista de tratos");
                 break;
             }
         }
     }
 
+    public void eliminarTrato(int trato) throws TratoException{
+        int encontrado = 0;
+        for(Jugador j: juego.getJugadores()){
 
+            if (j.equals(this)) continue;
+
+            Trato t = j.buscarTratoPorId(trato);
+            if(t != null){
+                
+                if (t.getJugador1().equals(this)){
+                encontrado = 1;    
+                j.getTratos().remove(t);
+                juego.consola.imprimir("Se ha eliminado el trato" + trato + " propuesto al jugador " + j.getNombre());
+                break;
+            } else throw new TratoException("No puedes eliminar un trato que no has propuesto.");
+            } else encontrado=0;
+        }
+        
+        if(encontrado == 0){
+            throw new TratoException("No se ha encontrado el trato" + trato);
+        }
+    }
+
+    public ArrayList<Solar> listaHipotecados() {
+        ArrayList<Solar> hipotecados = new ArrayList<>();
+        for (Propiedad p : this.getPropiedades()){
+            if ((p instanceof Solar) && ((Solar) p).getEstarHipotecada()){
+                hipotecados.add((Solar) p);
+            }
+
+        }
+        return hipotecados;
+    }
 
     ////////////////METODOS SOBREESCRITOS//////////////////
 
@@ -304,7 +337,8 @@ public class Jugador {
                "\nAvatar: " + avatarInfo +
                "\nFortuna: " + this.fortuna +
                "\nPropiedades:" + this.propiedades +
-                "\nEdificios:" + this.edificiosEnPropiedad();
+                "\nEdificios:" + this.edificiosEnPropiedad() +
+                "\nHipotecados: " + this.listaHipotecados();
             
     }
 

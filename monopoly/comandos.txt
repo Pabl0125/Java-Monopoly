@@ -8,7 +8,7 @@ lanzar dados 4+2
 comprar Solar2
 comprar Solar3
 acabar turno
-lanzar dados 1+1 
+lanzar dados 1+1
 comprar Solar21
 edificar casa
 lanzar dados 1+1
@@ -28,14 +28,14 @@ trato Maria: cambiar (Solar1, 1000)
 trato Maria: cambiar (100000, Solar3)
 acabar turno
 lanzar dados 1+3
-comprar Solar12  
+comprar Solar12
 aceptar trato1
 trato Pedro: cambiar (Solar12, Solar3)
 eliminar trato2
 trato Pedro: cambiar (Solar12, Solar3 y 100000)
 tratos
 acabar turno
-eliminar trato3 
+eliminar trato3
 aceptar trato1
 aceptar trato3
 describir jugador Pedro

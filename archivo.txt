@@ -1,0 +1,135 @@
+crear jugador Pedro pelota
+Nombre: Pedro.
+Avatar: O.
+Fortuna: 15000000,00.
+Propiedades: [Sin propiedades].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Sin edificios].
+
+-------------------
+crear jugador Maria coche
+Nombre: Maria.
+Avatar: Z.
+Fortuna: 15000000,00.
+Propiedades: [Sin propiedades].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Sin edificios].
+
+-------------------
+lanzar dados 6+6
+El jugador Pedro (O) ha avanzado 12 posiciones y ahora se encuentra en la casilla Serv1.
+lanzar dados 6+6
+El jugador Pedro (O) ha avanzado 12 posiciones y ahora se encuentra en la casilla Solar14.
+lanzar dados 5+6
+El jugador Pedro (O) ha avanzado 11 posiciones y ahora se encuentra en la casilla Trans4.
+acabar turno
+El jugador actual es Maria
+lanzar dados 4+2
+El jugador Maria (Z) ha avanzado 6 posiciones y ahora se encuentra en la casilla Solar3.
+comprar Solar2
+El jugador no se encuentra en la casilla a comprar.
+comprar Solar3
+El jugador Maria ha comprado la casilla Solar3, pagando 1000000.0$.
+acabar turno
+El jugador actual es Pedro
+lanzar dados 1+1
+El jugador Pedro (O) ha avanzado 2 posiciones y ahora se encuentra en la casilla Solar21.
+comprar Solar21
+El jugador Pedro ha comprado la casilla Solar21, pagando 3500000.0$.
+edificar casa
+No se pueden construir edificios en la casilla Solar21 porque el jugador no es dueño del grupo.
+lanzar dados 1+1
+El jugador Pedro (O) ha avanzado 2 posiciones y ahora se encuentra en la casilla Solar22.
+comprar Solar22
+El jugador Pedro ha comprado la casilla Solar22, pagando 4000000.0$.
+edificar hotel
+No se pueden construir un hotel en la casilla Solar22 porque no hay suficientes casas.
+edificar casa
+Se ha construido una casa en la casilla Solar22.
+edificar casa
+Se ha construido una casa en la casilla Solar22.
+acabar turno
+El jugador actual es Maria
+describir jugador Pedro
+Nombre: Pedro.
+Avatar: O.
+Fortuna: 3500000,00.
+Propiedades: [Solar21,Solar22].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Casa-0,Casa-1].
+
+describir jugador Maria
+Nombre: Maria.
+Avatar: Z.
+Fortuna: 14000000,00.
+Propiedades: [Solar3].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Sin edificios].
+
+lanzar dados 6+5
+El jugador Maria (Z) ha avanzado 11 posiciones y ahora se encuentra en la casilla Comunidad.
+Maria, elige una carta de Caja de Comunidad: 1.
+Acción: Paga 500.000€ por un fin de semana en un balneario 5★.
+acabar turno
+El jugador actual es Pedro
+describir jugador Maria
+Nombre: Maria.
+Avatar: Z.
+Fortuna: 13500000,00.
+Propiedades: [Solar3].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Sin edificios].
+
+lanzar dados 2+4
+El jugador Pedro (O) ha avanzado 6 posiciones y ahora se encuentra en la casilla Trans1.
+El jugador pasa por la casilla de Salida y recibe 2.000.000$.
+trato Maria: cambiar (16000000, Solar3)
+El jugador que propone el trato no dispone de saldo suficiente para proponer el trato.
+trato Maria: cambiar (Solar1, 1000)
+El jugador que propone el trato no es dueño de la propiedad Solar1 y por tanto no puede proponer el trato.
+trato Maria: cambiar (100000, Solar3)
+El Trato1 entre Pedro y Maria ha sido propuesto correctamente.
+acabar turno
+El jugador actual es Maria
+lanzar dados 1+3
+El jugador Maria (Z) ha avanzado 4 posiciones y ahora se encuentra en la casilla Solar12.
+comprar Solar12
+El jugador Maria ha comprado la casilla Solar12, pagando 2200000.0$.
+aceptar trato1
+Trato1 aceptado.
+trato Pedro: cambiar (Solar12, Solar3)
+El Trato2 entre Maria y Pedro ha sido propuesto correctamente.
+eliminar trato2
+El trato2 ha sido eliminado.
+trato Pedro: cambiar (Solar12, Solar3 y 100000)
+El Trato3 entre Maria y Pedro ha sido propuesto correctamente.
+tratos
+ID: 1.
+Jugador que propone: Pedro.
+Trato: Cambio (100000.0, Solar3).
+acabar turno
+El jugador actual es Pedro
+eliminar trato3
+El trato no lo propuso el jugador actual.
+aceptar trato1
+El trato no fue encontrado entre los tratos recibidos por el jugador actual.
+aceptar trato3
+Trato3 aceptado.
+describir jugador Pedro
+Nombre: Pedro.
+Avatar: O.
+Fortuna: 5300000,00.
+Propiedades: [Solar21,Solar22,Solar12].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Casa-0,Casa-1].
+
+describir jugador Maria
+Nombre: Maria.
+Avatar: Z.
+Fortuna: 11500000,00.
+Propiedades: [Solar3].
+Hipotecadas: [Sin propiedades hipotecadas].
+Edificios: [Sin edificios].
+
+
+Process finished with exit code 0

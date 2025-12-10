@@ -50,5 +50,5 @@ public interface Comando{
 
     void listarTratos();
 
-    void eliminarTrato(String stringTrato) throws ComandoImposibleException;
+    void eliminarTrato(String stringTrato) throws TratoException;
 }

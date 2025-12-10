@@ -32,7 +32,7 @@ public class Juego implements Comando{
     private int numCartaCajaCom; //Número de carta de caja de comunidad que se va a sacar.
 
     ////////////////////CONSTRUCTOR////////////////////
-    public void iniciarPartida() {
+    public void iniciarPartida(String fichero) {
         //Crear jugadores y avatares.
         int indiceSuerte = 0;
         int indiceCajaComunidad = 0;
@@ -46,7 +46,8 @@ public class Juego implements Comando{
         dado2 = new Dado();
         numCartaSuerte = 1;
         numCartaCajaCom = 1;
-        this.consola = new ConsolaNormal();
+        
+        this.consola = new ConsolaNormal(fichero);
     }
     ////////////////////GETTERS Y SETTERS////////////////////
     public int getTurno(){
@@ -70,29 +71,23 @@ public class Juego implements Comando{
 
     //////////////////METODOS GENERICOS//////////////////
     
-    public void lecturaFichero(String fichero) throws MonopolyException {
-        File file = new File(fichero);
-        try(Scanner sc = new Scanner(file)){
-            while(sc.hasNextLine()){
-                String linea = sc.nextLine();
-                analizarComando(linea);
-                try{
-                    Thread.sleep(0); //Se puede modificar este valor para incrementar el delay entre comandos
+    public void lecturaFichero() {
+        
+            while(consola.getScanner().hasNextLine()){
+                String linea = consola.leer("\n>> ");
+                try {
+                    analizarComando(linea);
+                } catch (Exception e) {
+                    consola.imprimir(e.getMessage());
                 }
-                catch(Exception e){
-                    throw new JuegoException("Error en el sleep");
-                }
-            }
-        } catch (FileNotFoundException e){
-            throw new JuegoException("Error: Fichero no encontrado.");
-        }
-    }
 
-    private void analizarComando(String comando) {
-        try{
-        consola.imprimir("\n>> " + comando );     //Impresion del comando insertado
+            }
+    }
+    
+
+    private void analizarComando(String comando) throws MonopolyException {
+         
         String[] partesComando = comando.split(" ");
-        consola.imprimir("");
             if(partesComando.length > 0){
                 String comandoPrincipal = partesComando[0];
             switch (comandoPrincipal) {
@@ -237,10 +232,7 @@ public class Juego implements Comando{
                 }
             }
         }
-        catch (MonopolyException e) {   //Este bloque catch atrapara cualquier excepcion que se le plantee
-            consola.imprimir(e.getMessage());
-        }
-    }
+    
 
     /*Método que realiza las acciones asociadas al comando 'crear jugador'.
     Parametro: Comando introducido + nombre del jugador
@@ -722,6 +714,7 @@ public class Juego implements Comando{
         }
 
         consola.imprimir("El jugador actual es " + jugadores.get(turno).getNombre() + ".");
+        listarTratos();
     }
 
     private void imprimirJugadorTurno() {
@@ -1018,15 +1011,15 @@ public class Juego implements Comando{
             }
             // Lado Oeste
             for (int i = 0; i < 10; i++) {
-                mostrar[10 - i][0] = formatearCasilla(casillas.get(1).get(10 + i));
+                mostrar[10 - i][0] = formatearCasilla(casillas.get(1).get(i));
             }
             // Lado Norte
             for (int i = 0; i < 10; i++) {
-                mostrar[0][i] = formatearCasilla(casillas.get(2).get(20 + i));
+                mostrar[0][i] = formatearCasilla(casillas.get(2).get(i));
             }
             // Lado Este
             for (int i = 0; i < 10; i++) {
-                mostrar[i][10] = formatearCasilla(casillas.get(3).get(30 + i));
+                mostrar[i][10] = formatearCasilla(casillas.get(3).get(i));
             }
             
             // Rellenar espacios vacíos
@@ -1328,13 +1321,9 @@ public class Juego implements Comando{
     }
 
     @Override
-    public void eliminarTrato(String stringTrato) throws ComandoImposibleException{
+    public void eliminarTrato(String stringTrato) throws TratoException{
         int idTrato = extraerNumeroTrato(stringTrato);
-        Trato trato = getJugadorActual().buscarTratoPorId(idTrato);
-        if(trato == null){
-            throw new ComandoImposibleException("Trato no encontrado.");
-        }
-        getJugadorActual().eliminarTrato(trato);
+        getJugadorActual().eliminarTrato(idTrato);
     }
     
     @Override
@@ -1346,8 +1335,9 @@ public class Juego implements Comando{
         if(trato == null){
             throw new ComandoImposibleException("Trato no encontrado.");
         }
-        Jugador jugador1 = trato.getJugador1();
-        Jugador jugador2 = trato.getJugador2();
+        
+        Jugador jugador2 = trato.getJugador1();
+        Jugador jugador1 = trato.getJugador2();
         Propiedad propiedadOfrecida = trato.getPropiedadOfrecida();
         Propiedad propiedadSolicitada = trato.getPropiedadSolicitada();
         float dineroOfrecido = trato.getDineroOfrecido();
@@ -1366,9 +1356,13 @@ public class Juego implements Comando{
                 
             jugador1.getPropiedades().add(propiedadOfrecida);
             jugador2.getPropiedades().remove(propiedadOfrecida);
+            propiedadSolicitada.setDuenho(jugador1);
 
             jugador1.getPropiedades().remove(propiedadSolicitada);
             jugador2.getPropiedades().add(propiedadSolicitada);
+            propiedadOfrecida.setDuenho(jugador2);
+
+            Juego.consola.imprimir("Trato realizado: El jugador " + jugador1.getNombre() + " recibe " + propiedadOfrecida.getNombre() + " y el jugador " + jugador2.getNombre() + " recibe " + propiedadSolicitada.getNombre() + ".");
 
         }
         
@@ -1383,11 +1377,15 @@ public class Juego implements Comando{
                 throw new DineroInsuficienteException("El jugador " + jugador1.getNombre() + " no tiene suficiente dinero para pagar " + dineroSolicitado + "€.");
             }
             jugador1.getPropiedades().add(propiedadOfrecida);
+            propiedadOfrecida.setDuenho(jugador1);
             jugador2.getPropiedades().remove(propiedadOfrecida);
+
 
             jugador1.sumarFortuna(-dineroSolicitado);
             jugador1.sumarGastos(dineroSolicitado);
             jugador2.sumarFortuna(dineroSolicitado);    // jugador 2 recibe el dinero pedido
+
+            Juego.consola.imprimir("Trato realizado: El jugador " + jugador1.getNombre() + " recibe " + propiedadOfrecida.getNombre() + " y el jugador " + jugador2.getNombre() + " recibe " + dineroSolicitado + "€.");
         }
 
         // CAS0 3: Jugador 1 recibe (dinero) jugador 2 rebice (propiedad)
@@ -1401,11 +1399,15 @@ public class Juego implements Comando{
                 throw new DineroInsuficienteException("El jugador " + jugador2.getNombre() + " no tiene suficiente dinero para pagar " + dineroOfrecido + "€.");
             }
             jugador2.getPropiedades().add(propiedadSolicitada);
+            propiedadSolicitada.setDuenho(jugador2);
             jugador1.getPropiedades().remove(propiedadSolicitada);
 
             jugador2.sumarFortuna(-dineroOfrecido);
             jugador2.sumarGastos(dineroOfrecido);
             jugador1.sumarFortuna(dineroOfrecido);    // jugador 1 recibe el dinero ofrecido
+
+            Juego.consola.imprimir("Trato realizado: El jugador " + jugador1.getNombre() + " recibe " + dineroOfrecido + "€ y el jugador " + jugador2.getNombre() + " recibe " + propiedadSolicitada.getNombre() + ".");
+
         }
 
         //CASO 4: Jugador 1 recibe (dinero) jugador 2 recibe (dinero + propiedad)
@@ -1426,6 +1428,7 @@ public class Juego implements Comando{
 
             jugador2.getPropiedades().add(propiedadSolicitada);
             jugador1.getPropiedades().remove(propiedadSolicitada);
+            propiedadSolicitada.setDuenho(jugador2);
 
             jugador1.sumarFortuna(dineroOfrecido);
             jugador2.sumarFortuna(-dineroOfrecido);
@@ -1434,6 +1437,9 @@ public class Juego implements Comando{
             jugador2.sumarFortuna(dineroSolicitado);
             jugador1.sumarFortuna(-dineroSolicitado);
             jugador1.sumarGastos(dineroSolicitado);
+
+            Juego.consola.imprimir("Trato realizado: El jugador " + jugador1.getNombre() + " recibe " + dineroOfrecido + "€ y el jugador " + jugador2.getNombre() + " recibe " + propiedadSolicitada.getNombre() + " y " + dineroSolicitado + "€.");
+
         }
 
         //CASO 5: Jugador 1 recibe (dinero+propiedad) jugador 2 recibe (propiedad)
@@ -1454,6 +1460,7 @@ public class Juego implements Comando{
 
             jugador1.getPropiedades().add(propiedadOfrecida);
             jugador2.getPropiedades().remove(propiedadOfrecida);
+            propiedadOfrecida.setDuenho(jugador1);
 
             jugador2.getPropiedades().add(propiedadSolicitada);
             jugador1.getPropiedades().remove(propiedadSolicitada);
@@ -1461,8 +1468,12 @@ public class Juego implements Comando{
             jugador1.sumarFortuna(dineroOfrecido);
             jugador2.sumarFortuna(-dineroOfrecido);
             jugador2.sumarGastos(dineroOfrecido);
+
+            Juego.consola.imprimir("Trato realizado: El jugador " + jugador1.getNombre() + " recibe " + propiedadOfrecida.getNombre() + " y " + dineroOfrecido + "€ y el jugador " + jugador2.getNombre() + " recibe " + propiedadSolicitada.getNombre() + ".");
+
         }
 
+        Juego.consola.imprimir("Trato aceptado");
         // EN CUALQUIERA DE ESTOS CASOS SE DEBE ELIMINAR EL TRATO DEL ARRAYLIST DE TRATOS
         //////////////////////////////////
         getJugadorActual().eliminarTrato(trato);

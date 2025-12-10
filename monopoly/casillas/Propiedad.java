@@ -27,8 +27,8 @@ public abstract class Propiedad extends Casilla{
     public Jugador getDuenho(){
         return this.duenho;
     }
-    public Jugador setDuenho(){
-        return this.duenho;
+    public void setDuenho(Jugador duenho){
+        this.duenho = duenho;
     }
     public float getRentabilidad(){
         return this.rentabilidad;
