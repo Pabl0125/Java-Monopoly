@@ -35,8 +35,8 @@ Una de las características más destacadas es el comando `ver tablero`, que ren
 [Solar6 &A    ]                                                                                                                                               [Solar22       ]
 [Carcel       ][Solar5        ][Solar4        ][Suerte        ][Solar3        ][Trans1        ][Imp1          ][Solar2        ][Caja          ][Solar1       ][Salida        ]
 ```
----
-📂 Estructura del Proyecto
+
+##📂 Estructura del Proyecto
 
 El código está organizado modularmente en paquetes para separar la lógica del juego, las entidades y la interfaz:
 ```text
@@ -56,8 +56,8 @@ MONOPOLY/
     ├── Avatar.java            # Ficha del jugador en el tablero
     └── Dado.java              # Simulación de lanzamiento de dados
 ```
----
-🚀 Instalación y Ejecución
+
+##🚀 Instalación y Ejecución
 Requisitos previos
 - Java JDK (versión 8 o superior).
 - Una terminal que soporte códigos de escape ANSI (Linux/Mac soportan nativamente; en Windows se recomienda usar PowerShell, Git Bash o CMD moderno).
@@ -73,8 +73,8 @@ Para iniciar el juego, ejecuta la clase principal MonopolyETSE:
 ```bash
 java monopoly.MonopolyETSE
 ```
----
-🎮 Comandos Básicos
+
+##🎮 Comandos Básicos
 
 El juego se controla mediante comandos de texto. Algunos de los más útiles son:
 
