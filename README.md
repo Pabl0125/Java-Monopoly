@@ -2,13 +2,13 @@
 
 Una implementación completa del clásico juego de mesa **Monopoly** desarrollada en **Java**. Este proyecto es una aplicación de consola que permite simular partidas, gestionar propiedades, realizar tratos y visualizar el estado del juego mediante una interfaz de texto coloreada.
 
-> **Nota:** Este proyecto fue desarrollado como parte de una asignatura universitaria (ETSE). Cumple con los requisitos académicos establecidos, aunque se encuentra en fase de mejora continua.
+> **Nota:** Este proyecto fue desarrollado como parte de una asignatura de Programación Orientada a Objetos. Cumple con los requisitos establecidos, aunque se encuentra algunas funcionalidades no están del todo pulidas.
 
 ## 📋 Características Principales
 
 * **Interfaz de Consola Avanzada:** Visualización del tablero completo con soporte para **colores ANSI**, permitiendo distinguir fácilmente los grupos de propiedades y la ubicación de los avatares.
 * **Gestión de Jugadores y Avatares:** Soporte para múltiples jugadores con fichas personalizadas.
-* **Sistema de Edificación Extendido:** Además de casas y hoteles, incluye construcciones especiales como **Piscinas** y **Pistas Deportivas**.
+* **Sistema de Edificación Extendido:** Además de casas y hoteles, incluye construcciones especiales como Piscinas y Pistas Deportivas.
 * **Mecánicas Completas:**
     * Compra y venta de propiedades (Solares, Servicios, Transporte).
     * Sistema de Subastas (implícito en la lógica de compra).
