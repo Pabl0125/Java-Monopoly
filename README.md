@@ -24,16 +24,16 @@ Una de las características más destacadas es el comando `ver tablero`, que ren
 
 ```text
 [Parking      ][Solar12 &Y   ][Suerte        ][Solar13       ][Solar14       ][Trans3        ][Solar15       ][Solar16       ][Serv2         ][Solar17       ][IrACarcel     ]
-[Solar11      ]                                                                                                                                              [Solar18       ]
-[Solar10      ]                                                                                                                                              [Solar19       ]
-[Caja         ]                                     M O N O P O L Y                                                                                          [Caja          ]
-[Solar9       ]                                                                                                                                              [Solar20       ]
-[Trans2       ]                                     Java Edition                                                                                             [Trans4        ]
-[Solar8       ]                                                                                                                                              [Suerte        ]
-[Solar7       ]                                                                                                                                              [Solar21       ]
-[Serv1        ]                                                                                                                                              [Imp2          ]
-[Solar6 &A    ]                                                                                                                                              [Solar22       ]
-[Carcel       ][Solar5        ][Solar4        ][Suerte        ][Solar3        ][Trans1        ][Imp1          ][Solar2        ][Caja          ][Solar1        ][Salida        ]
+[Solar11      ]                                                                                                                                               [Solar18       ]
+[Solar10      ]                                                                                                                                               [Solar19       ]
+[Caja         ]                                     M O N O P O L Y                                                                                           [Caja          ]
+[Solar9       ]                                                                                                                                               [Solar20       ]
+[Trans2       ]                                     Java Edition                                                                                              [Trans4        ]
+[Solar8       ]                                                                                                                                               [Suerte        ]
+[Solar7       ]                                                                                                                                               [Solar21       ]
+[Serv1        ]                                                                                                                                               [Imp2          ]
+[Solar6 &A    ]                                                                                                                                               [Solar22       ]
+[Carcel       ][Solar5        ][Solar4        ][Suerte        ][Solar3        ][Trans1        ][Imp1          ][Solar2        ][Caja          ][Solar1       ][Salida        ]
 ```
 ---
 📂 Estructura del Proyecto
