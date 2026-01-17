@@ -74,7 +74,7 @@ Para iniciar el juego, ejecuta la clase principal MonopolyETSE:
 java monopoly.MonopolyETSE
 ```
 
-##🎮 Comandos Básicos
+## 🎮 Comandos Básicos
 
 El juego se controla mediante comandos de texto. Algunos de los más útiles son:
 
